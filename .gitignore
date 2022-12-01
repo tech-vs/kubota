@@ -1,2 +1,4 @@
 frontend.bak/
 materio-mui-react-nextjs-admin-template-free/
+server/node_modules
+server-mssql/node_modules
