@@ -24,7 +24,7 @@ const Import = ({}: Props) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Import Master plan file</Typography>
+          <Typography variant='h5'>Import Stop Shipment File</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: 6 }}>

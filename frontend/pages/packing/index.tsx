@@ -90,7 +90,7 @@ const Overall = ({ packingList }: any) => {
           </Button>
         )
       }
-    },
+    }
     // {
     //   field: 'view',
     //   headerName: 'View',
@@ -107,21 +107,21 @@ const Overall = ({ packingList }: any) => {
     //     )
     //   }
     // },
-    {
-      field: 'confirm',
-      headerName: 'Confirm and Send Email',
-      headerAlign: 'center',
-      headerClassName: 'headerField',
-      align: 'center',
-      width: 125,
-      renderCell: () => {
-        return (
-          <Button variant='contained' onClick={() => null} sx={{ borderRadius: 50 }}>
-            Confirm
-          </Button>
-        )
-      }
-    }
+    // {
+    //   field: 'confirm',
+    //   headerName: 'Confirm and Send Email',
+    //   headerAlign: 'center',
+    //   headerClassName: 'headerField',
+    //   align: 'center',
+    //   width: 125,
+    //   renderCell: () => {
+    //     return (
+    //       <Button variant='contained' onClick={() => null} sx={{ borderRadius: 50 }}>
+    //         Confirm
+    //       </Button>
+    //     )
+    //   }
+    // }
   ]
   return (
     <Layout>

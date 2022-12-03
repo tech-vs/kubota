@@ -280,7 +280,7 @@ const Scan = ({}: Props) => {
               partSeq04: ''
             })
             setDeEx('')
-            router.push('/checksheet')
+            router.push('/scan-packing/checksheet')
             setSubmitting(false)
           } catch (error) {
             alert('Error')

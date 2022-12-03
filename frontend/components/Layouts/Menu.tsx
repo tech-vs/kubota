@@ -107,7 +107,7 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
       onClickAction: () => router.push('/loading')
     },
     {
-      name: 'Import Master (Loading)',
+      name: 'Import Stop Shipment',
       icon: <FileUploadIcon />,
       pathName: '/import',
       onClickAction: () => router.push('/import')
