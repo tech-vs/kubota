@@ -1,0 +1,25 @@
+### Login 
+POST http://localhost:4200/login HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "user01",
+    "password": "12345"
+}
+
+### Register 
+POST http://localhost:4200/register HTTP/1.1
+Content-Type: application/json
+
+{
+    "username": "user01",
+    "password" : "12345",
+    "role": "user"
+}
+
+### profile
+GET http://localhost:4200/profile HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwibGV2ZWwiOiJub3JtYWwiLCJpYXQiOjE2NTA2MTgzODl9.TYbv0H-zz5JpFQzSsN_0W5VioAnzwl_0iiOIlcmdnaU
+
+### getAllUser 
+GET http://localhost:4200/user HTTP/1.1

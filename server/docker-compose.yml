@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  # ts-backend:
+  #   restart: always
+  #   # network_mode: "host"
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ./:/usr/src/app
+  #     # - ./:/usr/src/app/node_modules # This is the only change
+  #   ports:
+  #     - 4200:4200
+  postgres:
+    restart: always
+    # network_mode: "host"
+    container_name: postgres
+    image: postgres:14.2-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data_knex:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=backend
+  # pgadmin:
+  #   container_name: pgadmin4_container
+  #   # network_mode: "host"
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: root
+  #   ports:
+  #     - "5050:5050"
+volumes:
+  postgres_data_knex:

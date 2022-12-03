@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  // binaryTargets = ["native", "linux-musl", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model Pallet {
+  id Int @id @default(autoincrement())
+  palletNo Int @unique
+  packingList PackingList[]
+  packingCheckSheet PackingCheckSheet[]
+  status ActivityLog?
+}
+
+model PackingList {
+  id Int @id @default(autoincrement())
+  idNo Int 
+  pallet Pallet @relation(fields: [palletID], references: [id])
+  palletID Int
+  modelCode String
+  serialNo String
+}
+
+model PackingCheckSheet {
+  id Int @id @default(autoincrement()) 
+  pallet Pallet @relation(fields: [palletID], references: [id])
+  palletID Int
+  questionList QuestionList?
+  // requestApproval Boolean @default(false)
+  // isApproved Boolean @default(false)
+}
+
+model QuestionList {
+  id Int @id @default(autoincrement())
+  question PackingCheckSheet @relation(fields: [packingCheckSheetID], references: [id])
+  packingCheckSheetID Int @unique
+  questionItems QuestionItems[]
+}
+
+model QuestionItems {
+  id Int @id @default(autoincrement())
+  question QuestionList @relation(fields: [questionListID], references: [id])
+  questionListID Int 
+  questionText String
+  questionStatus Boolean @default(false)
+  deEx deEx
+}
+enum deEx {
+  Export
+  Domestic
+}
+model ActivityLog {
+  id Int @id @default(autoincrement())
+  pallet Pallet @relation(fields: [palletID], references: [id])
+  palletID Int @unique
+  createdAt DateTime?  @default(now())
+  status Status
+}
+enum Status {
+  // Waiting
+  // Checking
+  // Picking
+  Review
+  Finish
+  Repack
+}
+
+// model managerApproval {
+//   id Int @id @default(autoincrement())
+//   pallet Pallet @relation(fields: [palletID], references: [id])
+//   palletID Int @unique
+// }
+
+model User {
+  id Int @id @default(autoincrement())
+  username String @unique
+  password String
+  role Role  @default(Operator)
+  createdAt DateTime?  @default(now())
+}
+
+enum Role {
+  Operator
+  Manager
+  SAP_Operator
+  Administrator
+}
+
+
+// Oracle
+model PROD_RESULT {
+  id Int @id @default(autoincrement())
+  station_no String
+  plan_monthly_seq Int
+  plan_monthlu_sub_seq Int
+  latest_monthly_seq Int
+  latest_monthly_sub_seq Int
+  id_no String
+  prod_stat_us Int
+  no_work_sign Int
+  actual_monthly_seq Int
+  actual_monthly_sub_seq String
+  error_code String
+  error_msg String
+  create_date DateTime
+  create_by String
+  update_date DateTime
+  update_by String
+}
+
+model PACKING_ISSUING_DETAIL {
+  id Int @id @default(autoincrement())
+  station_no String
+  id_no Int	
+  packing_sequence_no Int	
+  report_no Int	
+  issue_datetime DateTime	
+  packing_unit Int	
+  model_code String	
+  distributor_code Int	
+  model_name String	
+  distributor_name String	
+  serial_no String	
+  packing_style_code Int 
+  create_date DateTime	
+  create_by String	
+  update_date DateTime	
+  update_by String
+}
+
+model PACKING_ISSUING_HISTORY {
+  id Int @id @default(autoincrement())
+  station_no String	
+  report_no Int	
+  item_number Int	
+  item_description String	
+  number_of_times Int	
+  create_date DateTime	
+  create_by String
+  update_date DateTime	
+  update_by String
+}
+
+model MS_SEQUENCE_NO {
+  id Int @id @default(autoincrement())
+  station_no String	
+  actual_work_month DateTime	
+  sequence_no Int	
+  create_date DateTime	
+  create_by String	
+  update_date DateTime	
+  update_by String
+}
+
+model MS_ACTUAL_MONTHLY_SEQ {
+  id Int @id @default(autoincrement())
+  station_no String	
+  actual_work_month DateTime	
+  actual_running_seq Int	
+  create_date Int	
+  create_by	String
+  update_date DateTime	
+  update_by String
+}
+
+model MS_REPORT_SEQ {
+  id Int @id @default(autoincrement())
+  station_no String	
+  form_code String	
+  last_report_no Int	
+  create_date	DateTime
+  create_by String	
+  update_date DateTime	
+  update_by String
+}
+
+// MSSQL
+model PSE_TS_DataUpload {
+  id Int @id @default(autoincrement())
+  Delivery_Date DateTime
+  pallet Int	
+  skewer Int	
+}
