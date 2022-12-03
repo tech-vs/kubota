@@ -182,9 +182,10 @@ model MS_REPORT_SEQ {
 }
 
 // MSSQL
-model PSE_TS_DataUpload {
+model pse_ts_dataupload {
   id Int @id @default(autoincrement())
-  Delivery_Date DateTime
+  prod_seq Int
+  delivery_date String
   pallet Int	
   skewer Int	
 }
