@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/oem',
+        destination: '/packing',
         permanent: true
       }
     ]
