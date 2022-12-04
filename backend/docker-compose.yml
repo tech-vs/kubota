@@ -30,5 +30,5 @@ django:
     - .:/app
     - ./media:/app/media
     - ./static:/app/static
-  # command: bash -c "./start.sh"
-  command: python manage.py runserver
+  command: bash -c "./start.sh"
+  # command: python manage.py runserver
