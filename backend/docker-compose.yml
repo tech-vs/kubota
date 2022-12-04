@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+  postgres:
+    restart: always
+    # network_mode: "host"
+    container_name: postgres
+    image: postgres:14.2-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data_knex:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=backend
+volumes:
+  postgres_data_knex:
+
+django:
+  container_name: django
+  build:
+    context: .
+    dockerfile: Dockerfile
+  restart: always
+  ports:
+    - 8000:8000
+  depends_on:
+    - postgres
+  volumes:
+    - .:/app
+    - ./media:/app/media
+    - ./static:/app/static
+  # command: bash -c "./start.sh"
+  command: python manage.py runserver
