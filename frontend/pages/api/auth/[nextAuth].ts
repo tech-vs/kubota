@@ -22,9 +22,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const signin = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log('nextauth')
   try {
-    const response = await httpClient.post('/login', req.body)
+    const response = await httpClient.post('/account/login', req.body)
 
     const { token } = response.data
     setCookie(res, 'access_token', token, {
@@ -44,7 +43,7 @@ const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
     const cookies = cookie.parse(req.headers.cookie || '')
     const accessToken = cookies['access_token']
     if (accessToken) {
-      const response = await httpClient.get(`/profile`, {
+      const response = await httpClient.get(`/account/profile`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
       res.json(response.data)
@@ -65,7 +64,7 @@ const addUser = async (req: NextApiRequest, res: NextApiResponse) => {
     const cookies = cookie.parse(req.headers.cookie || '')
     const accessToken = cookies['access_token']
     if (accessToken) {
-      const response = await httpClient.post(`/auth/create-user`, req.body)
+      const response = await httpClient.post(`/account/register`, req.body)
       res.json(response.data)
     } else {
       res.json({ result: 'nok' })
@@ -82,7 +81,7 @@ const deleteUser = async (req: NextApiRequest, res: NextApiResponse) => {
     if (accessToken) {
       console.log(req.body)
 
-      const response = await httpClient.delete(`/user`, {
+      const response = await httpClient.delete(`/account/delete`, {
         data: req.body,
         headers: { Authorization: `Bearer ${accessToken}` }
       })
