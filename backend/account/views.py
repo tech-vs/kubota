@@ -16,6 +16,7 @@ from .helpers import get_token
 class AuthViewSet(viewsets.GenericViewSet):
     
     action_serializers = {
+        'list': None,
         'create': LoginSerializer,
     }
 

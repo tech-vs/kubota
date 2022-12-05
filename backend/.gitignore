@@ -1,0 +1,13 @@
+__pycache__
+*.pyc
+
+.vscode/
+*.sqlite3
+.env
+staticfiles/
+static/
+media/
+.idea/
+*.sql
+.DS_Store
+mariadb/

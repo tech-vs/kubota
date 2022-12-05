@@ -27,7 +27,7 @@ urlpatterns = [
 
    path('', RedirectView.as_view(url='/docs'), name='go-to-docs'),
    path('admin/', admin.site.urls),
-#    path('stock/', include('stock.urls', namespace='stock')),
+   path('syncdata/', include('syncdata.urls', namespace='syncdata')),
    path('account/', include('account.urls', namespace='account')),
 ]
 
