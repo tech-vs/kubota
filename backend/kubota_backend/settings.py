@@ -20,7 +20,7 @@ SECRET_KEY = 'django-insecure-0%&6_3zpwfjx!hagrz7jrrv633$wyd8wso1l=j(5_+j-lu2+c-
 DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = ['*']
-HOST = env('HOST', default='http://127.0.0.1:8000/')
+HOST = env.str('HOST', default='http://127.0.0.1:8000/')
 
 
 # Application definition
@@ -110,11 +110,11 @@ AUTH_USER_MODEL = 'account.User'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'backend', 
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': 'localhost', 
-        'PORT': '5432',
+        'NAME': env.str('DB_NAME', default='Backend'), 
+        'USER': env.str('DB_USER', default='postgres'),
+        'PASSWORD': env.str('DB_PASSWORD', default='password'),
+        'HOST': env.str('DB_HOST', default='localhost'), 
+        'PORT': env.str('DB_PORT', '5432'),
     }
 }
 
