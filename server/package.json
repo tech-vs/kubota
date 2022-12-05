@@ -16,10 +16,7 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mssql": "^9.0.1",
-    "pg": "^8.8.0",
-    "sequelize": "^6.25.5",
-    "sequelize-typescript": "^2.1.5",
-    "typeorm": "^0.3.10"
+    "pg": "^8.8.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
