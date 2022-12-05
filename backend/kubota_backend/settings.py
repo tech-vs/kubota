@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     'account',
-    # 'syncdata',
+    'syncdata',
     # 'pallet',
 ]
 
