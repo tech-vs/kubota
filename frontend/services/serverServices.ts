@@ -20,9 +20,11 @@ type exportExcelProps = {
 
 export const signIn = async (user: signInProps) => {
 
+
   const { data: response } = await httpClient.post('/auth/signin', user, {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API
   })
+
   return response
 }
 
