@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY . /app
 
-ARG HTTP_PROXY=172.20.176.9:8080
-ARG HTTPS_PROXY=172.20.176.9:8080
-ADD proxy.conf /etc/apt/apt.conf.d/
+# ARG HTTP_PROXY=172.20.176.9:8080
+# ARG HTTPS_PROXY=172.20.176.9:8080
+# ADD proxy.conf /etc/apt/apt.conf.d/
 ADD odbcinst.ini /etc/
 RUN apt-get update -y
 RUN apt-get install -y apt-utils
@@ -15,6 +15,7 @@ RUN apt-get install -y unixodbc-dev
 RUN apt-get install -y freetds-dev
 RUN apt-get install -y freetds-bin
 RUN apt-get install -y tdsodbc
+
 
 RUN pip install --upgrade pip
 # RUN pip install poetry
