@@ -36,10 +36,11 @@ const initialState: UserState = {
 
 export const signIn = createAsyncThunk('user/signin', async (credential: SignInAction) => {
   const response = await serverService.signIn(credential)
+  console.log(response);
 
-  if (response.result != 'ok') {
-    throw new Error('login failed')
-  }
+  // if (response.status != 200) {
+  //   throw new Error('login failed')
+  // }
 
   // set access token
   httpClient.interceptors.request.use((config?: AxiosRequestConfig) => {

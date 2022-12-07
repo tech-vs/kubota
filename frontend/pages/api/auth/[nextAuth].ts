@@ -26,7 +26,7 @@ const signin = async (req: NextApiRequest, res: NextApiResponse) => {
   console.log(req.body)
   try {
     const response = await httpClient.post('/account/login/', req.body)
-
+    console.log(response)
     const { token } = response.data
     setCookie(res, 'access_token', token, {
       httpOnly: true,
