@@ -21,7 +21,7 @@ DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = ['*']
 HOST = env.str('HOST', default='http://127.0.0.1:8000/')
-
+APPEND_SLASH=False
 
 # Application definition
 
