@@ -29,6 +29,7 @@ urlpatterns = [
    path('admin/', admin.site.urls),
    path('syncdata/', include('syncdata.urls', namespace='syncdata')),
    path('account/', include('account.urls', namespace='account')),
+   path('pallet/', include('pallet.urls', namespace='pallet')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

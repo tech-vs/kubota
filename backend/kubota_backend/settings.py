@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
     'account',
     'syncdata',
-    # 'pallet',
+    'pallet',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
