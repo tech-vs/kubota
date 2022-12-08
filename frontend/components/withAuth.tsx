@@ -26,12 +26,12 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
         router.push(`/login`)
         return null
       } else if (route == '/') {
-        router.push('/oem')
+        router.push('/packing')
         return null
       }
     } else {
       if (isAuthenticated) {
-        router.push('/oem')
+        router.push('/packing')
         return null
       }
     }
