@@ -21,7 +21,7 @@ DEBUG = env.bool('DEBUG', default=True)
 
 ALLOWED_HOSTS = ['*']
 HOST = env.str('HOST', default='http://127.0.0.1:8000/')
-
+APPEND_SLASH=False
 
 # Application definition
 
@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'drf_yasg',
 
     'account',
-    # 'syncdata',
+    'syncdata',
     # 'pallet',
 ]
 
@@ -110,10 +110,10 @@ AUTH_USER_MODEL = 'account.User'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env.str('DB_NAME', default='Backend'), 
+        'NAME': env.str('DB_NAME', default='backend'),
         'USER': env.str('DB_USER', default='postgres'),
         'PASSWORD': env.str('DB_PASSWORD', default='password'),
-        'HOST': env.str('DB_HOST', default='localhost'), 
+        'HOST': env.str('DB_HOST', default='localhost'),
         'PORT': env.str('DB_PORT', '5432'),
     }
 }

@@ -6,8 +6,8 @@ const nextConfig = {
     return [
       {
         source: '/',
-        destination: '/packing',
-        permanent: true
+        destination: '/',
+        permanent: false
       }
     ]
   }

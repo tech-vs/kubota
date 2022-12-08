@@ -1,15 +1,14 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-# from .views import (
-#     AuthViewSet,
-#     UserViewSet,
-# )
+from .views import (
+    SyncMSSQLViewSet
+)
 
-app_name = 'account'
+app_name = 'syncdata'
 
 router = DefaultRouter()
-# router.register(r'', AuthViewSet, basename='auth')
+router.register(r'mssql', SyncMSSQLViewSet, basename='mssql')
 # router.register(r'user', UserView, basename='auth')
 
 urlpatterns = [
