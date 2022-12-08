@@ -1,6 +1,5 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import httpClient from '@/utils/httpClient'
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
@@ -20,7 +19,6 @@ const rows = [
 ]
 const Overall = ({ packingList }: any) => {
   const router = useRouter()
-  console.log(packingList)
 
   const columns: GridColDef[] = [
     {
@@ -170,7 +168,7 @@ const Overall = ({ packingList }: any) => {
               outline: 'none'
             }
           }}
-          rows={packingList}
+          rows={rows}
           columns={columns}
           getCellClassName={(params: GridCellParams<string>) => {
             if (params.field === 'customer') {
@@ -200,18 +198,17 @@ const Overall = ({ packingList }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps() {
-  const response = await httpClient.get('/packing', {
-    headers: {
-      Accept: 'application/json'
-    }
-  })
-  console.log(response.data)
+// export async function getServerSideProps() {
+//   const response = await httpClient.get('/packing', {
+//     headers: {
+//       Accept: 'application/json'
+//     }
+//   })
 
-  return {
-    props: {
-      packingList: response.data
-    }
-  }
-}
+//   return {
+//     props: {
+//       packingList: response.data
+//     }
+//   }
+// }
 export default withAuth(Overall)

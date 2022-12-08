@@ -76,7 +76,6 @@ const View = ({ checksheets }: any) => {
                                 }
                               }
                             )
-                            console.log('test')
                           }}
                           sx={{
                             color: green[800],

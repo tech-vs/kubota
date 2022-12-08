@@ -78,6 +78,7 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
   const router = useRouter()
 
   const role = useSelector((state: RootState) => state.user.role)
+  console.log('fewfw', role)
 
   const operatorItems = [
     {

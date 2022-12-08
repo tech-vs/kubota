@@ -22,11 +22,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const signin = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log("sigin")
-  console.log(req.body)
   try {
     const response = await httpClient.post('/account/login/', req.body)
-    console.log(response)
     const { token } = response.data
     setCookie(res, 'access_token', token, {
       httpOnly: true,
@@ -36,13 +33,13 @@ const signin = async (req: NextApiRequest, res: NextApiResponse) => {
     })
     res.json(response.data)
   } catch (error: any) {
-    console.log("error sigin")
+    console.log('error sigin')
     res.status(400).end('hey')
   }
 }
 
 const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log("getSession")
+  console.log('getSession')
   try {
     const cookies = cookie.parse(req.headers.cookie || '')
     const accessToken = cookies['access_token']
@@ -50,6 +47,7 @@ const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
       const response = await httpClient.get(`/account/profile/`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
+      console.log(response.data)
       res.json(response.data)
     } else {
       res.json({ result: 'nok' })
@@ -83,8 +81,6 @@ const deleteUser = async (req: NextApiRequest, res: NextApiResponse) => {
     const cookies = cookie.parse(req.headers.cookie || '')
     const accessToken = cookies['access_token']
     if (accessToken) {
-      console.log(req.body)
-
       const response = await httpClient.delete(`/account/delete/`, {
         data: req.body,
         headers: { Authorization: `Bearer ${accessToken}` }

@@ -36,7 +36,6 @@ const initialState: UserState = {
 
 export const signIn = createAsyncThunk('user/signin', async (credential: SignInAction) => {
   const response = await serverService.signIn(credential)
-  console.log(response);
 
   // if (response.status != 200) {
   //   throw new Error('login failed')
@@ -111,15 +110,15 @@ const userSlice = createSlice({
       state.isAuthenticated = false
       state.isAuthenticating = false
     })
-    builder.addCase(getSession.fulfilled, (state, action: PayloadAction<GetSession>) => {
+    builder.addCase(getSession.fulfilled, (state, action: PayloadAction<any>) => {
       state.isAuthenticating = false
-      if (action.payload && action.payload.user?.token) {
-        state.accessToken = action.payload.user.token
-        state.user = action.payload.user
-        state.role = action.payload.user.role
+      console.log(action.payload)
+
+      if (action.payload) {
+        // state.accessToken = action.payload.data.token
+        state.user = action.payload.username
+        state.role = action.payload.role
         state.isAuthenticated = true
-        console.log(state.user)
-        console.log(state.role)
       }
     })
   }

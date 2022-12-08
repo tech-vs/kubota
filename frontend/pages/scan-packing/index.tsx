@@ -271,7 +271,6 @@ const Scan = ({}: Props) => {
               partSeq03: scan.partSeq03,
               partSeq04: scan.partSeq04
             }
-            console.log(data)
             setScan({
               palletNo: '',
               partSeq01: '',
