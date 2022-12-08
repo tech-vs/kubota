@@ -81,8 +81,8 @@ const Scan = ({}: Props) => {
                     setFieldValue('deEx', e.target.value)
                   }}
                 >
-                  <MenuItem value={'Domestic'}>Domestic</MenuItem>
-                  <MenuItem value={'Export'}>Export</MenuItem>
+                  <MenuItem value={'domestic'}>Domestic</MenuItem>
+                  <MenuItem value={'export'}>Export</MenuItem>
                 </Select>
               </FormControl>
               <Box sx={{ flexGrow: 1 }} />
@@ -280,7 +280,26 @@ const Scan = ({}: Props) => {
               partSeq04: ''
             })
             setDeEx('')
-            router.push('/scan-packing/checksheet')
+            if (data.deEx == 'export') {
+              if (
+                data.partSeq01 == data.partSeq02 &&
+                data.partSeq01 == data.partSeq03 &&
+                data.partSeq01 == data.partSeq04 &&
+                data.partSeq02 == data.partSeq03 &&
+                data.partSeq02 == data.partSeq04 &&
+                data.partSeq03 == data.partSeq04
+              ) {
+                console.log('checkpass-domestic')
+                router.push('/scan-packing/checksheet')
+              } else {
+                alert('partNot match')
+              }
+            } else if (data.deEx == 'domestic') {
+              console.log('check pass domestic')
+              router.push('/scan-packing/checksheet')
+              alert('part not match')
+            }
+
             setSubmitting(false)
           } catch (error) {
             alert('Error')
