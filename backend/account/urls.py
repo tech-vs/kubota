@@ -20,5 +20,5 @@ urlpatterns = [
     path('user/', UserViewSet.as_view({'get': 'list'})),
     path('profile/', UserViewSet.as_view({'get': 'retrieve'})),
     path('delete/<int:id>/', UserViewSet.as_view({'delete': 'destroy'})),
-    path('change-password/', UserViewSet.as_view({'patch': 'partial_update'}))
+    path('change-password/', UserViewSet.as_view({'patch': 'partial_update'})),
 ]

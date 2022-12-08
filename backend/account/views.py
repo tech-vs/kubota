@@ -11,12 +11,13 @@ from .serializers import (
     UserCreateSerializer,
     UserChangePasswordSerializer,
 )
+from pallet.serializers import NoneSerializer
 from .helpers import get_token
 
 class AuthViewSet(viewsets.GenericViewSet):
     
     action_serializers = {
-        'list': None,
+        'list': NoneSerializer,
         'create': LoginSerializer,
     }
 
