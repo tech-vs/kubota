@@ -4,87 +4,57 @@ from django.utils import timezone
 from utils.models import CommonInfoModel
 
 
-class ProdResult(CommonInfoModel):
-    station_no = models.CharField(max_length=255, null=True)
-    plan_monthly_seq = models.IntegerField(null=True)
-    plan_monthlu_sub_seq = models.IntegerField(null=True)
-    lastest_monthly_seq = models.IntegerField(null=True)
-    latest_monthly_sub_seq = models.IntegerField(null=True)
-    id_no = models.CharField(max_length=255, null=True)
-    prod_stat_us = models.IntegerField(null=True)
-    no_work_sign = models.IntegerField(null=True)
-    actual_monthly_seq = models.IntegerField(null=True)
-    actual_monthly_sub_seq = models.CharField(max_length=255, null=True)
-    error_code = models.CharField(max_length=255, null=True)
-    error_msg = models.CharField(max_length=255, null=True)
-    create_date = models.DateTimeField(null=True)
-    create_by = models.CharField(max_length=255, null=True)
-    update_date = models.DateTimeField(null=True)
-    update_by = models.CharField(max_length=255, null=True)
-
-
-class PackingIssuingDetail(CommonInfoModel):
-    station_no = models.CharField(max_length=255, null=True)
-    id_no = models.IntegerField(null=True)
-    packing_sequence_no = models.IntegerField(null=True)
-    report_no = models.IntegerField(null=True)
-    issue_datetime = models.DateTimeField(null=True)
-    packing_unit = models.IntegerField(null=True)
-    model_code = models.CharField(max_length=255, null=True)
-    distributor_code = models.IntegerField(null=True)
-    model_name = models.CharField(max_length=255, null=True)
-    serial_no = models.CharField(max_length=255, null=True)
-    packing_style_code = models.IntegerField(null=True)
-    create_date = models.DateTimeField(null=True)
-    create_by = models.CharField(max_length=255, null=True)
-    update_date = models.DateTimeField(null=True)
-    update_by = models.CharField(max_length=255, null=True)
-
-
-class PackingIssuingHistory(CommonInfoModel):
-    station_no = models.CharField(max_length=255, null=True)
-    report_no = models.IntegerField(null=True)
-    item_number = models.IntegerField(null=True)
-    item_description = models.CharField(max_length=255, null=True)
-    number_of_times = models.IntegerField(null=True)
-    create_date = models.DateTimeField(null=True)
-    create_by = models.CharField(max_length=255, null=True)
-    update_date = models.DateTimeField(null=True)
-    update_by = models.CharField(max_length=255, null=True)
-
-
-class MSSequenceNo(CommonInfoModel):
-    station_no = models.CharField(max_length=255, null=True)
-    actual_work_month = models.DateTimeField(null=True)
-    sequence_no = models.IntegerField(null=True)
-    create_date = models.DateTimeField(null=True)
-    create_by = models.CharField(max_length=255, null=True)
-    update_date = models.DateTimeField(null=True)
-    update_by = models.CharField(max_length=255, null=True)
-
-
-class MSActualMonthlySeq(CommonInfoModel):
-    station_no = models.CharField(max_length=255, null=True)
-    actual_work_month = models.DateTimeField(null=True)
-    actual_running_seq = models.IntegerField(null=True)
-    create_date = models.DateTimeField(null=True)
-    create_by = models.CharField(max_length=255, null=True)
-    update_date = models.DateTimeField(null=True)
-    update_by = models.CharField(max_length=255, null=True)
-
-
-class MSReportSeq(CommonInfoModel):
-    station_no = models.CharField(max_length=255, null=True)
-    form_code = models.CharField(max_length=255, null=True)
-    last_report_no = models.IntegerField(null=True)
-    create_date = models.DateTimeField(null=True)
-    create_by = models.CharField(max_length=255, null=True)
-    update_date = models.DateTimeField(null=True)
-    update_by = models.CharField(max_length=255, null=True)
-
-
 class PSETSDataUpload(CommonInfoModel):
-    prod_seq = models.IntegerField(null=True)
-    delivery_date = models.CharField(max_length=255, null=True)
-    pallet = models.IntegerField(null=True)
-    skewer = models.IntegerField(null=True)
+    id_no = models.DecimalField(max_digits=30, decimal_places=15, unique=True)
+    delivery_date = models.CharField(max_length=255, null=True, blank=True)
+    delivery_time = models.CharField(max_length=255, null=True, blank=True)
+    ket_delivery = models.CharField(max_length=255, null=True, blank=True)
+    round_no_sharp = models.CharField(max_length=255, null=True, blank=True)
+    seq = models.CharField(max_length=255, null=True, blank=True)
+    id_sharp = models.CharField(max_length=255, null=True, blank=True)
+    serial_sharp = models.CharField(max_length=255, null=True, blank=True)
+    modelname = models.CharField(max_length=255, null=True, blank=True)
+    line_in_time = models.CharField(max_length=255, null=True, blank=True)
+    item_sharp = models.CharField(max_length=255, null=True, blank=True)
+    item_description = models.CharField(max_length=255, null=True, blank=True)
+    prod_seq = models.CharField(max_length=255, null=True, blank=True)
+    po_sharp = models.CharField(max_length=255, null=True, blank=True)
+    qty = models.CharField(max_length=255, null=True, blank=True)
+
+    pallet_sharp = models.CharField(max_length=255, null=True, blank=True)
+    skewer_sharp = models.CharField(max_length=255, null=True, blank=True)
+
+    dummy = models.CharField(max_length=255, null=True, blank=True)
+    pick_status = models.CharField(max_length=255, null=True, blank=True)
+    finish_date = models.DateTimeField(null=True)
+    engine_status = models.CharField(max_length=255, null=True, blank=True)
+    pack_status = models.CharField(max_length=255, null=True, blank=True)
+    to_stock = models.CharField(max_length=255, null=True, blank=True)
+    user_login = models.CharField(max_length=255, null=True, blank=True)
+    serial_no = models.CharField(max_length=255, null=True, blank=True)
+    scan_time = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f'{self.id_no}'
+
+
+class ProdInfoHistory(CommonInfoModel):
+    id_no = models.CharField(max_length=255)
+    plan_prod_finish_ym = models.CharField(max_length=255)
+    model_code = models.CharField(max_length=255, null=True, blank=True)
+    model_name = models.CharField(max_length=255, null=True, blank=True)
+    serial_no = models.CharField(max_length=255, null=True, blank=True)
+    country_code = models.CharField(max_length=255, null=True, blank=True)
+    country_name = models.CharField(max_length=255, null=True, blank=True)
+    distributor_code = models.CharField(max_length=255, null=True, blank=True)
+    distributor_name = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta:
+        ordering = ['created_at']
+        unique_together = ('id_no', 'plan_prod_finish_ym',)
+
+    def __str__(self):
+        return f'{self.id_no}-{self.plan_prod_finish_ym}'

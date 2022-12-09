@@ -4,20 +4,24 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .syncdata import sync_data_mssql
+from .syncdata import sync_data_mssql, sync_data_oracle
+from pallet.serializers import NoneSerializer
 from .models import (
-    PSETSDataUpload
+    PSETSDataUpload,
+    ProdInfoHistory,
 )
 class SyncMSSQLViewSet(viewsets.GenericViewSet):
     
     action_serializers = {
-        'list': None,
-        'pse_ts_data_upload': None,
+        'list': NoneSerializer,
+        'pse_ts_data_upload': NoneSerializer,
+        'prod_info_history': NoneSerializer,
     }
 
     permission_classes_action = {
         'list': [AllowAny],
         'pse_ts_data_upload': [AllowAny],
+        'prod_info_history': [AllowAny],
     }
 
     def get_serializer_class(self):
@@ -38,16 +42,9 @@ class SyncMSSQLViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=['GET'], url_path='pse-ts-data-upload')
     def pse_ts_data_upload(self, request, *args, **kwargs):
         results = sync_data_mssql()
-        # psetsdata_list = []
-        # for result in results:
-        #     psetsdata_list.append(
-        #         PSETSDataUpload(
-        #                 prod_seq=result.get('Prod_Seq', None),
-        #                 delivery_date=result.get('Delivery_Date', None),
-        #                 pallet=result.get('Pallet#', None),
-        #                 skewer=result.get('Skewer#', None),
-        #         )
-        #     )
-        
-        # PSETSDataUpload.objects.bulk_create(psetsdata_list)
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'], url_path='prod-info-history')
+    def prod_info_history(self, request, *args, **kwargs):
+        results = sync_data_oracle()
         return Response(status=status.HTTP_200_OK)
