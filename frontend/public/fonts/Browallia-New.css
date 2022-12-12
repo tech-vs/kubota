@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Browallia New';
+    src: url('Browallia-New.eot');
+    src: url('Browallia-New.eot?#iefix') format('embedded-opentype'),
+         url('Browallia-New.woff2') format('woff2'),
+         url('Browallia-New.woff') format('woff'),
+         url('Browallia-New.ttf')  format('truetype'),
+         url('Browallia-New.svg#Browallia New') format('svg');
+}
