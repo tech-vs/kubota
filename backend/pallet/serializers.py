@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .models import Pallet, QuestionType
+from .models import Pallet, QuestionType, NWGW
 
 class NoneSerializer(serializers.Serializer):
     pass
@@ -16,6 +16,7 @@ class PalletCreateSerializer(serializers.Serializer):
     pallet_skewer = serializers.CharField()
     part_list = PartDetailSerializer(many=True)
     question_type = serializers.ChoiceField(choices=QuestionType.choices)
+    nw_gw = serializers.ChoiceField(choices=NWGW.choices)
 
     def validate(self, attrs):
         pallet_skewer = attrs.pop('pallet_skewer')
