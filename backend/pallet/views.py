@@ -64,6 +64,7 @@ class PalletViewSet(viewsets.GenericViewSet):
         part_list = data.pop('part_list', [])
         question_type = data.pop('question_type', None)
         pallet_string = data.pop('pallet_string', None)
+        nw_gw = data.pop('nw_gw', None)
         pallet = None
 
         pallet_skewer_check = {
@@ -88,7 +89,7 @@ class PalletViewSet(viewsets.GenericViewSet):
                     check_item.append(True)
 
         if check_item.count(True) == 4:
-            pallet, is_created = Pallet.objects.get_or_create(**data, pallet_string=pallet_string, internal_pallet_no=Pallet.generate_internal_pallet_no())
+            pallet, is_created = Pallet.objects.get_or_create(**data, pallet_string=pallet_string, internal_pallet_no=Pallet.generate_internal_pallet_no(), nw_gw=nw_gw)
             if not is_created:
                 return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
             pallet.generate_question(question_type)
