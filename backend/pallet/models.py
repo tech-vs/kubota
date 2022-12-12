@@ -9,9 +9,17 @@ class QuestionType(models.TextChoices):
     EXPORT = 'Export'
 
 
+class NWGW(models.TextChoices):
+    UNIT1 = '0173'
+    UNIT4 = '0473'
+
+
 class Pallet(CommonInfoModel):
-    pallet = models.IntegerField()
-    skewer = models.IntegerField()
+    pallet = models.CharField(max_length=255)
+    skewer = models.CharField(max_length=255)
+    pallet_string = models.CharField(max_length=255, null=True)
+    internal_pallet_no = models.CharField(max_length=10, null=True)
+    nw_gw = models.CharField(max_length=100, choices=NWGW.choices)
     packing_status = models.BooleanField(default=False)
     packing_datetime = models.DateTimeField(null=True)
     section_list = models.ManyToManyField(

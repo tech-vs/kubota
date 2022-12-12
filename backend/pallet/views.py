@@ -11,6 +11,9 @@ from .models import (
     Question,
     QuestionType,
 )
+from syncdata.models import (
+    PSETSDataUpload,
+)
 from .serializers import (
     NoneSerializer,
     PalletCreateSerializer,
@@ -60,15 +63,32 @@ class PalletViewSet(viewsets.GenericViewSet):
 
         part_list = data.pop('part_list', [])
         question_type = data.pop('question_type', None)
+        pallet_string = data.pop('pallet_string', None)
+
+        check_dict_list = [part.update(**data) for part in part_list]
+        check_item = []
+        domestic_fail_text = ''
         if question_type == QuestionType.DOMESTIC:
-            # for part in part_list:
-                # TODO logic check part_list
-            pass
-        pallet, is_created = Pallet.objects.get_or_create(**data)
-        if not is_created:
-            return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
-        pallet.generate_question(question_type)
-        
+            for check in check_dict_list:
+                #logic check part_list domestic
+                if PSETSDataUpload.objects.filter(**check).exists():
+                    check_item.append(True)
+                else:
+                    domestic_fail_text += f"prod_seq = {check.get('prod_seq', '')} - item_sharp = {check.get('item_sharp', '')} ไม่มีในระบบ"
+        if question_type == QuestionType.EXPORT:
+            for part in part_list:
+                #logic check part_list export
+                if part_list[0].get('item_sharp', '') == part.get('item_sharp', ''):
+                    check_item.append(True)
+
+        if check_item.count(True) == 4:
+            pallet, is_created = Pallet.objects.get_or_create(**data, pallet_string=pallet_string)
+            if not is_created:
+                return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
+            pallet.generate_question(question_type)
+        else:
+            return Response({'detail': f'item_sharp ไม่ตรงกัน {domestic_fail_text}'}, status=status.HTTP_400_BAD_REQUEST)
+                
         response = PalletListSerializer(pallet).data
         return Response(response, status=status.HTTP_201_CREATED)
 

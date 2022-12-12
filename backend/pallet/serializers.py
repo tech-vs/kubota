@@ -8,15 +8,24 @@ class NoneSerializer(serializers.Serializer):
     pass
 
 class PartDetailSerializer(serializers.Serializer):
-    seq_no = serializers.IntegerField()
-    part_no = serializers.IntegerField()
+    prod_seq = serializers.CharField(required=False)
+    item_sharp = serializers.CharField()
 
 
 class PalletCreateSerializer(serializers.Serializer):
-    pallet = serializers.IntegerField()
-    skewer = serializers.IntegerField()
+    pallet_skewer = serializers.CharField()
     part_list = PartDetailSerializer(many=True)
     question_type = serializers.ChoiceField(choices=QuestionType.choices)
+
+    def validate(self, attrs):
+        pallet_skewer = attrs.pop('pallet_skewer')
+        if pallet_skewer:
+            temp_s = pallet_skewer[-8:]
+            temp_s = pallet_skewer.replace(temp_s, '')
+            attrs['pallet'] = temp_s[:2]
+            attrs['skewer'] = temp_s[2:]
+            attrs['pallet_string'] = pallet_skewer
+        return attrs
 
 
 class SectionDetailSerializer(serializers.Serializer):
@@ -27,8 +36,8 @@ class SectionDetailSerializer(serializers.Serializer):
 
 class PalletListSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    pallet = serializers.IntegerField()
-    skewer = serializers.IntegerField()
+    pallet = serializers.CharField()
+    skewer = serializers.CharField()
     section_list = serializers.SerializerMethodField()
 
     def get_section_list(self, obj):
