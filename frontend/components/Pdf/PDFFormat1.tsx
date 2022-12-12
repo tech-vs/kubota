@@ -1,6 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Barcode, { Options } from 'react-barcode'
-const PDFFormat1 = () => {
+import { IPreviewDataFormat1 } from '@/models/preview.model'
+
+interface Props {
+  content: IPreviewDataFormat1
+}
+
+const PDFFormat1 = ({ content }: Props) => {
   const [barcodeOption, setBarcodeOption] = useState<Options>({
     width: 0.8,
     height: 25,
@@ -9,12 +15,25 @@ const PDFFormat1 = () => {
     margin: 0,
     fontSize: 8,
   })
+
+  const chunk = (arr: IPreviewDataFormat1["appearance_checks"], size: number) =>
+    Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
+      arr.slice(i * size, i * size + size)
+    );
+
+
+  const [acc, setAcc] = useState<IPreviewDataFormat1["appearance_checks"][]>([])
+
+  useEffect(() => {
+    setAcc(chunk(content.appearance_checks, 5))
+  }, [content.appearance_checks])
+
   return (
     <>
       <div className="page" data-size="A4">
         <div className="flex justify-between items-center ">
           <div className="fs-17 bold">Checksheet Issuing</div>
-          <div className="fs-9 bold">Doc : KET-FM-PC-LG-003 Eff.: 04/10/2022</div>
+          <div className="fs-9 bold">Doc : {content.doc_id} Eff.: {content.doc_date}</div>
         </div>
         <div className="section fs-11 bold">
           <table>
@@ -24,10 +43,10 @@ const PDFFormat1 = () => {
                   Engine Packing Check Sheet
                 </td>
                 <td style={{ width: '30%' }}>
-                  Packing Date : YYYY/MM/DD TT:TT
+                  Packing Date : {content.packing_date || '-'}
                 </td>
                 <td style={{ width: '30%' }}>
-                  Distributor : Thailand
+                  Distributor : {content.distributor}
                 </td>
               </tr>
             </tbody>
@@ -44,15 +63,15 @@ const PDFFormat1 = () => {
             </thead>
             <tbody>
               {
-                [...Array(4).keys()].map(m =>
-                  <tr key={m}>
-                    <td>2JXXX-XXXXX</td>
-                    <td> <div className="flex justify-center items-center "><Barcode value="1JXXX-XXXXX" {...barcodeOption} /></div> </td>
-                    <td>VXXXX-X-XX-X-XXXX</td>
-                    <td>10XX0XXXX</td>
-                    <td>BMLXXXX</td>
-                    <td><div className="flex justify-center items-center "><Barcode value="BMLXXXX" {...barcodeOption} /></div></td>
-                    <td />
+                content.engine_models.map((m, i) =>
+                  <tr key={m.model_code + i}>
+                    <td>{m.model_code || ''}</td>
+                    <td> <div className="flex justify-center items-center "><Barcode value={m.model_code || ''} {...barcodeOption} /></div> </td>
+                    <td>{m.model_name || ''}</td>
+                    <td>{m.id_number || ''}</td>
+                    <td>{m.serial_no || ''}</td>
+                    <td><div className="flex justify-center items-center "><Barcode value={m.serial_no || ''} {...barcodeOption} /></div></td>
+                    <td>{m.is_pass !== undefined ? m.is_pass ? '0' : 'X' : ''}</td>
                   </tr>,
                 )
               }
@@ -62,7 +81,7 @@ const PDFFormat1 = () => {
 
         <div className="flex items-center fs-9 bold" style={{ gap: '32pt', marginTop: '12pt' }}>
           <div style={{ width: '120pt' }}>
-            Pallet Code:
+            Pallet Code: {content.pallet_code}
           </div>
           <div>
             <div>
@@ -102,15 +121,14 @@ const PDFFormat1 = () => {
             </thead>
             <tbody>
               {
-                [...Array(15).keys()].map(m =>
-                  <tr style={{ fontSize: '8.5pt' }} key={m}>
+                content.checks.map((m, i) =>
+                  <tr style={{ fontSize: '8.5pt' }} key={m.check_no + i}>
                     <td>
-                      {m + 1}
+                      {m.check_no ? m.check_no + 1 : ''}
                     </td>
-                    <td style={{ textAlign: 'left' }}>รุ่นของเครื่องยนต์ และสถานที่จัดส่ง ถูกต้องหรือไม่ (ตรวจสอบ Barcode ทีÉ Product Label)
-                      Engine Model and Destination correct or not ? (Check at Barcode on Product Label)
+                    <td style={{ textAlign: 'left' }}>{m.detail || ''}
                     </td>
-                    <td> </td>
+                    <td>{m.is_pass !== undefined ? m.is_pass ? '0' : 'X' : ''} </td>
                   </tr>)
               }
 
@@ -120,8 +138,8 @@ const PDFFormat1 = () => {
         <div className="section">
           <div className="fs-11 bold">Appearance check sheet (For Export engine only) [Mark =&gt; O : OK , X : NG ]</div>
           {
-            [...Array(2).keys()].map(t =>
-              <div className="w-50 inline-flex" key={t}>
+            acc.map((table, itable) =>
+              <div className={`inline-flex ${content.appearance_checks.length <= 5 ? 'w-full' : 'w-50'}`} key={itable} >
                 <table>
                   <thead className="fs-11 bold">
                     <tr>
@@ -135,11 +153,11 @@ const PDFFormat1 = () => {
                   </thead>
                   <tbody>
                     {
-                      [...Array(5).keys()].map(m =>
-                        <tr style={{ fontSize: '8.5pt' }} key={m}>
-                          <td />
+                      table.map((m, i) =>
+                        <tr style={{ fontSize: '8.5pt' }} key={i}>
+                          <td>{m.mark ? 'O' : 'X'}</td>
                           <td style={{ textAlign: 'left' }}>
-                            {t === 1 ? m + 1 + 5 : m + 1} OIL PIPE (TURBOCHARGER)
+                            {m.check_list || ''}
                           </td>
                         </tr>)
                     }
@@ -155,15 +173,21 @@ const PDFFormat1 = () => {
           <div className="fs-11 bold">Appearance check sheet (For Export engine only) [Mark =&gt; O : OK , X : NG ]</div>
           <div className="flex fs-9 bold">
             <div className="flex items-center" style={{ width: '70%', gap: '10pt' }}>
-              <div className="flex items-center" style={{ paddingLeft: '16pt' }}><input type="checkbox" /> Bolt</div>
-              <div className="flex items-center"><input type="checkbox" /> Cover Turbo</div>
+              <div className="flex items-center" style={{ paddingLeft: '16pt' }}>
+                <input checked={content.bolt} type="checkbox" readOnly /> Bolt
+              </div>
+              <div className="flex items-center">
+                <input checked={content.cover_turbo} type="checkbox" readOnly /> Cover Turbo
+              </div>
             </div>
             <div style={{ width: '30%' }}>
               <table>
                 <tbody>
                   <tr>
                     <td style={{ width: '40%' }}>ลงชื่อ<br />Sign</td>
-                    <td style={{ width: '60%' }} />
+                    <td style={{ width: '60%' }}>
+                      <img src={content.sign} alt="sign" width="100%" height="32" />
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -199,28 +223,28 @@ const PDFFormat1 = () => {
             </thead>
             <tbody className="fs-9">
               {
-                [...Array(2).keys()].map(t =>
-                  <tr key={t}>
+                content.changes.map((c, i) =>
+                  <tr key={c.edition + i}>
                     <td>
-                      Re_03
+                      {c.edition}
                     </td>
                     <td>
-                      07.08.2015
+                      {c.date}
                     </td>
                     <td>
-                      Apply check pipe over flow to all model
+                      {c.detail}
                     </td>
                     <td>
-                      K. Murakami
+                      {c.approve_by}
                     </td>
                     <td>
-                      10.08.2015
+                      {c.approve_date}
                     </td>
                     <td>
-                      Atthapong K
+                      {c.authorized_by}
                     </td>
                     <td>
-                      Atthapong K.
+                      {c.created_by}
                     </td>
                   </tr>,
                 )
