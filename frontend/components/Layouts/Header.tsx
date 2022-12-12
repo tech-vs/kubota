@@ -52,7 +52,7 @@ export default function Header({ open, onDrawerOpen }: HeaderProp) {
     setAnchorEl(null)
   }
   return (
-    <AppBar position='fixed' open={open}>
+    <AppBar position='fixed' open={!open}>
       <Toolbar>
         <IconButton
           color='inherit'
@@ -70,7 +70,7 @@ export default function Header({ open, onDrawerOpen }: HeaderProp) {
           Kubota
         </Typography>
         <Box sx={{ flexGrow: 1 }} />
-        <Box sx={{ display: { xs: 'none', md: 'flex', flexDirection: 'row-reverse' } }}>
+        <Box sx={{ display: { xs: 'flex', md: 'flex', flexDirection: 'row-reverse' } }}>
           <IconButton
             size='large'
             aria-label='account of current user'

@@ -121,7 +121,7 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
     }
   ]
   return (
-    <Drawer variant='permanent' open={open}>
+    <Drawer variant='permanent' open={!open}>
       <DrawerHeader>
         <Stack direction='row'>
           <Image

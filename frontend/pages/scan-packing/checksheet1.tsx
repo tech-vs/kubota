@@ -17,7 +17,7 @@ import { Form, Formik, FormikProps } from 'formik'
 import { useState } from 'react'
 type Props = {}
 
-const View = ({ checksheets }: any) => {
+const View = ({ checksheets,id }: any) => {
   const [fileName, setFileName] = useState<string>('')
   const [customer, setCustomer] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -29,7 +29,7 @@ const View = ({ checksheets }: any) => {
         <Box
           component='main'
           sx={{
-            display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+            display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
             height: '30px'
@@ -168,9 +168,10 @@ const View = ({ checksheets }: any) => {
             })
             setCustomer('')
             setFileName('')
+            
             setSubmitting(false)
           } catch (error) {
-            alert('Error')
+            alert(error)
           }
 
           // resetForm()
@@ -184,8 +185,9 @@ const View = ({ checksheets }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps() {
-  const response = await httpClient.get('/checksheet?questionID=1', {
+export async function getServerSideProps(context:any) {
+  const id = context.query.id
+  const response = await httpClient.get(`/pallet/${id}/section/1/question/`, {
     headers: {
       Accept: 'application/json'
     }
@@ -193,7 +195,8 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      checksheets: response.data
+      checksheets: response.data,
+      id
     }
   }
 }

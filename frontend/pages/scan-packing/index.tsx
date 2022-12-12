@@ -1,5 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
+import { scanPallet } from '@/services/serverServices'
 import {
   Alert,
   Box,
@@ -81,8 +82,8 @@ const Scan = ({}: Props) => {
                     setFieldValue('deEx', e.target.value)
                   }}
                 >
-                  <MenuItem value={'domestic'}>Domestic</MenuItem>
-                  <MenuItem value={'export'}>Export</MenuItem>
+                  <MenuItem value={'Domestic'}>Domestic</MenuItem>
+                  <MenuItem value={'Export'}>Export</MenuItem>
                 </Select>
               </FormControl>
               <Box sx={{ flexGrow: 1 }} />
@@ -263,14 +264,30 @@ const Scan = ({}: Props) => {
             //   setSucess(true)
             //   setLoading(false)
             // }, 4000)
+
             let data = {
-              deEx: values.deEx,
-              palletNo: scan.palletNo,
-              partSeq01: scan.partSeq01,
-              partSeq02: scan.partSeq02,
-              partSeq03: scan.partSeq03,
-              partSeq04: scan.partSeq04
+              pallet_skewer: scan.palletNo ,
+              part_list: [
+                {
+                  prod_seq: "1",
+                  item_sharp: scan.partSeq01
+                },
+                {
+                  prod_seq: "2",
+                  item_sharp: scan.partSeq02
+                },
+                {
+                  prod_seq: "3",
+                  item_sharp: scan.partSeq03
+                },
+                {
+                  prod_seq: "4",
+                  item_sharp: scan.partSeq04
+                },
+              ],
+              question_type: values.deEx
             }
+            
             setScan({
               palletNo: '',
               partSeq01: '',
@@ -279,29 +296,11 @@ const Scan = ({}: Props) => {
               partSeq04: ''
             })
             setDeEx('')
-            if (data.deEx == 'export') {
-              if (
-                data.partSeq01 == data.partSeq02 &&
-                data.partSeq01 == data.partSeq03 &&
-                data.partSeq01 == data.partSeq04 &&
-                data.partSeq02 == data.partSeq03 &&
-                data.partSeq02 == data.partSeq04 &&
-                data.partSeq03 == data.partSeq04
-              ) {
-                console.log('checkpass-domestic')
-                router.push('/scan-packing/checksheet')
-              } else {
-                alert('partNot match')
-              }
-            } else if (data.deEx == 'domestic') {
-              console.log('check pass domestic')
-              router.push('/scan-packing/checksheet')
-              alert('part not match')
-            }
-
+            const response = await scanPallet(data)
+            router.push(`/scan-packing/checksheet1?id=${response.id}`)
             setSubmitting(false)
           } catch (error) {
-            alert('Error')
+            alert(error)
           }
 
           // resetForm()

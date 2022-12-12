@@ -18,6 +18,18 @@ type exportExcelProps = {
   customer: string
 }
 
+type scanPalletProps = {
+  pallet_skewer: string
+  part_list: PartList[]
+  question_type: string
+}
+
+export interface PartList {
+  prod_seq: string
+  item_sharp: string
+}
+
+
 export const signIn = async (user: signInProps) => {
 
 
@@ -69,5 +81,10 @@ export const importExcel = async (data: FormData): Promise<void> => {
   const response = await httpClient.post('/import', data, {
     baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API
   })
+  return response.data
+}
+
+export const scanPallet = async (data: scanPalletProps): Promise<any> => {
+  const response = await httpClient.post('/pallet/', data)
   return response.data
 }

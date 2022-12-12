@@ -1,27 +1,16 @@
-from rest_framework.filters import SearchFilter
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.exceptions import NotFound
+from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.exceptions import NotFound
+from syncdata.models import PSETSDataUpload
 
-from .models import (
-    Pallet,
-    Section,
-    Question,
-    QuestionType,
-)
-from syncdata.models import (
-    PSETSDataUpload,
-)
-from .serializers import (
-    NoneSerializer,
-    PalletCreateSerializer,
-    PalletListSerializer,
-    QuestionListSerializer,
-    SectionDetailSerializer,
-    QuestionCheckSerializer,
-)
+from .models import Pallet, Question, QuestionType, Section
+from .serializers import (NoneSerializer, PalletCreateSerializer,
+                          PalletListSerializer, QuestionCheckSerializer,
+                          QuestionListSerializer, SectionDetailSerializer)
+
 
 class PalletViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all()
