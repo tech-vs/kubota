@@ -1,8 +1,7 @@
 import PDFFormat1 from '@/components/Pdf/PDFFormat1'
 import PDFFormat2 from '@/components/Pdf/PDFFormat2'
 import withAuth from '@/components/withAuth'
-import { Box } from '@mui/material'
-import Head from 'next/head'
+import { IPreviewDataFormat1, IPreviewDataFormat2, mockupData1, mockupData2, TDataPreview } from '@/models/preview.model'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -14,6 +13,7 @@ const PreviewDocumentWithId = ({ }: Props) => {
     const [formShow, setFormShow] = useState<TFormId>(1)
     const [loading, setLoading] = useState<boolean>(false)
     const [render, setRender] = useState<boolean>(false)
+    const [data, setData] = useState<TDataPreview | undefined>()
     const router = useRouter()
 
     useEffect(() => {
@@ -25,12 +25,16 @@ const PreviewDocumentWithId = ({ }: Props) => {
 
         const fetchData = async () => {
             setLoading(true)
-            const pm = new Promise((resolve, reject) => {
+            const pm = new Promise<TDataPreview>((resolve, reject) => {
                 setTimeout(() => {
-                    resolve(true)
+                    if (id === "1")
+                        resolve(mockupData1)
+                    else if (id === "2") {
+                        resolve(mockupData2)
+                    }
                 }, 1000);
             })
-            await pm
+            setData(await pm)
             setFormShow(id || "1")
             setLoading(false)
             setRender(true)
@@ -38,12 +42,13 @@ const PreviewDocumentWithId = ({ }: Props) => {
         fetchData()
     }, [router.isReady]);
 
-    function renderContent() {
+    function renderContent(content: TDataPreview | undefined) {
+        if (!content) return <></>
         if (render) {
             if (formShow === "1") {
-                return <PDFFormat1></PDFFormat1>
+                return <PDFFormat1 content={content as IPreviewDataFormat1}></PDFFormat1>
             } else if (formShow === "2") {
-                return <PDFFormat2></PDFFormat2>
+                return <PDFFormat2 content={content as IPreviewDataFormat2}></PDFFormat2>
             }
         } else {
             return <></>
@@ -52,9 +57,8 @@ const PreviewDocumentWithId = ({ }: Props) => {
 
     return (
         <>
-            {/* <Box sx={{ textAlign: 'center', margin: '1rem' }}>Page ID: {id}</Box> */}
             {loading && <div>Loading...</div>}
-            <>{renderContent()}</>
+            <>{renderContent(data)}</>
         </>
     )
 }
