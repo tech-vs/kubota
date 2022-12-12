@@ -5,6 +5,7 @@ from pallet.models import (
     Section,
     Question,
     QuestionTemplate,
+    RunningNumber,
 )
 
 class SectionInline(admin.TabularInline):
@@ -15,18 +16,18 @@ class SectionInline(admin.TabularInline):
 @admin.register(Pallet)
 class PalletAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_display = ('id', 'pallet', 'skewer', 'get_pallet_skewer', 'packing_status', 'packing_datetime', 'created_at', 'updated_at',)
+    list_display = ('id', 'pallet', 'skewer', 'pallet_string', 'internal_pallet_no', 'packing_status', 'packing_datetime', 'created_at', 'updated_at',)
     inlines = [SectionInline]
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('section_list',)
     
-    def get_pallet_skewer(self, obj):
-        if obj:
-            return f'{obj.pallet}-{obj.skewer}'
-        else:
-            return '-'
-    get_pallet_skewer.short_description = 'Pallet-Skewer'
+    # def get_pallet_skewer(self, obj):
+    #     if obj:
+    #         return f'{obj.pallet}-{obj.skewer}'
+    #     else:
+    #         return '-'
+    # get_pallet_skewer.short_description = 'Pallet-Skewer'
 
 
 class QuestionInline(admin.TabularInline):
@@ -52,7 +53,12 @@ class QuestionAdmin(admin.ModelAdmin):
 
 
 @admin.register(QuestionTemplate)
-class QuestionTemplate(admin.ModelAdmin):
+class QuestionTemplateAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_display = ('id', 'text', 'type', 'section',)
     list_filter = ('type', 'section',)
+
+
+@admin.register(RunningNumber)
+class RunningNumberAdmin(admin.ModelAdmin):
+    list_display = ('id', 'month', 'pallet_no', 'doc_no',)

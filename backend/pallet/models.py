@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+import datetime
 
 from utils.models import CommonInfoModel
 
@@ -14,12 +15,33 @@ class NWGW(models.TextChoices):
     UNIT4 = '0473'
 
 
+class RunningNumber(CommonInfoModel):
+    doc_no = models.IntegerField(default=1)
+    pallet_no = models.IntegerField(default=1)
+    month = models.CharField(max_length=255, null=True)
+
+    def running_doc(self):
+        self.doc_no += 1
+        self.save()
+
+    def running_pallet(self):
+        self.pallet_no += 1
+        self.save()
+
+    def reset_all(self, month:str = ''):
+        if self.month != month:
+            self.month = month
+            self.doc_no = 1
+            self.pallet_no = 1
+        self.save()
+
+
 class Pallet(CommonInfoModel):
     pallet = models.CharField(max_length=255)
     skewer = models.CharField(max_length=255)
     pallet_string = models.CharField(max_length=255, null=True)
     internal_pallet_no = models.CharField(max_length=10, null=True)
-    nw_gw = models.CharField(max_length=100, choices=NWGW.choices)
+    nw_gw = models.CharField(max_length=100, choices=NWGW.choices, null=True)
     packing_status = models.BooleanField(default=False)
     packing_datetime = models.DateTimeField(null=True)
     section_list = models.ManyToManyField(
@@ -48,6 +70,25 @@ class Pallet(CommonInfoModel):
             sec.question_list.set(qa_list)
 
         self.section_list.set(section_list)
+
+    @staticmethod
+    def generate_internal_pallet_no() -> str:
+        now = timezone.now()
+        # now = datetime.datetime(2009, 1, 12, 18, 00)
+        year = now.strftime("%Y")[-2:]
+        month = now.strftime("%m")
+        day = now.strftime("%d")
+        # if day == '01':
+
+        # pallet_no = f'{year}{month}{no}'
+        # print(f'{i:05d}')
+        run_no = RunningNumber.objects.first()
+        if day == '01':
+            run_no.reset_all(month=month)
+        no = str(run_no.pallet_no).zfill(4)
+        run_no.running_pallet()
+        
+        return f'{year}{month}{no}'
 
 
 class PalletSection(CommonInfoModel):

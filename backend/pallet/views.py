@@ -64,17 +64,23 @@ class PalletViewSet(viewsets.GenericViewSet):
         part_list = data.pop('part_list', [])
         question_type = data.pop('question_type', None)
         pallet_string = data.pop('pallet_string', None)
+        pallet = None
 
-        check_dict_list = [part.update(**data) for part in part_list]
+        pallet_skewer_check = {
+            'pallet_sharp': data.get('pallet', ''),
+            'skewer_sharp': data.get('skewer', ''),
+        }
+
+        check_dict_list = [{**part, **pallet_skewer_check} for part in part_list]
         check_item = []
         domestic_fail_text = ''
         if question_type == QuestionType.DOMESTIC:
             for check in check_dict_list:
-                #logic check part_list domestic
+                # logic check part_list domestic
                 if PSETSDataUpload.objects.filter(**check).exists():
                     check_item.append(True)
                 else:
-                    domestic_fail_text += f"prod_seq = {check.get('prod_seq', '')} - item_sharp = {check.get('item_sharp', '')} ไม่มีในระบบ"
+                    domestic_fail_text += f"prod_seq = {check.get('prod_seq', '')} - item_sharp = {check.get('item_sharp', '')} ไม่มีในระบบ ,"
         if question_type == QuestionType.EXPORT:
             for part in part_list:
                 #logic check part_list export
@@ -82,7 +88,7 @@ class PalletViewSet(viewsets.GenericViewSet):
                     check_item.append(True)
 
         if check_item.count(True) == 4:
-            pallet, is_created = Pallet.objects.get_or_create(**data, pallet_string=pallet_string)
+            pallet, is_created = Pallet.objects.get_or_create(**data, pallet_string=pallet_string, internal_pallet_no=Pallet.generate_internal_pallet_no())
             if not is_created:
                 return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
             pallet.generate_question(question_type)
