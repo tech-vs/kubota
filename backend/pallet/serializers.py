@@ -1,11 +1,12 @@
-from django.contrib.auth import authenticate
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .models import Pallet, QuestionType, NWGW
+from .models import QuestionType, NWGW
+
 
 class NoneSerializer(serializers.Serializer):
     pass
+
 
 class PartDetailSerializer(serializers.Serializer):
     prod_seq = serializers.CharField(required=False)

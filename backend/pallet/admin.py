@@ -6,6 +6,7 @@ from pallet.models import (
     Question,
     QuestionTemplate,
     RunningNumber,
+    Document,
 )
 
 class SectionInline(admin.TabularInline):
@@ -62,3 +63,15 @@ class QuestionTemplateAdmin(admin.ModelAdmin):
 @admin.register(RunningNumber)
 class RunningNumberAdmin(admin.ModelAdmin):
     list_display = ('id', 'month', 'pallet_no', 'doc_no',)
+
+
+class DocumentInline(admin.TabularInline):
+    model = Document.pallet_list.through
+    list_display = '__all__'
+    extra = 0
+
+
+@admin.register(Document)
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'doc_no', 'delivery_date', 'status')
+    inlines = [DocumentInline]

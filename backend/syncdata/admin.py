@@ -1,3 +1,18 @@
 from django.contrib import admin
 
-# Register your models here.
+from syncdata.models import (
+    PSETSDataUpload,
+    ProdInfoHistory,
+)
+
+
+@admin.register(PSETSDataUpload)
+class PSEAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_display = ('id', 'prod_seq', 'item_sharp', 'pallet_sharp', 'skewer_sharp', 'modelname', 'serial_no')
+
+
+@admin.register(ProdInfoHistory)
+class ProdInfoHistoryAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_display = ('id', 'plan_prod_finish_ym', 'model_code', 'model_name', 'serial_no', 'country_code', 'country_name', 'distributor_code', 'distributor_name')
