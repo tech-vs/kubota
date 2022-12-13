@@ -1,7 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { IPreviewDataFormat2 } from '@/models/preview.model'
 
-const PDFFormat2 = () => {
-  const [checkColumn, setCheckColumn] = useState([
+interface Props {
+  content: IPreviewDataFormat2
+}
+
+const PDFFormat2 = ({ content }: Props) => {
+  const [checkColumn, setCheckColumn] = useState<string[]>([
     'มี Tag อื่นๆ ติดอยู่กับเครื่องยนต์หรือไม่',
     'ID Tag SEQ Delivery Tag ใส่ถูกต้องหรือไม่',
     'ตำแหน่งเครื่องยนต์วางถูกต้องหรือไม่',
@@ -10,10 +15,12 @@ const PDFFormat2 = () => {
     'Barcode ติดที่เครื่องยนต์หรือไม่',
     'Barcode ติดที่เครื่องยนต์หรือไม่',
     'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
   ])
+
+  useEffect(() => {
+    setCheckColumn(content.pallets_check_header)
+  }, [content.pallets_check_header])
+
   return (
     <>
       <div className="page" data-size="A4">
@@ -47,27 +54,27 @@ const PDFFormat2 = () => {
                         </tr>
                         <tr>
                           <td className="text-left">Doc.No :</td>
-                          <td>00122022002</td>
+                          <td>{content.doc_no || ''}</td>
                           <td className="text-left">Del. Date:</td>
-                          <td>01122022</td>
+                          <td>{content.del_date || ''}</td>
                         </tr>
                         <tr>
                           <td className="text-left">Ref. D/O No :</td>
-                          <td>1</td>
+                          <td>{content.ref_do_no || ''}</td>
                           <td className="text-left">Total Q'ty:</td>
-                          <td>64</td>
+                          <td>{content.total_qty || ''}</td>
                         </tr>
                         <tr>
                           <td className="text-left">Invoice No :</td>
                           <td colSpan={3} className="text-left" />
                         </tr>
                         <tr>
-                          <td className="text-left">CUSTOMER NAME :</td>
-                          <td colSpan={3} className="text-left">SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)</td>
+                          <td className="text-left" style={{ width: '60pt' }}>CUSTOMER NAME :</td>
+                          <td colSpan={3} className="text-left">{content.customer_name || ''}</td>
                         </tr>
                         <tr>
                           <td className="text-left">ADDRESS :</td>
-                          <td colSpan={3} className="text-left">700/867 Moo 3 Amata Nakhon Industrial Estate, <br />Tambon Nong Ka Kha, District, Panthong District, <br />Chon Buri 20160</td>
+                          <td colSpan={3} className="text-left">{content.address || ''}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -109,13 +116,13 @@ const PDFFormat2 = () => {
                 }
               </tr>
               {
-                [...Array(64).keys()].map((row, i) =>
+                content.pallets.map((row, i) =>
                   <tr key={i + '_row_data'}>
-                    <td className="bold">{row + 1}</td>
-                    {i % 4 === 0 && <td rowSpan={4} className="fs-9 bold">40-831</td>}
-                    <td>D1803-M-DI-E_TS5T</td>
-                    <td>1J65813000</td>
-                    <td>BNW7201</td>
+                    <td className="bold">{row.item || ''}</td>
+                    {i % 4 === 0 && <td rowSpan={4} className="fs-9 bold">{row.pallet_no || ''}</td>}
+                    <td>{row.model_name || ''}</td>
+                    <td>{row.model_code || ''}</td>
+                    <td>{row.serial_no || ''}</td>
                     {
                       checkColumn.map((column, j) =>
                         i % 4 === 0 && <td key={j + '_check_column'} rowSpan={4} />,
@@ -137,10 +144,10 @@ const PDFFormat2 = () => {
                 <div>X = ผิดปรกติ</div>
               </div>
             </div>
-            <div className="div4"> </div>
+            <div className="div4"> <img src={content.sign || ''} width="100%" height="32" alt="" /></div>
             <div className="div5 text-center"> ผู้ตรวจเช็ค</div>
-            <div className="div6"> test</div>
-            <div className="div7"> test</div>
+            <div className="div6"> {content.abnormal_recode || ''}</div>
+            <div className="div7"> {content.fix_solution_abnormal || ''}</div>
           </div>
         </div>
         <div className="section" style={{ marginTop: '12pt' }}>
@@ -156,11 +163,11 @@ const PDFFormat2 = () => {
                   <div>
                     <div className="flex justify-between">
                       <div>Prepare by: </div>
-                      <div className="bold">KET</div>
+                      <div className="bold">{content.prepare_by?.name || ''}</div>
                     </div>
                     <div className="flex justify-between">
                       <div>Date: </div>
-                      <div>test</div>
+                      <div>{content.prepare_by?.date || ''}</div>
                     </div>
                   </div>
                 </td>
@@ -168,11 +175,11 @@ const PDFFormat2 = () => {
                   <div>
                     <div className="flex justify-between">
                       <div>Deliverned by: </div>
-                      <div className="bold">SNS</div>
+                      <div className="bold">{content.deliverned_by?.name || ''}</div>
                     </div>
                     <div className="flex justify-between">
                       <div>Date: </div>
-                      <div>test</div>
+                      <div>{content.deliverned_by?.date || ''}</div>
                     </div>
                   </div>
                 </td>
@@ -180,11 +187,11 @@ const PDFFormat2 = () => {
                   <div>
                     <div className="flex justify-between">
                       <div>Receive by: </div>
-                      <div className="bold">KET</div>
+                      <div className="bold">{content.receive_by?.name || ''}</div>
                     </div>
                     <div className="flex justify-between">
                       <div>Date: </div>
-                      <div>test</div>
+                      <div>{content.receive_by?.date || ''}</div>
                     </div>
                   </div>
                 </td>
@@ -193,19 +200,19 @@ const PDFFormat2 = () => {
                 <td className="text-left">
                   <div className="flex justify-between">
                     <div>Start Time: </div>
-                    <div className="bold">.........</div>
+                    <div className="bold">{content.prepare_by?.start_time || ''}</div>
                   </div>
                 </td>
                 <td className="text-left">
                   <div className="flex justify-between">
                     <div>Start Time: </div>
-                    <div className="bold">.........</div>
+                    <div className="bold">{content.deliverned_by?.start_time || ''}</div>
                   </div>
                 </td>
                 <td className="text-left">
                   <div className="flex justify-between">
                     <div>Start Time: </div>
-                    <div className="bold">.........</div>
+                    <div className="bold">{content.receive_by?.start_time || ''}</div>
                   </div>
                 </td>
               </tr>
