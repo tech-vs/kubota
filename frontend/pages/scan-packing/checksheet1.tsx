@@ -1,5 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
+import { confirmCheckSheet1 } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
   Box,
@@ -14,12 +15,13 @@ import {
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 type Props = {}
 
 const View = ({ checksheets,id }: any) => {
-  const [fileName, setFileName] = useState<string>('')
-  const [customer, setCustomer] = useState<string>('')
+  const router = useRouter()
+
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
 
@@ -64,11 +66,10 @@ const View = ({ checksheets,id }: any) => {
                       control={
                         <Radio
                           onChange={async () => {
-                            const response = await httpClient.post(
-                              '/checksheet',
+                            const response = await httpClient.patch(
+                              `/pallet/question/${checksheets.id}/status/`,
                               {
-                                id: checksheet.id,
-                                questionStatus: true
+                                status: true
                               },
                               {
                                 headers: {
@@ -92,17 +93,14 @@ const View = ({ checksheets,id }: any) => {
                       control={
                         <Radio
                           onChange={async () => {
-                            await httpClient.post(
-                              '/checksheet',
+                            const response = await httpClient.patch(
+                              `/pallet/question/${checksheet.id}/status/`,
                               {
-                                id: checksheet.id,
-                                questionStatus: false
+                                status: false
                               },
                               {
                                 headers: {
-                                  'Access-Control-Allow-Origin': '*',
-                                  'Access-Control-Allow-Methods': 'POST',
-                                  Accept: 'application/json'
+                                  'Content-Type': 'application/json'
                                 }
                               }
                             )
@@ -120,10 +118,8 @@ const View = ({ checksheets,id }: any) => {
                   </RadioGroup>
                 </FormControl>
 
-                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.questionText}</Typography>
-                <Button size='small' sx={{ mb: 2, color: 'success.dark' }}>
-                  Check
-                </Button>
+                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
+
                 <Box sx={{ flexGrow: 1 }} />
               </Box>
             ))}
@@ -138,7 +134,7 @@ const View = ({ checksheets,id }: any) => {
               }}
             >
               <Button size='small' sx={{ color: 'success.dark' }}>
-                Request Approval
+                Ok
               </Button>
               <Box sx={{ flexGrow: 1 }} />
             </Box>
@@ -154,21 +150,14 @@ const View = ({ checksheets,id }: any) => {
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           // alert(values.customer)
           try {
-            setLoading(true)
-            setTimeout(() => {
-              setSucess(true)
-              setLoading(false)
-            }, 4000)
+            // setLoading(true)
+            // setTimeout(() => {
+            //   setSucess(true)
+            //   setLoading(false)
+            // }, 4000)
 
-            resetForm({
-              values: {
-                file: null,
-                customer: ''
-              }
-            })
-            setCustomer('')
-            setFileName('')
-            
+            await confirmCheckSheet1(id)
+            router.push(`/scan-packing/checksheet2?id=${id}`)
             setSubmitting(false)
           } catch (error) {
             alert(error)

@@ -85,6 +85,15 @@ export const importExcel = async (data: FormData): Promise<void> => {
 }
 
 export const scanPallet = async (data: scanPalletProps): Promise<any> => {
-  const response = await httpClient.post('/pallet/', data)
+  const response = await httpClient.post('/pallet/', data,{
+    headers: {
+      Accept: 'application/json',
+      'access-control-allow-origin' : '*'
+    }
+  })
+  return response.data 
+}
+export const confirmCheckSheet1 = async (palletID:String): Promise<any> => {
+  const response = await httpClient.get('/pallet/${palletID}/section/1/submit/')
   return response.data
 }

@@ -34,6 +34,7 @@ type scanProps = {
 const Scan = ({}: Props) => {
   const router = useRouter()
   const [deEx, setDeEx] = useState<string>('')
+  const [unit, setUnit] = useState<string>('')
   const [scan, setScan] = useState<scanProps>({
     palletNo: '',
     partSeq01: '',
@@ -84,6 +85,34 @@ const Scan = ({}: Props) => {
                 >
                   <MenuItem value={'Domestic'}>Domestic</MenuItem>
                   <MenuItem value={'Export'}>Export</MenuItem>
+                </Select>
+              </FormControl>
+              <Box sx={{ flexGrow: 1 }} />
+            </Box>
+            <Box
+              component='main'
+              sx={{
+                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                my: 5,
+                position: 'relative',
+                height: '55px'
+              }}
+            >
+              <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
+                <InputLabel id='demo-simple-select-required-label'>Select Unit</InputLabel>
+                <Select
+                  labelId='demo-simple-select-required-label'
+                  id='demo-simple-select-required'
+                  label='Unit *'
+                  value={unit}
+                  onChange={(e: SelectChangeEvent<string>) => {
+                    e.preventDefault()
+                    setUnit(e.target.value)
+                    setFieldValue('unit', e.target.value)
+                  }}
+                >
+                  <MenuItem value={'0173'}>Unit 1</MenuItem>
+                  <MenuItem value={'0473'}>Unit 4</MenuItem>
                 </Select>
               </FormControl>
               <Box sx={{ flexGrow: 1 }} />
@@ -213,7 +242,7 @@ const Scan = ({}: Props) => {
             >
               <Box sx={{ flexGrow: 1 }} />
               <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
-                Submit
+                Ok
               </Button>
               <Button
                 variant='contained'
@@ -255,7 +284,7 @@ const Scan = ({}: Props) => {
   return (
     <Layout>
       <Formik
-        initialValues={{ deEx: '', palletNo: '', partSeq01: '', partSeq02: '', partSeq03: '', partSeq04: '' }}
+        initialValues={{ deEx: '', unit: '', palletNo: '', partSeq01: '', partSeq02: '', partSeq03: '', partSeq04: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           // alert(values.deEx)
           try {
@@ -285,7 +314,8 @@ const Scan = ({}: Props) => {
                   item_sharp: scan.partSeq04
                 },
               ],
-              question_type: values.deEx
+              question_type: values.deEx,
+              nw_gw: values.unit
             }
             
             setScan({
@@ -296,6 +326,7 @@ const Scan = ({}: Props) => {
               partSeq04: ''
             })
             setDeEx('')
+            setUnit('')
             const response = await scanPallet(data)
             router.push(`/scan-packing/checksheet1?id=${response.id}`)
             setSubmitting(false)
