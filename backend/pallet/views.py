@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
@@ -6,8 +7,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from syncdata.models import PSETSDataUpload
 
-from .models import Pallet, Question, QuestionType, Section
-from .serializers import (NoneSerializer, PalletCreateSerializer,
+from pallet.models import Pallet, Question, QuestionType, Section, PalletStatus
+from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
                           QuestionListSerializer, SectionDetailSerializer)
 
@@ -139,7 +140,12 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
             if section.question_list.filter(status=False).exists():
                 return Response({'detail': 'ไม่สามารถ submit ได้เนื่องจากมีคำถามที่ยังไม่ยอมรับ'}, status=status.HTTP_400_BAD_REQUEST)
             section.is_submit = True
-            section.save() 
+            section.save()
+        if self.pallet.section_list.filter(is_submit=True).count() == 2:
+            self.pallet.packing_status = True
+            self.pallet.status = PalletStatus.FINISH_PACK
+            self.pallet.packing_datetime = timezone.now()
+            self.pallet.save()
         response = SectionDetailSerializer(section).data
         return Response(response, status=status.HTTP_200_OK)
 
