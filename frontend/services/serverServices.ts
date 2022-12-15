@@ -94,6 +94,16 @@ export const scanPallet = async (data: scanPalletProps): Promise<any> => {
   return response.data 
 }
 export const confirmCheckSheet1 = async (palletID:String): Promise<any> => {
-  const response = await httpClient.get('/pallet/${palletID}/section/1/submit/')
+  const response = await httpClient.get(`/pallet/${palletID}/section/1/submit/`)
   return response.data
 }
+
+export const confirmCheckSheet2 = async (palletID:String): Promise<any> => {
+  const response = await httpClient.get(`/pallet/${palletID}/section/2/submit/`)
+  return response.data
+}
+
+// export const scanLoading = async (data:any): Promise<any> => {
+//   const response = await httpClient.get(`/pallet/${palletID}/section/2/submit/`)
+//   return response.data
+// }

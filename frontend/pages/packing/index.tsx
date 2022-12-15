@@ -1,5 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
+import httpClient from '@/utils/httpClient'
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
@@ -198,17 +199,17 @@ const Overall = ({ packingList }: any) => {
 }
 
 // This gets called on every request
-// export async function getServerSideProps() {
-//   const response = await httpClient.get('/packing', {
-//     headers: {
-//       Accept: 'application/json'
-//     }
-//   })
+export async function getServerSideProps() {
+  const response = await httpClient.get('/pallet/', {
+    headers: {
+      Accept: 'application/json'
+    }
+  })
 
-//   return {
-//     props: {
-//       packingList: response.data
-//     }
-//   }
-// }
+  return {
+    props: {
+      packingList: response.data.results
+    }
+  }
+}
 export default withAuth(Overall)

@@ -56,7 +56,7 @@ const Scan = ({}: Props) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Scan</Typography>
+          <Typography variant='h5'>Scan Packing</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: 6 }}>
@@ -288,11 +288,11 @@ const Scan = ({}: Props) => {
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           // alert(values.deEx)
           try {
-            // setLoading(true)
-            // setTimeout(() => {
-            //   setSucess(true)
-            //   setLoading(false)
-            // }, 4000)
+            setLoading(true)
+            setTimeout(() => {
+              setSucess(true)
+              setLoading(false)
+            }, 4000)
 
             let data = {
               pallet_skewer: scan.palletNo ,
@@ -312,7 +312,7 @@ const Scan = ({}: Props) => {
                 {
                   prod_seq: "4",
                   item_sharp: scan.partSeq04
-                },
+                }
               ],
               question_type: values.deEx,
               nw_gw: values.unit
@@ -330,8 +330,11 @@ const Scan = ({}: Props) => {
             const response = await scanPallet(data)
             router.push(`/scan-packing/checksheet1?id=${response.id}`)
             setSubmitting(false)
-          } catch (error) {
-            alert(error)
+          } catch (error:any) {
+            if(error.response){
+            alert(error.response.detail)
+            console.log(error.response.detail)
+            }
           }
 
           // resetForm()

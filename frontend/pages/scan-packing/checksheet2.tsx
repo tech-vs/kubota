@@ -1,6 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import { confirmCheckSheet1 } from '@/services/serverServices'
+import { confirmCheckSheet2 } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
   Box,
@@ -21,6 +21,11 @@ type Props = {}
 
 const View = ({ checksheets,id }: any) => {
   const router = useRouter()
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = () => {
+    router.replace(router.asPath)
+  }
 
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
@@ -37,7 +42,7 @@ const View = ({ checksheets,id }: any) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Check Sheet</Typography>
+          <Typography variant='h5'>Check Sheet 2</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: 6 }}>
@@ -59,7 +64,7 @@ const View = ({ checksheets,id }: any) => {
                     row
                     aria-labelledby='demo-row-radio-buttons-group-label'
                     name='row-radio-buttons-group'
-                    value={checksheet.questionStatus}
+                    value={checksheet.status}
                   >
                     <FormControlLabel
                       value='true'
@@ -67,7 +72,7 @@ const View = ({ checksheets,id }: any) => {
                         <Radio
                           onChange={async () => {
                             const response = await httpClient.patch(
-                              `/pallet/question/${checksheets.id}/status/`,
+                              `/pallet/question/${checksheet.id}/status/`,
                               {
                                 status: true
                               },
@@ -77,6 +82,7 @@ const View = ({ checksheets,id }: any) => {
                                 }
                               }
                             )
+                            refreshData()
                           }}
                           sx={{
                             color: green[800],
@@ -104,6 +110,7 @@ const View = ({ checksheets,id }: any) => {
                                 }
                               }
                             )
+                            refreshData()
                           }}
                           sx={{
                             color: pink[800],
@@ -133,8 +140,8 @@ const View = ({ checksheets,id }: any) => {
                 height: '55px'
               }}
             >
-              <Button size='small' sx={{ color: 'success.dark' }}>
-                Ok
+              <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
+                Submit Packing
               </Button>
               <Box sx={{ flexGrow: 1 }} />
             </Box>
@@ -156,8 +163,9 @@ const View = ({ checksheets,id }: any) => {
             //   setLoading(false)
             // }, 4000)
 
-            await confirmCheckSheet1(id)
-            router.push(`/scan-packing/checksheet2?id=${id}`)
+            await confirmCheckSheet2(id)
+            alert("Packing Successfully")
+            router.push(`/scan-packing`)
             setSubmitting(false)
           } catch (error) {
             alert(error)

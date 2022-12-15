@@ -88,8 +88,8 @@ const Scan = ({}: Props) => {
                     setFieldValue('deEx', e.target.value)
                   }}
                 >
-                  <MenuItem value={'domestic'}>Domestic</MenuItem>
-                  <MenuItem value={'export'}>Export</MenuItem>
+                  <MenuItem value={'Domestic'}>Domestic</MenuItem>
+                  <MenuItem value={'Export'}>Export</MenuItem>
                 </Select>
               </FormControl>
               <Box sx={{ flexGrow: 1 }} />
@@ -247,7 +247,7 @@ const Scan = ({}: Props) => {
             >
               <Box sx={{ flexGrow: 1 }} />
               <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
-                Submit
+                OK
               </Button>
               <Button
                 variant='contained'
@@ -299,15 +299,7 @@ const Scan = ({}: Props) => {
             //   setSucess(true)
             //   setLoading(false)
             // }, 4000)
-            let data = {
-              deEx: values.deEx,
-              refNo: '',
-              qty: '',
-              invoiceNo: '',
-              round: '',
-              customerName: '',
-              address: ''
-            }
+
             setInput({
               refNo: '',
               qty: '',
@@ -317,7 +309,18 @@ const Scan = ({}: Props) => {
               address: ''
             })
             setDeEx('')
-                router.push('/scan-packing/checksheet')
+            router.push({
+              pathname: '/scan-loading/check-pallet',
+              query: {             
+                deEx: values.deEx,
+                refNo: input.refNo,
+                qty: input.qty,
+                invoiceNo: input.invoiceNo,
+                round: input.round,
+                customerName: input.customerName,
+                address: input.address
+              }
+            }, '/scan-loading/check-pallet')
             setSubmitting(false)
           } catch (error) {
             alert(error)
