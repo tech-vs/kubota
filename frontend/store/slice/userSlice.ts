@@ -114,7 +114,7 @@ const userSlice = createSlice({
       state.isAuthenticating = false
       console.log(action.payload)
 
-      if (action.payload) {
+      if (action.payload.username) {
         // state.accessToken = action.payload.data.token
         state.user = action.payload.username
         state.role = action.payload.role

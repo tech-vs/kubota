@@ -60,8 +60,8 @@ const columns: GridColDef[] = [
     flex: 1
   },
   {
-    field: 'download',
-    headerName: 'Download',
+    field: 'view',
+    headerName: 'View',
     headerAlign: 'center',
     headerClassName: 'headerField',
     align: 'center',
@@ -69,11 +69,11 @@ const columns: GridColDef[] = [
     renderCell: () => {
       return (
         <Button variant='contained' onClick={() => null} sx={{ borderRadius: 25 }}>
-          Download
+          View
         </Button>
       )
     }
-  },
+  }
   // {
   //   field: 'view',
   //   headerName: 'View',
@@ -90,21 +90,6 @@ const columns: GridColDef[] = [
   //     )
   //   }
   // },
-  {
-    field: 'confirm',
-    headerName: 'Confirm and Send Email',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    width: 125,
-    renderCell: () => {
-      return (
-        <Button variant='contained' onClick={() => null} sx={{ borderRadius: 50 }}>
-          Confirm
-        </Button>
-      )
-    }
-  }
 ]
 
 const rows = [
@@ -130,7 +115,7 @@ const Overall = ({}: Props) => {
           height: '30px'
         }}
       >
-        <Typography variant='h5'>View/Download Check sheet</Typography>
+        <Typography variant='h5'>View Loading List</Typography>
       </Box>
 
       <Box

@@ -15,6 +15,7 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
     const { route } = router
     const isAuthenticated = useSelector(isAuthenticatedSelector)
     const isAuthenticating = useSelector((state: RootState) => state.user.isAuthenticating)
+    console.log(isAuthenticated)
 
     // is fetching session (eg. show spinner)
     if (isAuthenticating) {

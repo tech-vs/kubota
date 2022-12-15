@@ -76,8 +76,8 @@ const Overall = ({ packingList }: any) => {
       flex: 1
     },
     {
-      field: 'download',
-      headerName: 'Download',
+      field: 'view',
+      headerName: 'View',
       headerAlign: 'center',
       headerClassName: 'headerField',
       align: 'center',
@@ -85,7 +85,7 @@ const Overall = ({ packingList }: any) => {
       renderCell: () => {
         return (
           <Button variant='contained' onClick={() => null} sx={{ borderRadius: 25 }}>
-            Download
+            View
           </Button>
         )
       }
@@ -133,7 +133,7 @@ const Overall = ({ packingList }: any) => {
           height: '30px'
         }}
       >
-        <Typography variant='h5'>View/Download Check sheet</Typography>
+        <Typography variant='h5'>View Packing List</Typography>
       </Box>
 
       <Box

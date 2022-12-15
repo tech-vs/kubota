@@ -1,16 +1,10 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import httpClient from '@/utils/httpClient'
-import {
-  Box,
-  Button,
-  Card,
-  CardContent, TextField,
-  Typography
-} from '@mui/material'
+import { scanLoading } from '@/services/serverServices'
+import { Box, Button, TextField, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
-import { useRouter } from 'next/router'
+import { useRouter, withRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
 type Props = {}
 const columns: GridColDef[] = [
@@ -51,7 +45,7 @@ const columns: GridColDef[] = [
     cellClassName: 'cellField',
     width: 150
   },
-    {
+  {
     field: 'countryName',
     headerName: 'Country Name',
     headerAlign: 'center',
@@ -84,17 +78,14 @@ const columns: GridColDef[] = [
     headerName: '',
     headerClassName: 'headerField',
     flex: 1
-  },
+  }
 ]
 
-const rows:any[] = []
+let scanLoadingResponse: any[] = []
 const View = ({ checksheets }: any) => {
   const router = useRouter()
   // Call this function whenever you want to
   // refresh props!
-  const refreshData = () => {
-    router.replace(router.asPath)
-  }
   const [fileName, setFileName] = useState<string>('')
   const [customer, setCustomer] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -108,14 +99,14 @@ const View = ({ checksheets }: any) => {
       router.replace(router.asPath)
     }
     const [scan, setScan] = useState({
-      internalPalletNo: '',
+      internalPalletNo: ''
     })
     return (
       <Form>
         <Box
           component='main'
           sx={{
-            display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+            display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
             height: '30px'
@@ -125,128 +116,145 @@ const View = ({ checksheets }: any) => {
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Pallet No.'
-                variant='filled'
-                value={scan.internalPalletNo}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setScan({ ...scan, internalPalletNo: e.target.value })
-                  setFieldValue('scan.internalPalletNo', e.target.value)
-
-                }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 5,
-                position: 'relative'
-              }}
-            >
-              <Box sx={{ flexGrow: 1 }} />
-              <Button
-                variant='contained'
-                onClick={() => {
-                  alert("test success")
-                  refreshData()
-                }}
-                color='primary'
-                sx={{ marginRight: 1 }}
-              >
-                Check
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-        sx={{
-          height: 360,
-          width: '100%',
-          '& .cold': {
-            color: 'success.main'
-          },
-          '& .hot': {
-            color: 'error.main'
-          },
-          '& .headerField': {
-            fontSize: 16,
-            backgroundColor: '#55AAFF'
-          },
-          '& .customerField': {
-            backgroundColor: '#c7ddb5'
-          },
-          '& .cellField': {
-            fontSize: 20,
-            fontWeight: '700'
-          }
-        }}
-      >
-        <DataGrid
+          component='main'
           sx={{
-            boxShadow: 2,
-            '& .MuiDataGrid-cell:hover': {
-              color: 'primary.main'
+            display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+            my: 3,
+            position: 'relative'
+          }}
+        >
+          <TextField
+            required
+            fullWidth
+            id='filled-basic'
+            label='Pallet No.'
+            variant='filled'
+            value={scan.internalPalletNo}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              e.preventDefault()
+              setScan({ ...scan, internalPalletNo: e.target.value })
+              setFieldValue('scan.internalPalletNo', e.target.value)
+            }}
+          />
+          <Box sx={{ flexGrow: 1 }} />
+        </Box>
+        <Box
+          component='main'
+          sx={{
+            display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+            my: 5,
+            position: 'relative'
+          }}
+        >
+          <Box sx={{ flexGrow: 1 }} />
+          <Button
+            variant='contained'
+            onClick={async () => {
+              const response = await scanLoading(scan.internalPalletNo)
+              scanLoadingResponse = response.item_list
+              console.log(scanLoadingResponse)
+              alert(scanLoadingResponse)
+              refreshData()
+            }}
+            color='primary'
+            sx={{ marginRight: 1 }}
+          >
+            Check
+          </Button>
+          <Box sx={{ flexGrow: 1 }} />
+        </Box>
+        <Box
+          sx={{
+            height: 360,
+            width: '100%',
+            '& .cold': {
+              color: 'success.main'
             },
-            '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
-              outline: 'none'
+            '& .hot': {
+              color: 'error.main'
+            },
+            '& .headerField': {
+              fontSize: 16,
+              backgroundColor: '#55AAFF'
+            },
+            '& .customerField': {
+              backgroundColor: '#c7ddb5'
+            },
+            '& .cellField': {
+              fontSize: 20,
+              fontWeight: '700'
             }
           }}
-          rows={rows}
-          columns={columns}
-          getCellClassName={(params: GridCellParams<string>) => {
-            if (params.field === 'customer') {
-              return 'customerField'
-            }
-            if (params.value == 'OK') {
-              return 'cold'
-            }
-            if (params.value == 'Waiting') {
-              return 'hot'
-            }
-            return ''
+        >
+          <DataGrid
+            sx={{
+              boxShadow: 2,
+              '& .MuiDataGrid-cell:hover': {
+                color: 'primary.main'
+              },
+              '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
+                outline: 'none'
+              }
+            }}
+            rows={[]}
+            columns={columns}
+            getCellClassName={(params: GridCellParams<string>) => {
+              if (params.field === 'customer') {
+                return 'customerField'
+              }
+              if (params.value == 'OK') {
+                return 'cold'
+              }
+              if (params.value == 'Waiting') {
+                return 'hot'
+              }
+              return ''
+            }}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            disableSelectionOnClick
+            disableVirtualization
+            disableExtendRowFullWidth
+            disableIgnoreModificationsIfProcessingProps
+            disableColumnSelector
+            // disableColumnFilter
+            // disableColumnMenu
+          />
+        </Box>
+
+        <Box
+          component='main'
+          sx={{
+            display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+            my: 5,
+            position: 'relative'
           }}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          disableSelectionOnClick
-          disableVirtualization
-          disableExtendRowFullWidth
-          disableIgnoreModificationsIfProcessingProps
-          disableColumnSelector
-          // disableColumnFilter
-          // disableColumnMenu
-        />
-      </Box>
-        <Card sx={{ mx: 6 }}>
-          <CardContent sx={{ pb: 4, px: 4 }}>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'none', md: 'flex', flexDirection: 'row' },
-                my: 2,
-                position: 'relative',
-                height: '55px'
-              }}
-            >
-              <Button size='small' sx={{ color: 'success.dark' }}>
-                Submit
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            
-          </CardContent>
-        </Card>
+        >
+          <Box sx={{ flexGrow: 1 }} />
+          <Button
+            variant='contained'
+            onClick={() => {
+              alert('test success')
+              refreshData()
+            }}
+            color='primary'
+            sx={{ marginRight: 1 }}
+          >
+            Submit
+          </Button>
+          <Button
+            variant='contained'
+            onClick={() => {
+              alert('test success')
+              refreshData()
+            }}
+            color='primary'
+            sx={{ marginRight: 1 }}
+          >
+            Submit & Request Approval
+          </Button>
+          <Box sx={{ flexGrow: 1 }} />
+        </Box>
       </Form>
     )
   }
@@ -287,18 +295,18 @@ const View = ({ checksheets }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps() {
-  const response = await httpClient.get('/checksheet?questionID=1', {
-    headers: {
-      Accept: 'application/json'
-    }
-  })
+// export async function getServerSideProps() {
+//   const response = await httpClient.get('/checksheet?questionID=1', {
+//     headers: {
+//       Accept: 'application/json'
+//     }
+//   })
 
-  return {
-    props: {
-      checksheets: response.data
-    }
-  }
-}
+//   return {
+//     props: {
+//       checksheets: response.data
+//     }
+//   }
+// }
 
-export default withAuth(View)
+export default withRouter(withAuth(View))
