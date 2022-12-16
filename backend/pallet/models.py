@@ -44,6 +44,11 @@ class RunningNumber(CommonInfoModel):
         self.save()
 
 
+class PalletPart(CommonInfoModel):
+    pallet = models.ForeignKey('pallet.Pallet', on_delete=models.CASCADE, null=True)
+    part = models.ForeignKey('syncdata.ProdInfoHistory', on_delete=models.CASCADE, null=True)
+
+
 class Pallet(CommonInfoModel):
     pallet = models.CharField(max_length=255)
     skewer = models.CharField(max_length=255)
@@ -53,9 +58,15 @@ class Pallet(CommonInfoModel):
     packing_status = models.BooleanField(default=False)
     packing_datetime = models.DateTimeField(null=True)
     status = models.CharField(max_length=100, choices=PalletStatus.choices, null=True)
+    question_type = models.CharField(max_length=100, choices=QuestionType.choices, default=QuestionType.DOMESTIC)
     section_list = models.ManyToManyField(
         'pallet.Section',
         through='pallet.PalletSection',
+        blank=True,
+    )
+    part_list = models.ManyToManyField(
+        'syncdata.ProdInfoHistory',
+        through='pallet.PalletPart',
         blank=True,
     )
     
@@ -64,6 +75,13 @@ class Pallet(CommonInfoModel):
 
     def __str__(self):
         return f'{self.pallet}{self.skewer}'
+
+    @staticmethod
+    def get_date_from_pallet_string(pallet_string: str) -> str:
+        if pallet_string:
+            date = pallet_string[-8:]
+            return f'{date[6:8]}/{date[4:6]}/{date[0:4]}'
+        return ''
 
     def generate_question(self, type: str) -> None:
         question_data_list = list(QuestionTemplate.objects.filter(type=type).values('text', 'type', 'section'))

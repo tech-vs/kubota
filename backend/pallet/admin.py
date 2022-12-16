@@ -14,11 +14,16 @@ class SectionInline(admin.TabularInline):
     extra = 0
 
 
+class PartInline(admin.TabularInline):
+    model = Pallet.part_list.through
+    extra = 0
+
+
 @admin.register(Pallet)
 class PalletAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_display = ('id', 'pallet', 'skewer', 'pallet_string', 'internal_pallet_no', 'packing_status', 'packing_datetime', 'created_at', 'updated_at',)
-    inlines = [SectionInline]
+    inlines = [SectionInline, PartInline]
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('section_list',)

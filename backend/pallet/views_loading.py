@@ -85,8 +85,13 @@ class LoadingViewSet(viewsets.GenericViewSet):
         pallet = None
         if queryset:
             pallet = queryset.first()
-            item_list = PSETSDataUpload.objects.filter(pallet_sharp=pallet.pallet, skewer_sharp=pallet.skewer)[:4]
-        item_list = self.get_serializer(item_list, many=True).data
+            date = None
+            # print(pallet)
+            if pallet and pallet.pallet_string:
+                date = Pallet.get_date_from_pallet_string(pallet.pallet_string)
+                # print(f'date = {date}')
+                item_list = PSETSDataUpload.objects.filter(pallet_sharp=pallet.pallet, skewer_sharp=pallet.skewer, delivery_date=date)
+                item_list = self.get_serializer(item_list, many=True).data
         response = {
             'pallet_id': pallet.id if pallet else 0,
             'item_list': item_list,
