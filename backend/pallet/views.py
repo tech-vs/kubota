@@ -10,7 +10,7 @@ from syncdata.models import (
     ProdInfoHistory,
 )
 
-from pallet.models import Pallet, Question, QuestionType, Section, PalletStatus
+from pallet.models import Pallet, QuestionType, PalletStatus, PalletQuestion
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
                           QuestionListSerializer, SectionDetailSerializer)
@@ -173,7 +173,7 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
 
 
 class QuestionViewSet(viewsets.GenericViewSet):
-    queryset = Question.objects.all()
+    queryset = PalletQuestion.objects.all()
     lookup_field = 'id'
     action_serializers = {
         'partial_update': QuestionCheckSerializer,

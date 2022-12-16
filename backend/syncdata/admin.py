@@ -9,7 +9,7 @@ from syncdata.models import (
 @admin.register(PSETSDataUpload)
 class PSEAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_display = ('id', 'prod_seq', 'item_sharp', 'pallet_sharp', 'skewer_sharp', 'modelname', 'serial_no', 'delivery_date')
+    list_display = ('id', 'prod_seq', 'item_sharp', 'pallet_sharp', 'skewer_sharp', 'modelname', 'delivery_date')
 
 
 @admin.register(ProdInfoHistory)

@@ -5,11 +5,13 @@ from syncdata.models import PSETSDataUpload, ProdInfoHistory
 cnxn = "Driver={FreeTDS};TDS_VERSION=7.3;Server=172.20.176.4,1433;Database=ADJ;UID=kuet\\administrator;PWD=keT2402D0main"
 
 # results = []
-def sync_data_mssql() -> List[dict]:
+def sync_data_mssql() -> str:
     results = []
     with pyodbc.connect(cnxn) as db:
         cursor = db.cursor()
         cursor.execute("SELECT ID as ID_NO, \
+            ID#, \
+            MODELNAME, \
             DELIVERY_DATE, \
             DELIVERY_TIME, \
             ITEM#, \
@@ -27,10 +29,10 @@ def sync_data_mssql() -> List[dict]:
             PSETSDataUpload(**result)
         )
     PSETSDataUpload.objects.bulk_create(psetsdata_list)
-    return results
+    return 'Done'
 
 
-def sync_data_oracle() -> List[dict]:
+def sync_data_oracle() -> str:
     results = []
     with cx_Oracle.connect(user="STDADMIN", password="STDADMIN", dsn="172.20.176.72/PRDACT") as db:
         cursor = db.cursor()
@@ -62,4 +64,4 @@ def sync_data_oracle() -> List[dict]:
             ProdInfoHistory(**result)
         )
     ProdInfoHistory.objects.bulk_create(prodinfohistory_list)
-    return results
+    return 'Done'
