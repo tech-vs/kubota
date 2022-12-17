@@ -10,5 +10,5 @@ class PalletLoadingFilter(FilterSet):
 
 
 class PalletPartListFilter(FilterSet):
-    internal_pallet_no = filters.CharFilter(field_name='internal_pallet_no')
-    status = filters.ChoiceFilter(choices=PalletStatus.choices, field_name='status')
+    internal_pallet_no = filters.CharFilter(field_name='pallet__internal_pallet_no')
+    status = filters.ChoiceFilter(choices=PalletStatus.choices, field_name='pallet__status')

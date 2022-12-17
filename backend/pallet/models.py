@@ -71,8 +71,8 @@ class PalletQuestion(CommonInfoModel):
 
 
 class Pallet(CommonInfoModel):
-    pallet = models.CharField(max_length=255)
-    skewer = models.CharField(max_length=255)
+    pallet = models.CharField(max_length=255, null=True, blank=True)
+    skewer = models.CharField(max_length=255, null=True, blank=True)
     pallet_string = models.CharField(max_length=255, null=True)
     internal_pallet_no = models.CharField(max_length=10, null=True)
     nw_gw = models.CharField(max_length=100, choices=NWGW.choices, null=True)

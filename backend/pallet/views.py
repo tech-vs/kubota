@@ -20,7 +20,8 @@ from pallet.models import (
 )
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
-                          QuestionListSerializer, PalletPackingDoneSerializer)
+                          QuestionListSerializer, PalletPackingDoneSerializer,
+                          PalletPartListSerializer)
 from pallet.filters import PalletPartListFilter
 
 
@@ -29,11 +30,9 @@ class PalletViewSet(viewsets.GenericViewSet):
 
     action_serializers = {
         'create': PalletCreateSerializer,
-        'list': PalletListSerializer
     }
 
     permission_classes_action = {
-        'list': [AllowAny],
         'create': [AllowAny],
     }
 
@@ -48,14 +47,6 @@ class PalletViewSet(viewsets.GenericViewSet):
             return [permission() for permission in self.permission_classes_action[self.action]]
         except KeyError:
             return [permission() for permission in self.permission_classes]
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page, many=True).data
-        response = self.get_paginated_response(serializer).data
-        response['total'] = int(len(self.get_queryset()))
-        return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -86,8 +77,6 @@ class PalletViewSet(viewsets.GenericViewSet):
                 part_to_set_list.append((prod_seq, part_item))
         if len(part_to_set_list) != 4:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
-
-        print(f'part list = {part_to_set_list}')
         
         if question_type == QuestionType.EXPORT:
             #logic check part_list export
@@ -98,7 +87,7 @@ class PalletViewSet(viewsets.GenericViewSet):
             # logic check part_list domestic
             check_dict_list = [{'delivery_date': date, **pallet_skewer_check, 'prod_seq': part_item[0], 'item_sharp': part_item[1].model_code} for part_item in part_to_set_list]
             for check in check_dict_list:
-                print(f'check = {check}')
+                # print(f'check = {check}')
                 if PSETSDataUpload.objects.filter(**check).exists():
                     check_item.append(True)
                 else:
@@ -222,13 +211,11 @@ class PalletPartViewSet(viewsets.GenericViewSet):
     filterset_class = PalletPartListFilter
 
     action_serializers = {
-        'create': PalletCreateSerializer,
-        'list': PalletListSerializer
+        'list': PalletPartListSerializer
     }
 
     permission_classes_action = {
         'list': [AllowAny],
-        'create': [AllowAny],
     }
 
     def get_serializer_class(self):
