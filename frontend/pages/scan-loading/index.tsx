@@ -1,6 +1,5 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import { scanLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
   Alert,
@@ -18,86 +17,85 @@ import {
   Typography
 } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
 
 type Props = {}
-let scanLoadingResponse: any[] = []
-const columns: GridColDef[] = [
-  {
-    field: 'pallet_skewer',
-    headerName: 'Model Code',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'modelName',
-    headerName: 'Model Name',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    type: 'string',
-    cellClassName: 'cellField',
-    width: 250
-  },
-  {
-    field: 'item_sharp',
-    headerName: 'ID No.',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'countryCode',
-    headerName: 'Country Code',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'countryName',
-    headerName: 'Country Name',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'distributoeCode',
-    headerName: 'Distributor Code',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'distributoeName',
-    headerName: 'Distributor Name',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
+// let scanLoadingResponse: any[] = []
+// const columns: GridColDef[] = [
+//   {
+//     field: 'pallet_skewer',
+//     headerName: 'Model Code',
+//     headerAlign: 'center',
+//     headerClassName: 'headerField',
+//     align: 'center',
+//     cellClassName: 'cellField',
+//     width: 150
+//   },
+//   {
+//     field: 'modelName',
+//     headerName: 'Model Name',
+//     headerAlign: 'center',
+//     headerClassName: 'headerField',
+//     align: 'center',
+//     type: 'string',
+//     cellClassName: 'cellField',
+//     width: 250
+//   },
+//   {
+//     field: 'item_sharp',
+//     headerName: 'ID No.',
+//     headerAlign: 'center',
+//     headerClassName: 'headerField',
+//     align: 'center',
+//     cellClassName: 'cellField',
+//     width: 150
+//   },
+//   {
+//     field: 'countryCode',
+//     headerName: 'Country Code',
+//     headerAlign: 'center',
+//     headerClassName: 'headerField',
+//     align: 'center',
+//     cellClassName: 'cellField',
+//     width: 150
+//   },
+//   {
+//     field: 'countryName',
+//     headerName: 'Country Name',
+//     headerAlign: 'center',
+//     headerClassName: 'headerField',
+//     align: 'center',
+//     cellClassName: 'cellField',
+//     width: 150
+//   },
+//   {
+//     field: 'distributoeCode',
+//     headerName: 'Distributor Code',
+//     headerAlign: 'center',
+//     headerClassName: 'headerField',
+//     align: 'center',
+//     cellClassName: 'cellField',
+//     width: 150
+//   },
+//   {
+//     field: 'distributoeName',
+//     headerName: 'Distributor Name',
+//     headerAlign: 'center',
+//     headerClassName: 'headerField',
+//     align: 'center',
+//     cellClassName: 'cellField',
+//     width: 150
+//   },
 
-  {
-    field: 'blank',
-    headerName: '',
-    headerClassName: 'headerField',
-    flex: 1
-  }
-]
+//   {
+//     field: 'blank',
+//     headerName: '',
+//     headerClassName: 'headerField',
+//     flex: 1
+//   }
+// ]
 
 var Amatanakhon =
   '700/867 Moo 3 Amata Nakhon Industrial Estate, Tambon Nong Ka Kha,District, Panthong District, Chon Buri 20160'
@@ -121,9 +119,9 @@ const Scan = ({ genDoc }: any) => {
     customerName: '',
     address: ''
   })
-  const [scan, setScan] = useState({
-    internalPalletNo: ''
-  })
+  // const [scan, setScan] = useState({
+  //   internalPalletNo: ''
+  // })
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
@@ -362,7 +360,7 @@ const Scan = ({ genDoc }: any) => {
               />
               <Box sx={{ flexGrow: 1 }} />
             </Box>
-            <Box
+            {/* <Box
               component='main'
               sx={{
                 display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
@@ -384,8 +382,8 @@ const Scan = ({ genDoc }: any) => {
                 }}
               />
               <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
+            </Box> */}
+            {/* <Box
               component='main'
               sx={{
                 display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
@@ -409,8 +407,8 @@ const Scan = ({ genDoc }: any) => {
                 Check
               </Button>
               <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
+            </Box> */}
+            {/* <Box
               sx={{
                 height: 360,
                 width: '100%',
@@ -467,7 +465,7 @@ const Scan = ({ genDoc }: any) => {
                 // disableColumnFilter
                 // disableColumnMenu
               />
-            </Box>
+            </Box> */}
             <Box
               component='main'
               sx={{
@@ -483,16 +481,7 @@ const Scan = ({ genDoc }: any) => {
               <Button
                 variant='contained'
                 onClick={() => {
-                  // window.location.reload()
-                  setDeEx('')
-                  setInput({
-                    refNo: '',
-                    qty: '',
-                    invoiceNo: '',
-                    round: '',
-                    customerName: '',
-                    address: ''
-                  })
+                  router.push('scan-loading/check-pallet')
                 }}
                 color='secondary'
                 sx={{ marginRight: 1 }}

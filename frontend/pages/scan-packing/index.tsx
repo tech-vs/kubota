@@ -36,7 +36,7 @@ const Scan = ({}: Props) => {
   const [deEx, setDeEx] = useState<string>('')
   const [unit, setUnit] = useState<string>('')
   const [scan, setScan] = useState<scanProps>({
-    palletNo: '',
+    palletNo: '4097420170622',
     partSeq01: '',
     partSeq02: '',
     partSeq03: '',
@@ -89,149 +89,173 @@ const Scan = ({}: Props) => {
               </FormControl>
               <Box sx={{ flexGrow: 1 }} />
             </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 5,
-                position: 'relative',
-                height: '55px'
-              }}
-            >
-              <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
-                <InputLabel id='demo-simple-select-required-label'>Select Unit</InputLabel>
-                <Select
-                  labelId='demo-simple-select-required-label'
-                  id='demo-simple-select-required'
-                  label='Unit *'
-                  value={unit}
-                  onChange={(e: SelectChangeEvent<string>) => {
+            {deEx == 'Domestic' || deEx == '' ? (
+              ''
+            ) : (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 5,
+                  position: 'relative',
+                  height: '55px'
+                }}
+              >
+                <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
+                  <InputLabel id='demo-simple-select-required-label'>Select Unit</InputLabel>
+                  <Select
+                    labelId='demo-simple-select-required-label'
+                    id='demo-simple-select-required'
+                    label='Unit *'
+                    value={unit}
+                    onChange={(e: SelectChangeEvent<string>) => {
+                      e.preventDefault()
+                      setUnit(e.target.value)
+                      setFieldValue('unit', e.target.value)
+                    }}
+                  >
+                    <MenuItem value={'0173'}>Unit 1</MenuItem>
+                    <MenuItem value={'0473'}>Unit 4</MenuItem>
+                  </Select>
+                </FormControl>
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            )}
+            {deEx == 'Export' || deEx == '' ? (
+              ''
+            ) : (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 3,
+                  position: 'relative'
+                }}
+              >
+                <TextField
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Pallet No.'
+                  variant='filled'
+                  value={scan.palletNo}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
-                    setUnit(e.target.value)
-                    setFieldValue('unit', e.target.value)
+                    setScan({ ...scan, palletNo: e.target.value })
+                    setFieldValue('scan.palletNo', e.target.value)
                   }}
-                >
-                  <MenuItem value={'0173'}>Unit 1</MenuItem>
-                  <MenuItem value={'0473'}>Unit 4</MenuItem>
-                </Select>
-              </FormControl>
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Pallet No.'
-                variant='filled'
-                value={scan.palletNo}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setScan({ ...scan, palletNo: e.target.value })
-                  setFieldValue('scan.palletNo', e.target.value)
+                />
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            )}
+            {deEx == '' ? (
+              ''
+            ) : (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 3,
+                  position: 'relative'
                 }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Part Seq01'
-                variant='filled'
-                value={scan.partSeq01}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setScan({ ...scan, partSeq01: e.target.value })
-                  setFieldValue('scan.partSeq01', e.target.value)
+              >
+                <TextField
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Part Seq01'
+                  variant='filled'
+                  value={scan.partSeq01}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    setScan({ ...scan, partSeq01: e.target.value })
+                    setFieldValue('scan.partSeq01', e.target.value)
+                  }}
+                />
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            )}
+            {deEx == '' ? (
+              ''
+            ) : (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 3,
+                  position: 'relative'
                 }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Part Seq02'
-                variant='filled'
-                value={scan.partSeq02}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setScan({ ...scan, partSeq02: e.target.value })
-                  setFieldValue('scan.partSeq02', e.target.value)
+              >
+                <TextField
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Part Seq02'
+                  variant='filled'
+                  value={scan.partSeq02}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    setScan({ ...scan, partSeq02: e.target.value })
+                    setFieldValue('scan.partSeq02', e.target.value)
+                  }}
+                />
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            )}
+            {deEx == '' ? (
+              ''
+            ) : (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 3,
+                  position: 'relative'
                 }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Part Seq03'
-                variant='filled'
-                value={scan.partSeq03}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setScan({ ...scan, partSeq03: e.target.value })
-                  setFieldValue('scan.partSeq03', e.target.value)
+              >
+                <TextField
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Part Seq03'
+                  variant='filled'
+                  value={scan.partSeq03}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    setScan({ ...scan, partSeq03: e.target.value })
+                    setFieldValue('scan.partSeq03', e.target.value)
+                  }}
+                />
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            )}
+            {deEx == '' ? (
+              ''
+            ) : (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 3,
+                  position: 'relative'
                 }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Part Seq04'
-                variant='filled'
-                value={scan.partSeq04}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setScan({ ...scan, partSeq04: e.target.value })
-                  setFieldValue('scan.partSeq04', e.target.value)
-                }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
+              >
+                <TextField
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Part Seq04'
+                  variant='filled'
+                  value={scan.partSeq04}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    setScan({ ...scan, partSeq04: e.target.value })
+                    setFieldValue('scan.partSeq04', e.target.value)
+                  }}
+                />
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            )}
             <Box
               component='main'
               sx={{
@@ -295,29 +319,29 @@ const Scan = ({}: Props) => {
             }, 4000)
 
             let data = {
-              pallet_skewer: scan.palletNo ,
+              pallet_skewer: scan.palletNo,
               part_list: [
                 {
-                  prod_seq: "1",
+                  prod_seq: '1',
                   item_sharp: scan.partSeq01
                 },
                 {
-                  prod_seq: "2",
+                  prod_seq: '2',
                   item_sharp: scan.partSeq02
                 },
                 {
-                  prod_seq: "3",
+                  prod_seq: '3',
                   item_sharp: scan.partSeq03
                 },
                 {
-                  prod_seq: "4",
+                  prod_seq: '4',
                   item_sharp: scan.partSeq04
                 }
               ],
               question_type: values.deEx,
               nw_gw: values.unit
             }
-            
+
             setScan({
               palletNo: '',
               partSeq01: '',
@@ -330,10 +354,9 @@ const Scan = ({}: Props) => {
             const response = await scanPallet(data)
             router.push(`/scan-packing/checksheet1?id=${response.id}`)
             setSubmitting(false)
-          } catch (error:any) {
-            if(error.response){
-            alert(error.response.detail)
-            console.log(error.response.detail)
+          } catch (error: any) {
+            if (error.response) {
+              alert(JSON.stringify(error.response.data))
             }
           }
 

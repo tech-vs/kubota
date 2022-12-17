@@ -2,7 +2,6 @@ import { RootState } from '@/store/store'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
-import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 import PeopleIcon from '@mui/icons-material/People'
 import SummarizeIcon from '@mui/icons-material/Summarize'
 import { Stack, Tooltip } from '@mui/material'
@@ -112,13 +111,13 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
       icon: <FileUploadIcon />,
       pathName: '/import',
       onClickAction: () => router.push('/import')
-    },
-    {
-      name: 'Tracking Pallet',
-      icon: <LocalShippingIcon />,
-      pathName: '/tracking',
-      onClickAction: () => router.push('/tracking')
     }
+    // {
+    //   name: 'Tracking Pallet',
+    //   icon: <LocalShippingIcon />,
+    //   pathName: '/tracking',
+    //   onClickAction: () => router.push('/tracking')
+    // }
   ]
   return (
     <Drawer variant='permanent' open={!open}>

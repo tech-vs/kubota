@@ -24,6 +24,6 @@
     }
   },
 
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/scan.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/scan.jsx", "pages/tracking.tsx.bak"],
   "exclude": ["node_modules"]
 }
