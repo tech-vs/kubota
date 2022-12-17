@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .models import QuestionType, NWGW
+from .models import QuestionType, NWGW, PalletStatus
 
 
 class NoneSerializer(serializers.Serializer):
@@ -30,22 +30,20 @@ class PalletCreateSerializer(serializers.Serializer):
         return attrs
 
 
-class SectionDetailSerializer(serializers.Serializer):
+class PalletPackingDoneSerializer(serializers.Serializer):
     id = serializers.IntegerField()
-    no = serializers.IntegerField()
-    is_submit = serializers.BooleanField()
+    pallet = serializers.CharField()
+    skewer = serializers.CharField()
+    internal_pallet_no = serializers.CharField()
+    status = serializers.ChoiceField(choices=PalletStatus.choices)
+    packing_datetime = serializers.DateTimeField()
 
 
 class PalletListSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     pallet = serializers.CharField()
     skewer = serializers.CharField()
-    section_list = serializers.SerializerMethodField()
-
-    def get_section_list(self, obj):
-        if obj.section_list.exists():
-            return SectionDetailSerializer(obj.section_list.all(), many=True).data
-        return []
+    internal_pallet_no = serializers.CharField()
 
 
 class QuestionListSerializer(serializers.Serializer):

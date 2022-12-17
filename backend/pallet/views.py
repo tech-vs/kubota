@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
@@ -13,7 +14,7 @@ from syncdata.models import (
 from pallet.models import Pallet, QuestionType, PalletStatus, PalletQuestion
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
-                          QuestionListSerializer, SectionDetailSerializer)
+                          QuestionListSerializer, PalletPackingDoneSerializer)
 
 
 class PalletViewSet(viewsets.GenericViewSet):
@@ -78,6 +79,8 @@ class PalletViewSet(viewsets.GenericViewSet):
                 part_to_set_list.append((prod_seq, part_item))
         if len(part_to_set_list) != 4:
             return Response({}, status=status.HTTP_400_BAD_REQUEST)
+
+        print(f'part list = {part_to_set_list}')
         
         if question_type == QuestionType.EXPORT:
             #logic check part_list export
@@ -86,8 +89,9 @@ class PalletViewSet(viewsets.GenericViewSet):
                     check_item.append(True)
         if question_type == QuestionType.DOMESTIC:
             # logic check part_list domestic
-            check_dict_list = [{'delivery_date': date, **pallet_skewer_check, 'prod_seq': part_item[0], 'item_sharp': part_item[1].model_name} for part_item in part_to_set_list]
+            check_dict_list = [{'delivery_date': date, **pallet_skewer_check, 'prod_seq': part_item[0], 'item_sharp': part_item[1].model_code} for part_item in part_to_set_list]
             for check in check_dict_list:
+                print(f'check = {check}')
                 if PSETSDataUpload.objects.filter(**check).exists():
                     check_item.append(True)
                 else:
@@ -97,11 +101,13 @@ class PalletViewSet(viewsets.GenericViewSet):
             pallet, is_created = Pallet.objects.get_or_create(
                 **data,
                 pallet_string=pallet_string,
-                internal_pallet_no=Pallet.generate_internal_pallet_no(),
                 nw_gw=nw_gw,
                 question_type=question_type,
+                defaults={
+                    'internal_pallet_no': Pallet.generate_internal_pallet_no()
+                }
             )
-            pallet.set([part_item[1] for part_item in part_to_set_list])
+            pallet.part_list.set([part_item[1] for part_item in part_to_set_list])
             if not is_created:
                 return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
             pallet.generate_question(question_type)
@@ -113,7 +119,7 @@ class PalletViewSet(viewsets.GenericViewSet):
 
 
 class PalletListQuestionViewSet(viewsets.GenericViewSet):
-    queryset = Pallet.objects.all().prefetch_related('section_list')
+    queryset = Pallet.objects.all().prefetch_related('palletquestion_set')
     lookup_field = None
     action_serializers = {
         'list': QuestionListSerializer,
@@ -143,32 +149,26 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
-        self.pallet = Pallet.objects.filter(id=kwargs.get('pallet_id', -1)).prefetch_related('section_list').first()
+        self.pallet = Pallet.objects.filter(id=kwargs.get('pallet_id', -1)).prefetch_related('palletquestion_set').first()
         self.section = int(kwargs.get('section_no', 0))
         if self.pallet is None or self.section == 0:
             raise NotFound
 
     def list(self, request, *args, **kwargs):
-        section = self.pallet.section_list.filter(no=self.section).first()
-        question_data = []
-        if section:
-            question_data = section.question_list.all()
+        question_data = self.pallet.palletquestion_set.filter(section=self.section)
         response = self.get_serializer(question_data, many=True).data
         return Response(response, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
-        section = self.pallet.section_list.filter(no=self.section).first()
-        if section:
-            if section.question_list.filter(status=False).exists():
-                return Response({'detail': 'ไม่สามารถ submit ได้เนื่องจากมีคำถามที่ยังไม่ยอมรับ'}, status=status.HTTP_400_BAD_REQUEST)
-            section.is_submit = True
-            section.save()
-        if self.pallet.section_list.filter(is_submit=True).count() == 2:
+        can_submit = self.pallet.can_submit_section(self.section)
+        if not can_submit:
+            return Response({'detail': 'ไม่สามารถ submit ได้เนื่องจากมีคำถามที่ยังไม่ยอมรับ'}, status=status.HTTP_400_BAD_REQUEST)
+        if not self.pallet.palletquestion_set.filter(Q(section=1) | Q(section=2), Q(status=False)).exists():
             self.pallet.packing_status = True
             self.pallet.status = PalletStatus.FINISH_PACK
             self.pallet.packing_datetime = timezone.now()
             self.pallet.save()
-        response = SectionDetailSerializer(section).data
+        response = PalletPackingDoneSerializer(self.pallet).data
         return Response(response, status=status.HTTP_200_OK)
 
 

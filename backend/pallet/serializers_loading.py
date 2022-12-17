@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .models import Pallet, Document, DocStatus
+from pallet.models import DocStatus, QuestionType
 
 
 class NoneSerializer(serializers.Serializer):
@@ -9,31 +9,43 @@ class NoneSerializer(serializers.Serializer):
 
 
 class DocNoGenSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
     doc_no = serializers.CharField()
     delivery_date = serializers.CharField()
     status = serializers.ChoiceField(choices=DocStatus.choices)
+    ref_do_no = serializers.CharField(allow_null=True)
+    total_qty = serializers.CharField(allow_null=True)
+    invoice_no = serializers.CharField(allow_null=True)
+    round = serializers.CharField(allow_null=True)
+    customer_name = serializers.CharField(allow_null=True)
+    address = serializers.CharField(allow_null=True)
+    question_type = serializers.ChoiceField(choices=QuestionType.choices, allow_null=True)
 
 
-class PalletItemFromPSETSDataUploadSerializer(serializers.Serializer):
-    pallet_skewer = serializers.SerializerMethodField()
-    item_sharp = serializers.CharField()
-    prod_seq = serializers.CharField()
-    modelname = serializers.CharField()
-    serial_no = serializers.CharField()
+class DocUpdateSerializer(serializers.Serializer):
+    ref_do_no = serializers.CharField(required=False)
+    total_qty = serializers.CharField(required=False)
+    invoice_no = serializers.CharField(required=False)
+    round = serializers.CharField(required=False)
+    customer_name = serializers.CharField(required=False)
+    address = serializers.CharField(required=False)
+    question_type = serializers.ChoiceField(choices=QuestionType.choices)
 
-    def get_pallet_skewer(self, obj):
-        return f'{obj.pallet_sharp}-{obj.skewer_sharp}'
+
+class PartItemSerializer(serializers.Serializer):
+    plan_prod_finish_ym = serializers.CharField(max_length=255)
+    model_code = serializers.CharField(max_length=255)
+    model_name = serializers.CharField(max_length=255)
+    serial_no = serializers.CharField(max_length=255)
+    country_code = serializers.CharField(max_length=255)
+    country_name = serializers.CharField(max_length=255)
+    distributor_code = serializers.CharField(max_length=255)
+    distributor_name = serializers.CharField(max_length=255)
 
 
 class LoadingPalletSerializer(serializers.Serializer):
     is_send_approve = serializers.BooleanField(default=False)
     pallet_id = serializers.IntegerField()
-    ref_do_no = serializers.CharField(max_length=255)
-    total_qty = serializers.CharField(max_length=255)
-    invoice_no = serializers.CharField(max_length=255)
-    round = serializers.CharField(max_length=255)
-    customer_name = serializers.CharField(max_length=255)
-    address = serializers.CharField(max_length=255)
 
 
 # class SectionDetailSerializer(serializers.Serializer):

@@ -28,7 +28,7 @@ def migrate_question_template_data(apps, schema_editor):
     ]
     question_template_data_domestic_section_3 = [
         {'text': 'มี Tag อื่นๆ ติดอยู่กับเครื่องยนต์หรือไม่ (domestic)'},
-        {'text': 'ID Tag SEQ Delivery Tag ใส่ถูกต้องหรือไม่'},
+        {'text': 'ID Tag SEQ Delivery Tag ใส่ถูกต้องหรือไม่ (domestic)'},
         {'text': 'ตำแหน่งเครื่องยนต์วางถูกต้องหรือไม่ (domestic)'},
         {'text': 'Barcode ติดที่เครื่องยนต์หรือไม่ (domestic)'},
     ]

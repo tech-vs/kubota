@@ -22,7 +22,7 @@ class QuestionInline(admin.TabularInline):
 class PalletAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_display = ('id', 'pallet', 'skewer', 'pallet_string', 'internal_pallet_no', 'packing_status', 'packing_datetime', 'created_at', 'updated_at',)
-    inlines = [PartInline, QuestionInline]
+    inlines = [QuestionInline,]
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('question_list',)
@@ -49,7 +49,6 @@ class RunningNumberAdmin(admin.ModelAdmin):
 
 class DocumentInline(admin.TabularInline):
     model = Document.pallet_list.through
-    list_display = '__all__'
     extra = 0
 
 

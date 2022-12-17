@@ -11,26 +11,25 @@ from pallet.models import Pallet, Document, DocumentPallet, PalletStatus, DocSta
 from pallet.serializers_loading import (
     NoneSerializer,
     DocNoGenSerializer,
-    PalletItemFromPSETSDataUploadSerializer,
     LoadingPalletSerializer,
+    DocUpdateSerializer,
+    PartItemSerializer,
 )
+from pallet.filters import PalletLoadingFilter
 
 
 class LoadingViewSet(viewsets.GenericViewSet):
-    queryset = Pallet.objects.all()
+    queryset = Pallet.objects.all().prefetch_related('palletpart_set')
     filter_backends = [SearchFilter, DjangoFilterBackend]
-    search_fields = ['internal_pallet_no']
-    filterset_fields = ['status']
+    filterset_class = PalletLoadingFilter
 
     action_serializers = {
-        'list':  PalletItemFromPSETSDataUploadSerializer,
-        'gen_doc': DocNoGenSerializer,
+        'list':  PartItemSerializer,
         'submit':  LoadingPalletSerializer,
     }
 
     permission_classes_action = {
         'list': [AllowAny],
-        'gen_doc': [AllowAny],
         'submit': [AllowAny],
     }
 
@@ -46,12 +45,6 @@ class LoadingViewSet(viewsets.GenericViewSet):
         except KeyError:
             return [permission() for permission in self.permission_classes]
 
-    @action(detail=False, methods=['GET'], url_path='gen-doc')
-    def gen_doc(self, request, *args, **kwargs):
-        doc = Document.generate_doc_object()
-        response = self.get_serializer(doc).data
-        return Response(response, status=status.HTTP_200_OK)
-
     @action(detail=False, methods=['POST'], url_path='submit')
     def submit(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -62,12 +55,12 @@ class LoadingViewSet(viewsets.GenericViewSet):
         is_send_approve = data.pop('is_send_approve', False)
         
         pallet = self.get_queryset().filter(id=pallet_id).first()
-        doc = Document.objects.last()
+        doc = Document.objects.filter(status=DocStatus.LOADING).last()
         
         if pallet is None or doc is None:
             return Response({'detail': f'ไม่พบ doc ที่กำลังใช้หรือ pallet_id: {pallet_id}'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        doc_pallet, is_created = DocumentPallet.objects.get_or_create(defaults={**data}, document=doc, pallet=pallet)
+        if pallet:
+            doc_pallet, is_created = DocumentPallet.objects.get_or_create(document=doc, pallet=pallet)
         if not is_created:
             return Response({'detail': 'pallet-skewer นี้มีการเรียกโหลดไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
         
@@ -80,24 +73,57 @@ class LoadingViewSet(viewsets.GenericViewSet):
         return Response({}, status=status.HTTP_200_OK)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
+        pallet = self.filter_queryset(self.get_queryset()).first()
         item_list = []
-        pallet = None
-        if queryset:
-            pallet = queryset.first()
-            date = None
-            # print(pallet)
-            if pallet and pallet.pallet_string:
-                date = Pallet.get_date_from_pallet_string(pallet.pallet_string)
-                # print(f'date = {date}')
-                item_list = PSETSDataUpload.objects.filter(pallet_sharp=pallet.pallet, skewer_sharp=pallet.skewer, delivery_date=date)
-                item_list = self.get_serializer(item_list, many=True).data
+        if pallet:
+            item_list  = pallet.part_list.all()
         response = {
             'pallet_id': pallet.id if pallet else 0,
-            'item_list': item_list,
+            'item_list': self.get_serializer(item_list, many=True).data,
         }
         return Response(response, status=status.HTTP_200_OK)
 
-    # def create(self, request, *args, **kwargs):
-    #     response = {}
-    #     return Response(response, status=status.HTTP_201_CREATED)
+
+class DocumentViewSet(viewsets.GenericViewSet):
+    queryset = Document.objects.all()
+    lookup_field = 'id'
+    action_serializers = {
+        'partial_update': DocUpdateSerializer,
+        'gen_doc': DocNoGenSerializer,
+    }
+
+    permission_classes_action = {
+        'partial_update': [AllowAny],
+        'gen_doc': [AllowAny],
+    }
+
+    def get_serializer_class(self):
+        if hasattr(self, 'action_serializers'):
+            if self.action in self.action_serializers:
+                return self.action_serializers[self.action]
+        return super().get_serializer_class()
+    
+    def get_permissions(self):
+        try:
+            return [permission() for permission in self.permission_classes_action[self.action]]
+        except KeyError:
+            return [permission() for permission in self.permission_classes]
+
+    def partial_update(self, request, *args, **kwargs):
+        question = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        for field, value in data.items():
+            setattr(question, field, value)
+
+        question.save()
+        response = DocNoGenSerializer(question).data
+        return Response(response, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'], url_path='gen-doc')
+    def gen_doc(self, request, *args, **kwargs):
+        doc = Document.generate_doc_object()
+        response = self.get_serializer(doc).data
+        return Response(response, status=status.HTTP_200_OK)
