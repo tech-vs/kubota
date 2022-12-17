@@ -56,6 +56,7 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'Content-Disposition',
+    'allow-access-control-origin',
 ]
 
 CORS_EXPOSE_HEADERS = [

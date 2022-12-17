@@ -5,9 +5,11 @@ from .views import (
     PalletViewSet,
     PalletListQuestionViewSet,
     QuestionViewSet,
+    PalletPartViewSet,
 )
 from .views_loading import (
     LoadingViewSet,
+    DocumentViewSet,
 )
 
 app_name = 'pallet'
@@ -15,6 +17,8 @@ app_name = 'pallet'
 router = DefaultRouter()
 router.register(r'', PalletViewSet, basename='pallet')
 router.register(r'loading', LoadingViewSet, basename='loading')
+router.register(r'document', DocumentViewSet, basename='document')
+router.register(r'part-list', PalletPartViewSet, basename='part-list')
 # router.register(r'doc', ApproveViewSet, basename='')
 
 urlpatterns = [

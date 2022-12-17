@@ -1,8 +1,9 @@
 from django.utils import timezone
+from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from syncdata.models import (
@@ -10,22 +11,28 @@ from syncdata.models import (
     ProdInfoHistory,
 )
 
-from pallet.models import Pallet, QuestionType, PalletStatus, PalletQuestion
+from pallet.models import (
+    Pallet,
+    QuestionType,
+    PalletStatus,
+    PalletQuestion,
+    PalletPart,
+)
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
-                          QuestionListSerializer, SectionDetailSerializer)
+                          QuestionListSerializer, PalletPackingDoneSerializer,
+                          PalletPartListSerializer)
+from pallet.filters import PalletPartListFilter
 
 
 class PalletViewSet(viewsets.GenericViewSet):
-    queryset = Pallet.objects.all()
+    queryset = Pallet.objects.all().prefetch_related('part_list', 'question_list')
 
     action_serializers = {
         'create': PalletCreateSerializer,
-        'list': PalletListSerializer
     }
 
     permission_classes_action = {
-        'list': [AllowAny],
         'create': [AllowAny],
     }
 
@@ -40,14 +47,6 @@ class PalletViewSet(viewsets.GenericViewSet):
             return [permission() for permission in self.permission_classes_action[self.action]]
         except KeyError:
             return [permission() for permission in self.permission_classes]
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page, many=True).data
-        response = self.get_paginated_response(serializer).data
-        response['total'] = int(len(self.get_queryset()))
-        return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -86,8 +85,9 @@ class PalletViewSet(viewsets.GenericViewSet):
                     check_item.append(True)
         if question_type == QuestionType.DOMESTIC:
             # logic check part_list domestic
-            check_dict_list = [{'delivery_date': date, **pallet_skewer_check, 'prod_seq': part_item[0], 'item_sharp': part_item[1].model_name} for part_item in part_to_set_list]
+            check_dict_list = [{'delivery_date': date, **pallet_skewer_check, 'prod_seq': part_item[0], 'item_sharp': part_item[1].model_code} for part_item in part_to_set_list]
             for check in check_dict_list:
+                # print(f'check = {check}')
                 if PSETSDataUpload.objects.filter(**check).exists():
                     check_item.append(True)
                 else:
@@ -97,13 +97,15 @@ class PalletViewSet(viewsets.GenericViewSet):
             pallet, is_created = Pallet.objects.get_or_create(
                 **data,
                 pallet_string=pallet_string,
-                internal_pallet_no=Pallet.generate_internal_pallet_no(),
                 nw_gw=nw_gw,
                 question_type=question_type,
+                defaults={
+                    'internal_pallet_no': Pallet.generate_internal_pallet_no()
+                }
             )
-            pallet.set([part_item[1] for part_item in part_to_set_list])
             if not is_created:
                 return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
+            PalletPart.objects.bulk_create([PalletPart(pallet=pallet, part=part_item[1]) for part_item in part_to_set_list])
             pallet.generate_question(question_type)
         else:
             return Response({'detail': f'item_sharp ไม่ตรงกัน {domestic_fail_text}'}, status=status.HTTP_400_BAD_REQUEST)
@@ -113,7 +115,7 @@ class PalletViewSet(viewsets.GenericViewSet):
 
 
 class PalletListQuestionViewSet(viewsets.GenericViewSet):
-    queryset = Pallet.objects.all().prefetch_related('section_list')
+    queryset = Pallet.objects.all().prefetch_related('palletquestion_set')
     lookup_field = None
     action_serializers = {
         'list': QuestionListSerializer,
@@ -143,32 +145,26 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
 
     def initial(self, request, *args, **kwargs):
         super().initial(request, *args, **kwargs)
-        self.pallet = Pallet.objects.filter(id=kwargs.get('pallet_id', -1)).prefetch_related('section_list').first()
+        self.pallet = Pallet.objects.filter(id=kwargs.get('pallet_id', -1)).prefetch_related('palletquestion_set').first()
         self.section = int(kwargs.get('section_no', 0))
         if self.pallet is None or self.section == 0:
             raise NotFound
 
     def list(self, request, *args, **kwargs):
-        section = self.pallet.section_list.filter(no=self.section).first()
-        question_data = []
-        if section:
-            question_data = section.question_list.all()
+        question_data = self.pallet.palletquestion_set.filter(section=self.section)
         response = self.get_serializer(question_data, many=True).data
         return Response(response, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
-        section = self.pallet.section_list.filter(no=self.section).first()
-        if section:
-            if section.question_list.filter(status=False).exists():
-                return Response({'detail': 'ไม่สามารถ submit ได้เนื่องจากมีคำถามที่ยังไม่ยอมรับ'}, status=status.HTTP_400_BAD_REQUEST)
-            section.is_submit = True
-            section.save()
-        if self.pallet.section_list.filter(is_submit=True).count() == 2:
+        can_submit = self.pallet.can_submit_section(self.section)
+        if not can_submit:
+            return Response({'detail': 'ไม่สามารถ submit ได้เนื่องจากมีคำถามที่ยังไม่ยอมรับ'}, status=status.HTTP_400_BAD_REQUEST)
+        if not self.pallet.palletquestion_set.filter(Q(section=1) | Q(section=2), Q(status=False)).exists():
             self.pallet.packing_status = True
             self.pallet.status = PalletStatus.FINISH_PACK
             self.pallet.packing_datetime = timezone.now()
             self.pallet.save()
-        response = SectionDetailSerializer(section).data
+        response = PalletPackingDoneSerializer(self.pallet).data
         return Response(response, status=status.HTTP_200_OK)
 
 
@@ -206,4 +202,48 @@ class QuestionViewSet(viewsets.GenericViewSet):
 
         question.save()
         response = QuestionListSerializer(question).data
+        return Response(response, status=status.HTTP_200_OK)
+
+
+class PalletPartViewSet(viewsets.GenericViewSet):
+    queryset = PalletPart.objects.all().select_related('pallet', 'part')
+    lookup_url_kwarg = 'pallet_id'
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PalletPartListFilter
+
+    action_serializers = {
+        'list': PalletPartListSerializer,
+        'retrieve': PalletListSerializer,
+    }
+
+    permission_classes_action = {
+        'list': [AllowAny],
+        'retrieve': [AllowAny],
+    }
+
+    def get_serializer_class(self):
+        if hasattr(self, 'action_serializers'):
+            if self.action in self.action_serializers:
+                return self.action_serializers[self.action]
+        return super().get_serializer_class()
+    
+    def get_permissions(self):
+        try:
+            return [permission() for permission in self.permission_classes_action[self.action]]
+        except KeyError:
+            return [permission() for permission in self.permission_classes]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True).data
+        response = self.get_paginated_response(serializer).data
+        response['total'] = int(len(self.get_queryset()))
+        return Response(response, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, *args, **kwargs):
+        pallet = Pallet.objects.filter(id=kwargs.get('pallet_id', -1)).first()
+        response = self.get_serializer(pallet).data
+        if pallet:
+            response['part_list'] = PalletPartListSerializer(pallet.palletpart_set.all(), many=True).data
         return Response(response, status=status.HTTP_200_OK)

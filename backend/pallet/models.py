@@ -52,7 +52,7 @@ class PalletPart(CommonInfoModel):
         ordering = ['created_at']
 
     def __str__(self):
-        return self.text
+        return f'{self.id}'
 
 
 class PalletQuestion(CommonInfoModel):
@@ -71,8 +71,8 @@ class PalletQuestion(CommonInfoModel):
 
 
 class Pallet(CommonInfoModel):
-    pallet = models.CharField(max_length=255)
-    skewer = models.CharField(max_length=255)
+    pallet = models.CharField(max_length=255, null=True, blank=True)
+    skewer = models.CharField(max_length=255, null=True, blank=True)
     pallet_string = models.CharField(max_length=255, null=True)
     internal_pallet_no = models.CharField(max_length=10, null=True)
     nw_gw = models.CharField(max_length=100, choices=NWGW.choices, null=True)
@@ -105,19 +105,25 @@ class Pallet(CommonInfoModel):
         return ''
 
     def generate_question(self, type: str) -> None:
-        question_data_list = list(QuestionTemplate.objects.filter(type=type).values('text', 'type', 'section'))
-        section_dict = {}
-        for section in question_data_list:
-            section_dict[section['section']] = section_dict.get(section['section'], []) + [section]
-        
-        section_list = []
-        for section_no, question in section_dict.items():
-            sec = Section.objects.create(no=section_no)
-            section_list.append(sec)
-            qa_list = [Question.objects.create(text=qa['text'], type=qa['type']) for qa in question]
-            sec.question_list.set(qa_list)
+        question_data_list = QuestionTemplate.objects.filter(type=type)
+        pallet_question_list = []
+        for question in question_data_list:
+            pallet_question_list.append(
+                PalletQuestion(
+                    text=question.text,
+                    type=question.type,
+                    section=question.section,
+                    question=question,
+                    pallet=self,
+                )
+            )
+            # section_dict[section['section']] = section_dict.get(section['section'], []) + [section]
+        PalletQuestion.objects.bulk_create(pallet_question_list)
 
-        self.section_list.set(section_list)
+    def can_submit_section(self, section: int) -> bool:
+        if self.palletquestion_set.filter(section=section, status=False).exists():
+            return False
+        return True
 
     @staticmethod
     def generate_internal_pallet_no() -> str:
@@ -173,6 +179,7 @@ class Document(CommonInfoModel):
     round = models.CharField(max_length=255, null=True)
     customer_name = models.CharField(max_length=255, null=True)
     address = models.CharField(max_length=255, null=True)
+    question_type = models.CharField(max_length=100, choices=QuestionType.choices, default=QuestionType.DOMESTIC)
 
     class Meta:
         ordering = ['created_at']
