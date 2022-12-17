@@ -26,7 +26,7 @@ type scanPalletProps = {
 
 export interface PartList {
   prod_seq: string
-  item_sharp: string
+  id_no: string
 }
 
 export const signIn = async (user: signInProps) => {
@@ -84,8 +84,7 @@ export const importExcel = async (data: FormData): Promise<void> => {
 export const scanPallet = async (data: scanPalletProps): Promise<any> => {
   const response = await httpClient.post('/pallet/', data, {
     headers: {
-      Accept: 'application/json',
-      'access-control-allow-origin': '*'
+      Accept: 'application/json'
     }
   })
   return response.data

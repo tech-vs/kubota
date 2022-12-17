@@ -2,7 +2,6 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { scanPallet } from '@/services/serverServices'
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -12,11 +11,9 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Snackbar,
   TextField,
   Typography
 } from '@mui/material'
-import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
@@ -36,7 +33,7 @@ const Scan = ({}: Props) => {
   const [deEx, setDeEx] = useState<string>('')
   const [unit, setUnit] = useState<string>('')
   const [scan, setScan] = useState<scanProps>({
-    palletNo: '4097420170622',
+    palletNo: '',
     partSeq01: '',
     partSeq02: '',
     partSeq03: '',
@@ -288,7 +285,7 @@ const Scan = ({}: Props) => {
               </Button>
               <Box sx={{ flexGrow: 1 }} />
             </Box>
-            <Box sx={{ width: '100%', my: 5 }}>
+            {/* <Box sx={{ width: '100%', my: 5 }}>
               {loading ? <LinearProgress /> : <></>}
               {success ? (
                 <Snackbar open={success} autoHideDuration={6000} onClose={() => setSucess(false)}>
@@ -299,7 +296,7 @@ const Scan = ({}: Props) => {
               ) : (
                 <></>
               )}
-            </Box>
+            </Box> */}
           </CardContent>
         </Card>
       </Form>
@@ -323,19 +320,19 @@ const Scan = ({}: Props) => {
               part_list: [
                 {
                   prod_seq: '1',
-                  item_sharp: scan.partSeq01
+                  id_no: scan.partSeq01
                 },
                 {
                   prod_seq: '2',
-                  item_sharp: scan.partSeq02
+                  id_no: scan.partSeq02
                 },
                 {
                   prod_seq: '3',
-                  item_sharp: scan.partSeq03
+                  id_no: scan.partSeq03
                 },
                 {
                   prod_seq: '4',
-                  item_sharp: scan.partSeq04
+                  id_no: scan.partSeq04
                 }
               ],
               question_type: values.deEx,
