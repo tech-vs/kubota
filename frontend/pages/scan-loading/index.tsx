@@ -139,7 +139,7 @@ const Scan = ({ genDoc }: any) => {
           <Typography variant='h5'>Scan Loading</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
-        <Card sx={{ mx: 6 }}>
+        <Card sx={{ mx: { xs: 0, md: 6 } }}>
           <CardContent sx={{ pb: 4, px: 4 }}>
             <Box
               component='main'
@@ -559,7 +559,7 @@ const Scan = ({ genDoc }: any) => {
 }
 // This gets called on every request
 export async function getServerSideProps() {
-  const response = await httpClient.get('/pallet/loading/gen-doc/', {
+  const response = await httpClient.get('/pallet/document/gen-doc/', {
     headers: {
       Accept: 'application/json'
     }
