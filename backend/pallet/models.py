@@ -44,6 +44,32 @@ class RunningNumber(CommonInfoModel):
         self.save()
 
 
+class PalletPart(CommonInfoModel):
+    pallet = models.ForeignKey('pallet.Pallet', on_delete=models.CASCADE, null=True)
+    part = models.ForeignKey('syncdata.ProdInfoHistory', on_delete=models.CASCADE, null=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return self.text
+
+
+class PalletQuestion(CommonInfoModel):
+    pallet = models.ForeignKey('pallet.Pallet', on_delete=models.CASCADE, null=True)
+    question = models.ForeignKey('pallet.QuestionTemplate', on_delete=models.CASCADE, null=True)
+    text = models.TextField(max_length=255)
+    status = models.BooleanField(default=False)
+    type = models.CharField(max_length=100, choices=QuestionType.choices, default=QuestionType.DOMESTIC)
+    section = models.IntegerField()
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return self.text
+
+
 class Pallet(CommonInfoModel):
     pallet = models.CharField(max_length=255)
     skewer = models.CharField(max_length=255)
@@ -53,9 +79,15 @@ class Pallet(CommonInfoModel):
     packing_status = models.BooleanField(default=False)
     packing_datetime = models.DateTimeField(null=True)
     status = models.CharField(max_length=100, choices=PalletStatus.choices, null=True)
-    section_list = models.ManyToManyField(
-        'pallet.Section',
-        through='pallet.PalletSection',
+    question_type = models.CharField(max_length=100, choices=QuestionType.choices, default=QuestionType.DOMESTIC)
+    question_list = models.ManyToManyField(
+        'pallet.QuestionTemplate',
+        through='pallet.PalletQuestion',
+        blank=True,
+    )
+    part_list = models.ManyToManyField(
+        'syncdata.ProdInfoHistory',
+        through='pallet.PalletPart',
         blank=True,
     )
     
@@ -64,6 +96,13 @@ class Pallet(CommonInfoModel):
 
     def __str__(self):
         return f'{self.pallet}{self.skewer}'
+
+    @staticmethod
+    def get_date_from_pallet_string(pallet_string: str) -> str:
+        if pallet_string:
+            date = pallet_string[-8:]
+            return f'{date[6:8]}/{date[4:6]}/{date[0:4]}'
+        return ''
 
     def generate_question(self, type: str) -> None:
         question_data_list = list(QuestionTemplate.objects.filter(type=type).values('text', 'type', 'section'))
@@ -101,44 +140,6 @@ class Pallet(CommonInfoModel):
         return f'{year}{month}{no}'
 
 
-class PalletSection(CommonInfoModel):
-    pallet = models.ForeignKey('pallet.Pallet', on_delete=models.CASCADE, null=True)
-    section = models.ForeignKey('pallet.Section', on_delete=models.CASCADE, null=True)
-
-
-class Section(CommonInfoModel):
-    no = models.IntegerField()
-    question_list = models.ManyToManyField(
-        'pallet.Question',
-        through='pallet.SectionQuestion',
-        blank=True,
-    )
-    is_submit = models.BooleanField(default=False)
-
-    class Meta:
-        ordering = ['created_at']
-
-    def __str__(self):
-        return str(self.pk)
-
-
-class SectionQuestion(CommonInfoModel):
-    section = models.ForeignKey('pallet.Section', on_delete=models.CASCADE, null=True)
-    question = models.ForeignKey('pallet.Question', on_delete=models.CASCADE, null=True)
-
-
-class Question(CommonInfoModel):
-    text = models.TextField(max_length=255)
-    status = models.BooleanField(default=False)
-    type = models.CharField(max_length=100, choices=QuestionType.choices, default=QuestionType.DOMESTIC)
-
-    class Meta:
-        ordering = ['created_at']
-
-    def __str__(self):
-        return self.text
-
-
 class QuestionTemplate(CommonInfoModel):
     text = models.TextField(max_length=255)
     type = models.CharField(max_length=100, choices=QuestionType.choices, default=QuestionType.DOMESTIC)
@@ -166,6 +167,12 @@ class Document(CommonInfoModel):
         through='DocumentPallet',
         blank=True,
     )
+    ref_do_no = models.CharField(max_length=255, null=True)
+    total_qty = models.CharField(max_length=255, null=True)
+    invoice_no = models.CharField(max_length=255, null=True)
+    round = models.CharField(max_length=255, null=True)
+    customer_name = models.CharField(max_length=255, null=True)
+    address = models.CharField(max_length=255, null=True)
 
     class Meta:
         ordering = ['created_at']
@@ -203,9 +210,3 @@ class Document(CommonInfoModel):
 class DocumentPallet(CommonInfoModel):
     document = models.ForeignKey('pallet.Document', on_delete=models.CASCADE, null=True)
     pallet = models.ForeignKey('pallet.Pallet', on_delete=models.CASCADE, null=True)
-    ref_do_no = models.CharField(max_length=255, null=True)
-    total_qty = models.CharField(max_length=255, null=True)
-    invoice_no = models.CharField(max_length=255, null=True)
-    round = models.CharField(max_length=255, null=True)
-    customer_name = models.CharField(max_length=255, null=True)
-    address = models.CharField(max_length=255, null=True)

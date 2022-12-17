@@ -10,7 +10,7 @@ class NoneSerializer(serializers.Serializer):
 
 class PartDetailSerializer(serializers.Serializer):
     prod_seq = serializers.CharField(required=False)
-    item_sharp = serializers.CharField()
+    id_no = serializers.CharField()
 
 
 class PalletCreateSerializer(serializers.Serializer):

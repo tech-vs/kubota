@@ -5,9 +5,12 @@ from rest_framework.exceptions import NotFound
 from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from syncdata.models import PSETSDataUpload
+from syncdata.models import (
+    PSETSDataUpload,
+    ProdInfoHistory,
+)
 
-from pallet.models import Pallet, Question, QuestionType, Section, PalletStatus
+from pallet.models import Pallet, QuestionType, PalletStatus, PalletQuestion
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
                           QuestionListSerializer, SectionDetailSerializer)
@@ -62,24 +65,43 @@ class PalletViewSet(viewsets.GenericViewSet):
             'skewer_sharp': data.get('skewer', ''),
         }
 
-        check_dict_list = [{**part, **pallet_skewer_check} for part in part_list]
+        date = Pallet.get_date_from_pallet_string(pallet_string)
+
         check_item = []
         domestic_fail_text = ''
+        part_to_set_list = []
+        ## prepare part_list to compare and set to pallet
+        for part in part_list:
+            prod_seq = part.pop('prod_seq', '')
+            part_item = ProdInfoHistory.objects.filter(**part).first()
+            if part_item:
+                part_to_set_list.append((prod_seq, part_item))
+        if len(part_to_set_list) != 4:
+            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if question_type == QuestionType.EXPORT:
+            #logic check part_list export
+            for part in part_list:
+                if part_list[0].get('id_no', '') == part.get('id_no', ''):
+                    check_item.append(True)
         if question_type == QuestionType.DOMESTIC:
+            # logic check part_list domestic
+            check_dict_list = [{'delivery_date': date, **pallet_skewer_check, 'prod_seq': part_item[0], 'item_sharp': part_item[1].model_name} for part_item in part_to_set_list]
             for check in check_dict_list:
-                # logic check part_list domestic
                 if PSETSDataUpload.objects.filter(**check).exists():
                     check_item.append(True)
                 else:
-                    domestic_fail_text += f"prod_seq = {check.get('prod_seq', '')} - item_sharp = {check.get('item_sharp', '')} ไม่มีในระบบ ,"
-        if question_type == QuestionType.EXPORT:
-            for part in part_list:
-                #logic check part_list export
-                if part_list[0].get('item_sharp', '') == part.get('item_sharp', ''):
-                    check_item.append(True)
+                    domestic_fail_text += f"item_sharp = {check.get('item_sharp', '')} ไม่มีในระบบ ,"
 
         if check_item.count(True) == 4:
-            pallet, is_created = Pallet.objects.get_or_create(**data, pallet_string=pallet_string, internal_pallet_no=Pallet.generate_internal_pallet_no(), nw_gw=nw_gw)
+            pallet, is_created = Pallet.objects.get_or_create(
+                **data,
+                pallet_string=pallet_string,
+                internal_pallet_no=Pallet.generate_internal_pallet_no(),
+                nw_gw=nw_gw,
+                question_type=question_type,
+            )
+            pallet.set([part_item[1] for part_item in part_to_set_list])
             if not is_created:
                 return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
             pallet.generate_question(question_type)
@@ -151,7 +173,7 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
 
 
 class QuestionViewSet(viewsets.GenericViewSet):
-    queryset = Question.objects.all()
+    queryset = PalletQuestion.objects.all()
     lookup_field = 'id'
     action_serializers = {
         'partial_update': QuestionCheckSerializer,
