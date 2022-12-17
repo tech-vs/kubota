@@ -103,9 +103,9 @@ class PalletViewSet(viewsets.GenericViewSet):
                     'internal_pallet_no': Pallet.generate_internal_pallet_no()
                 }
             )
-            pallet.part_list.set([part_item[1] for part_item in part_to_set_list])
             if not is_created:
                 return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
+            PalletPart.objects.bulk_create([PalletPart(pallet=pallet, part=part_item[1]) for part_item in part_to_set_list])
             pallet.generate_question(question_type)
         else:
             return Response({'detail': f'item_sharp ไม่ตรงกัน {domestic_fail_text}'}, status=status.HTTP_400_BAD_REQUEST)
@@ -207,15 +207,18 @@ class QuestionViewSet(viewsets.GenericViewSet):
 
 class PalletPartViewSet(viewsets.GenericViewSet):
     queryset = PalletPart.objects.all().select_related('pallet', 'part')
+    lookup_url_kwarg = 'pallet_id'
     filter_backends = [DjangoFilterBackend]
     filterset_class = PalletPartListFilter
 
     action_serializers = {
-        'list': PalletPartListSerializer
+        'list': PalletPartListSerializer,
+        'retrieve': PalletListSerializer,
     }
 
     permission_classes_action = {
         'list': [AllowAny],
+        'retrieve': [AllowAny],
     }
 
     def get_serializer_class(self):
@@ -236,4 +239,11 @@ class PalletPartViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(page, many=True).data
         response = self.get_paginated_response(serializer).data
         response['total'] = int(len(self.get_queryset()))
+        return Response(response, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, *args, **kwargs):
+        pallet = Pallet.objects.filter(id=kwargs.get('pallet_id', -1)).first()
+        response = self.get_serializer(pallet).data
+        if pallet:
+            response['part_list'] = PalletPartListSerializer(pallet.palletpart_set.all(), many=True).data
         return Response(response, status=status.HTTP_200_OK)

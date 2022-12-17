@@ -40,7 +40,7 @@ class PalletPackingDoneSerializer(serializers.Serializer):
 
 
 class PalletListSerializer(serializers.Serializer):
-    id = serializers.IntegerField()
+    pallet_id = serializers.IntegerField(source='id')
     pallet = serializers.CharField()
     skewer = serializers.CharField()
     internal_pallet_no = serializers.CharField()

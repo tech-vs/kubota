@@ -22,10 +22,10 @@ class QuestionInline(admin.TabularInline):
 class PalletAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_display = ('id', 'pallet', 'skewer', 'pallet_string', 'internal_pallet_no', 'packing_status', 'packing_datetime', 'created_at', 'updated_at',)
-    inlines = [QuestionInline,]
+    inlines = [PartInline, QuestionInline,]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related('question_list',)
+        return super().get_queryset(request).prefetch_related('question_list', 'part_list')
     
     # def get_pallet_skewer(self, obj):
     #     if obj:

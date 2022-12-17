@@ -15,7 +15,7 @@ from pallet.serializers_loading import (
     DocUpdateSerializer,
     PartItemSerializer,
 )
-from pallet.filters import PalletLoadingFilter
+from pallet.filters import PalletLoadingFilter, DocumentListFilter
 
 
 class LoadingViewSet(viewsets.GenericViewSet):
@@ -87,14 +87,18 @@ class LoadingViewSet(viewsets.GenericViewSet):
 class DocumentViewSet(viewsets.GenericViewSet):
     queryset = Document.objects.all()
     lookup_field = 'id'
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = DocumentListFilter
     action_serializers = {
         'partial_update': DocUpdateSerializer,
         'gen_doc': DocNoGenSerializer,
+        'list': DocNoGenSerializer,
     }
 
     permission_classes_action = {
         'partial_update': [AllowAny],
         'gen_doc': [AllowAny],
+        'list': [AllowAny],
     }
 
     def get_serializer_class(self):
@@ -126,4 +130,12 @@ class DocumentViewSet(viewsets.GenericViewSet):
     def gen_doc(self, request, *args, **kwargs):
         doc = Document.generate_doc_object()
         response = self.get_serializer(doc).data
+        return Response(response, status=status.HTTP_200_OK)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True).data
+        response = self.get_paginated_response(serializer).data
+        response['total'] = int(len(self.get_queryset()))
         return Response(response, status=status.HTTP_200_OK)

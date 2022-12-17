@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from pallet.models import DocStatus, QuestionType
+from pallet.serializers import PalletPartListSerializer
 
 
 class NoneSerializer(serializers.Serializer):
@@ -20,6 +21,17 @@ class DocNoGenSerializer(serializers.Serializer):
     customer_name = serializers.CharField(allow_null=True)
     address = serializers.CharField(allow_null=True)
     question_type = serializers.ChoiceField(choices=QuestionType.choices, allow_null=True)
+    pallet_part_list = serializers.SerializerMethodField()
+
+    def get_pallet_part_list(self, obj):
+        pallet_list = obj.pallet_list.all().prefetch_related('palletpart_set')
+        print(pallet_list)
+        pallet_part_list = []
+        if pallet_list:
+            for pallet in pallet_list:
+                pallet_part_list += PalletPartListSerializer(pallet.palletpart_set.all(), many=True).data
+            return pallet_part_list
+        return []
 
 
 class DocUpdateSerializer(serializers.Serializer):
@@ -29,7 +41,8 @@ class DocUpdateSerializer(serializers.Serializer):
     round = serializers.CharField(required=False)
     customer_name = serializers.CharField(required=False)
     address = serializers.CharField(required=False)
-    question_type = serializers.ChoiceField(choices=QuestionType.choices)
+    question_type = serializers.ChoiceField(choices=QuestionType.choices, required=False)
+    status = serializers.ChoiceField(choices=DocStatus.choices, required=False)
 
 
 class PartItemSerializer(serializers.Serializer):
