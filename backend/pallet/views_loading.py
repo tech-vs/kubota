@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.filters import SearchFilter
+# from rest_framework.filters import SearchFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from syncdata.models import PSETSDataUpload
@@ -20,7 +20,7 @@ from pallet.filters import PalletLoadingFilter
 
 class LoadingViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all().prefetch_related('palletpart_set')
-    filter_backends = [SearchFilter, DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend]
     filterset_class = PalletLoadingFilter
 
     action_serializers = {

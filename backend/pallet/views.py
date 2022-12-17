@@ -3,7 +3,7 @@ from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import NotFound
-from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from syncdata.models import (
@@ -11,14 +11,21 @@ from syncdata.models import (
     ProdInfoHistory,
 )
 
-from pallet.models import Pallet, QuestionType, PalletStatus, PalletQuestion
+from pallet.models import (
+    Pallet,
+    QuestionType,
+    PalletStatus,
+    PalletQuestion,
+    PalletPart,
+)
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
                           QuestionListSerializer, PalletPackingDoneSerializer)
+from pallet.filters import PalletPartListFilter
 
 
 class PalletViewSet(viewsets.GenericViewSet):
-    queryset = Pallet.objects.all()
+    queryset = Pallet.objects.all().prefetch_related('part_list', 'question_list')
 
     action_serializers = {
         'create': PalletCreateSerializer,
@@ -206,4 +213,40 @@ class QuestionViewSet(viewsets.GenericViewSet):
 
         question.save()
         response = QuestionListSerializer(question).data
+        return Response(response, status=status.HTTP_200_OK)
+
+
+class PalletPartViewSet(viewsets.GenericViewSet):
+    queryset = PalletPart.objects.all().select_related('pallet', 'part')
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = PalletPartListFilter
+
+    action_serializers = {
+        'create': PalletCreateSerializer,
+        'list': PalletListSerializer
+    }
+
+    permission_classes_action = {
+        'list': [AllowAny],
+        'create': [AllowAny],
+    }
+
+    def get_serializer_class(self):
+        if hasattr(self, 'action_serializers'):
+            if self.action in self.action_serializers:
+                return self.action_serializers[self.action]
+        return super().get_serializer_class()
+    
+    def get_permissions(self):
+        try:
+            return [permission() for permission in self.permission_classes_action[self.action]]
+        except KeyError:
+            return [permission() for permission in self.permission_classes]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True).data
+        response = self.get_paginated_response(serializer).data
+        response['total'] = int(len(self.get_queryset()))
         return Response(response, status=status.HTTP_200_OK)
