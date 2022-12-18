@@ -219,6 +219,10 @@ td.clear-border-bottom {
   .div6 { grid-area: 2 / 1 / 5 / 2; }
   .div7 { grid-area: 2 / 2 / 5 / 3; }
 
+  .no-print {
+    display: block;
+  }
+
 /**
  * Print Stylesheet for reset @media print
 * @version         1.0
@@ -229,6 +233,10 @@ td.clear-border-bottom {
   .page {
     padding: var(--page-top) var(--page-right) var(--page-bottom) var(--page-left);
     margin: 0;
+  }
+
+  .no-print {
+    display: none;
   }
       
   /** Seitenränder einstellen */       

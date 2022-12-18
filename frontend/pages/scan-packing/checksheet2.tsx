@@ -166,7 +166,8 @@ const View = ({ checksheets, id }: any) => {
 
             await confirmCheckSheet2(id)
             alert('Packing Successfully')
-            router.push(`/scan-packing`)
+            router.push(`/preview/${id}?type=1`)
+            // router.push(`/scan-packing`)
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {
