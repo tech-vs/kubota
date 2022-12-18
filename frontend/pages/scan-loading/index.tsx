@@ -1,5 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
+import { inputLoadingDoc } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
   Alert,
@@ -112,12 +113,13 @@ const Scan = ({ genDoc }: any) => {
   const [customer, setCustomer] = useState<string>('')
   const [address, setAddress] = useState<string>('')
   const [input, setInput] = useState({
-    refNo: '',
-    qty: '',
-    invoiceNo: '',
-    round: '',
-    customerName: '',
-    address: ''
+    refNo: genDoc.ref_do_no,
+    qty: genDoc.total_qty,
+    invoiceNo: genDoc.invoice_no,
+    round: genDoc.round,
+    customerName: genDoc.customer_name,
+    address: genDoc.address,
+    question_type: genDoc.question_type
   })
   // const [scan, setScan] = useState({
   //   internalPalletNo: ''
@@ -158,8 +160,9 @@ const Scan = ({ genDoc }: any) => {
                 value={genDoc.doc_no}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
-                  setInput({ ...input, refNo: e.target.value })
-                  setFieldValue('input.refNo', e.target.value)
+
+                  // setInput({ ...input, refNo: e.target.value })
+                  // setFieldValue('input.refNo', e.target.value)
                 }}
               />
 
@@ -182,8 +185,6 @@ const Scan = ({ genDoc }: any) => {
                 value={genDoc.delivery_date}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
-                  setInput({ ...input, refNo: e.target.value })
-                  setFieldValue('input.refNo', e.target.value)
                 }}
               />
 
@@ -204,11 +205,13 @@ const Scan = ({ genDoc }: any) => {
                   labelId='demo-simple-select-required-label'
                   id='demo-simple-select-required'
                   label='deEx *'
-                  value={deEx}
+                  value={input.question_type}
                   onChange={(e: SelectChangeEvent<string>) => {
                     e.preventDefault()
-                    setDeEx(e.target.value)
-                    setFieldValue('deEx', e.target.value)
+                    setInput({ ...input, question_type: e.target.value })
+                    setFieldValue('input.question_type', e.target.value)
+                    // setDeEx(e.target.value)
+                    // setFieldValue('deEx', e.target.value)
                   }}
                 >
                   <MenuItem value={'Domestic'}>Domestic</MenuItem>
@@ -324,11 +327,11 @@ const Scan = ({ genDoc }: any) => {
                   labelId='demo-simple-select-required-label'
                   id='demo-simple-select-required'
                   label='Customer *'
-                  value={customer}
+                  value={input.customerName}
                   onChange={(e: SelectChangeEvent<string>) => {
                     e.preventDefault()
-                    setCustomer(e.target.value)
-                    setFieldValue('customer', e.target.value)
+                    setInput({ ...input, customerName: e.target.value })
+                    setFieldValue('customerName', e.target.value)
                   }}
                 >
                   <MenuItem value={'Amatanakhon'}>SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)</MenuItem>
@@ -351,7 +354,13 @@ const Scan = ({ genDoc }: any) => {
                 id='filled-basic'
                 label='Address'
                 variant='filled'
-                value={customer == 'Amatanakhon' ? Amatanakhon : customer == 'Navanakorn' ? Navanakorn : ''}
+                value={
+                  input.customerName == 'Amatanakhon'
+                    ? Amatanakhon
+                    : input.customerName == 'Navanakorn'
+                    ? Navanakorn
+                    : ''
+                }
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
                   setAddress(e.target.value)
@@ -360,112 +369,6 @@ const Scan = ({ genDoc }: any) => {
               />
               <Box sx={{ flexGrow: 1 }} />
             </Box>
-            {/* <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Scan Internal Pallet No.'
-                variant='filled'
-                value={scan.internalPalletNo}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setScan({ ...scan, internalPalletNo: e.target.value })
-                  setFieldValue('scan.internalPalletNo', e.target.value)
-                }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box> */}
-            {/* <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 5,
-                position: 'relative'
-              }}
-            >
-              <Box sx={{ flexGrow: 1 }} />
-              <Button
-                variant='contained'
-                onClick={async () => {
-                  const response = await scanLoading(scan.internalPalletNo)
-                  scanLoadingResponse = response.item_list
-                  console.log(scanLoadingResponse)
-                  alert(scanLoadingResponse)
-                  refreshData()
-                }}
-                color='primary'
-                sx={{ marginRight: 1 }}
-              >
-                Check
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
-            </Box> */}
-            {/* <Box
-              sx={{
-                height: 360,
-                width: '100%',
-                '& .cold': {
-                  color: 'success.main'
-                },
-                '& .hot': {
-                  color: 'error.main'
-                },
-                '& .headerField': {
-                  fontSize: 16,
-                  backgroundColor: '#55AAFF'
-                },
-                '& .customerField': {
-                  backgroundColor: '#c7ddb5'
-                },
-                '& .cellField': {
-                  fontSize: 20,
-                  fontWeight: '700'
-                }
-              }}
-            >
-              <DataGrid
-                sx={{
-                  boxShadow: 2,
-                  '& .MuiDataGrid-cell:hover': {
-                    color: 'primary.main'
-                  },
-                  '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
-                    outline: 'none'
-                  }
-                }}
-                rows={[]}
-                columns={columns}
-                getCellClassName={(params: GridCellParams<string>) => {
-                  if (params.field === 'customer') {
-                    return 'customerField'
-                  }
-                  if (params.value == 'OK') {
-                    return 'cold'
-                  }
-                  if (params.value == 'Waiting') {
-                    return 'hot'
-                  }
-                  return ''
-                }}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
-                disableSelectionOnClick
-                disableVirtualization
-                disableExtendRowFullWidth
-                disableIgnoreModificationsIfProcessingProps
-                disableColumnSelector
-                // disableColumnFilter
-                // disableColumnMenu
-              />
-            </Box> */}
             <Box
               component='main'
               sx={{
@@ -520,32 +423,30 @@ const Scan = ({ genDoc }: any) => {
             //   setLoading(false)
             // }, 4000)
 
-            setInput({
-              refNo: '',
-              qty: '',
-              invoiceNo: '',
-              round: '',
-              customerName: '',
-              address: ''
-            })
-            setDeEx('')
-            router.push(
+            // setInput({
+            //   refNo: '',
+            //   qty: '',
+            //   invoiceNo: '',
+            //   round: '',
+            //   customerName: '',
+            //   address: ''
+            // })
+            // setDeEx('')
+            await inputLoadingDoc(
               {
-                pathname: '/scan-loading/check-pallet',
-                query: {
-                  docNo: genDoc.doc_no,
-                  delDate: genDoc.del_date,
-                  deEx: values.deEx,
-                  refNo: input.refNo,
-                  qty: input.qty,
-                  invoiceNo: input.invoiceNo,
-                  round: input.round,
-                  customerName: input.customerName,
-                  address: input.address
-                }
+                ref_do_no: input.refNo,
+                question_type: input.question_type,
+                status: 'loading',
+                total_qty: input.qty,
+                invoice_no: input.invoiceNo,
+                round: input.round,
+                customer_name: input.customerName,
+                address: input.address
               },
-              '/scan-loading/check-pallet'
+              genDoc.id
             )
+            router.push(`/scan-loading/check-pallet`)
+            // router.push(`/scan-loading/checksheet1?id=${genDoc.id}`)
             setSubmitting(false)
           } catch (error) {
             alert(error)
@@ -559,7 +460,7 @@ const Scan = ({ genDoc }: any) => {
 }
 // This gets called on every request
 export async function getServerSideProps() {
-  const response = await httpClient.get('/pallet/loading/gen-doc/', {
+  const response = await httpClient.get('/pallet/document/gen-doc/', {
     headers: {
       Accept: 'application/json'
     }

@@ -24,6 +24,7 @@ import {
 } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { Formik } from 'formik'
+import { useRouter } from 'next/router'
 import { ChangeEvent, Fragment, useState } from 'react'
 import * as Yup from 'yup'
 {
@@ -48,14 +49,22 @@ const rows = [
   { id: 9, role: 'NOT_ADMIN', user: 'test9' }
 ]
 
-const user = ({ user }: any) => {
+const User = ({ user }: any) => {
+  const router = useRouter()
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = () => {
+    router.replace(router.asPath)
+  }
+
   const [addUserForm, setAddUserForm] = useState({
     username: '',
     password: '',
     role: 'ADMIN'
   })
   const [deleteUsername, setDeleteUsername] = useState({
-    username: ''
+    username: '',
+    id: ''
   })
   const [addUserPopUpOpen, setAddUserPopUpOpen] = useState(false)
 
@@ -139,7 +148,7 @@ const user = ({ user }: any) => {
             <IconButton
               onClick={() => {
                 setDeletePopUpOpen(true)
-                setDeleteUsername({ username: row.username })
+                setDeleteUsername({ username: row.username, id: row.id })
               }}
             >
               <DeleteIcon sx={{ color: '#FF0000' }} />
@@ -243,6 +252,7 @@ const user = ({ user }: any) => {
               role: values.role
             }
             await addUser(data)
+            refreshData()
             setSubmitting(false)
             setAddUserPopUpOpen(false)
           } catch (error) {
@@ -334,8 +344,9 @@ const user = ({ user }: any) => {
             color='secondary'
             variant='contained'
             onClick={async () => {
-              await deleteUser(deleteUsername)
+              await deleteUser(deleteUsername.id)
               setDeletePopUpOpen(false)
+              refreshData()
             }}
           >
             Confirm
@@ -372,6 +383,8 @@ export async function getServerSideProps() {
       Accept: 'application/json'
     }
   })
+  console.log(response.data.results)
+
   return {
     props: {
       user: response.data.results
@@ -379,4 +392,4 @@ export async function getServerSideProps() {
   }
 }
 
-export default withAuth(user)
+export default withAuth(User)

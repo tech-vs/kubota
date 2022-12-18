@@ -10,8 +10,15 @@ type addUserProps = {
   password: string
   role: string
 }
-type deleteUserProps = {
-  username: string
+type inputLoadingDocProps = {
+  ref_do_no: string
+  total_qty: string
+  invoice_no: string
+  round: string
+  customer_name: string
+  address: string
+  question_type: string
+  status: string
 }
 
 type exportExcelProps = {
@@ -27,6 +34,10 @@ type scanPalletProps = {
 export interface PartList {
   prod_seq: string
   id_no: string
+}
+type submitLoadingProps = {
+  is_send_approve: boolean
+  pallet_id: Number
 }
 
 export const signIn = async (user: signInProps) => {
@@ -59,11 +70,8 @@ export const addUser = async (data: addUserProps): Promise<void> => {
   return response.data
 }
 
-export const deleteUser = async (data: deleteUserProps): Promise<void> => {
-  const response = await httpClient.delete('/auth/deleteuser', {
-    data: data,
-    baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API
-  })
+export const deleteUser = async (data: String): Promise<void> => {
+  const response = await httpClient.delete(`/account/delete/${data}`)
   return response.data
 }
 
@@ -82,11 +90,7 @@ export const importExcel = async (data: FormData): Promise<void> => {
 }
 
 export const scanPallet = async (data: scanPalletProps): Promise<any> => {
-  const response = await httpClient.post('/pallet/', data, {
-    headers: {
-      Accept: 'application/json'
-    }
-  })
+  const response = await httpClient.post('/pallet/', data)
   return response.data
 }
 export const confirmCheckSheet1 = async (palletID: String): Promise<any> => {
@@ -99,12 +103,23 @@ export const confirmCheckSheet2 = async (palletID: String): Promise<any> => {
   return response.data
 }
 
-export const scanLoading = async (internalPalletId: String): Promise<any> => {
-  const response = await httpClient.get(`/pallet/loading/?search=${internalPalletId}&status=finish_pack`)
+// Loading
+export const inputLoadingDoc = async (data: inputLoadingDocProps, id: string): Promise<any> => {
+  const response = await httpClient.patch(`/pallet/document/${id}/`, data)
   return response.data
 }
 
-export const submitLoading = async (internalPalletId: String): Promise<any> => {
-  const response = await httpClient.get(`/pallet/loading/?search=${internalPalletId}&status=finish_pack`)
+export const scanLoading = async (internalPalletNo: String): Promise<any> => {
+  const response = await httpClient.get(`/pallet/loading/?internal_pallet_no=${internalPalletNo}&status=finish_pack`)
+  return response.data
+}
+
+export const confirmCheckSheet3 = async (palletID: String): Promise<any> => {
+  const response = await httpClient.get(`/pallet/${palletID}/section/3/submit/`)
+  return response.data
+}
+
+export const submitLoading = async (data: submitLoadingProps): Promise<any> => {
+  const response = await httpClient.post(`/pallet/loading/submit/`, data)
   return response.data
 }

@@ -1,6 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import { confirmCheckSheet1 } from '@/services/serverServices'
+import { confirmCheckSheet1, submitLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
   Box,
@@ -21,6 +21,8 @@ type Props = {}
 
 const View = ({ checksheets, id }: any) => {
   const router = useRouter()
+  const { internalpalletid } = router.query
+
   // Call this function whenever you want to
   // refresh props!
   const refreshData = () => {
@@ -134,16 +136,48 @@ const View = ({ checksheets, id }: any) => {
             <Box
               component='main'
               sx={{
-                display: { xs: 'none', md: 'flex', flexDirection: 'row' },
-                my: 2,
-                position: 'relative',
-                height: '55px'
+                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                my: 5,
+                position: 'relative'
               }}
             >
-              <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
-                Ok
+              <Box sx={{ flexGrow: 1 }} />
+              <Button
+                variant='contained'
+                onClick={async () => {
+                  if (typeof internalpalletid === 'string') {
+                    const internalpalletidInt = parseInt(internalpalletid)
+                    await submitLoading({
+                      is_send_approve: false,
+                      pallet_id: internalpalletidInt
+                    })
+                  }
+                  alert('Loading successfully')
+                  router.push(`/scan-loading/check-pallet`)
+                }}
+                color='primary'
+                sx={{ marginRight: 1 }}
+              >
+                Submit
               </Button>
-
+              <Button
+                variant='contained'
+                onClick={async () => {
+                  if (typeof internalpalletid === 'string') {
+                    const internalpalletidInt = parseInt(internalpalletid)
+                    await submitLoading({
+                      is_send_approve: true,
+                      pallet_id: internalpalletidInt
+                    })
+                  }
+                  alert('Last oading successfully and Request Approval')
+                  router.push(`/scan-loading`)
+                }}
+                color='primary'
+                sx={{ marginRight: 1 }}
+              >
+                Submit & Request Approval
+              </Button>
               <Box sx={{ flexGrow: 1 }} />
             </Box>
           </CardContent>
@@ -156,7 +190,6 @@ const View = ({ checksheets, id }: any) => {
       <Formik
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          // alert(values.customer)
           try {
             // setLoading(true)
             // setTimeout(() => {
@@ -165,14 +198,13 @@ const View = ({ checksheets, id }: any) => {
             // }, 4000)
 
             await confirmCheckSheet1(id)
-            router.push(`/scan-packing/checksheet2?id=${id}`)
+            router.push(`scan-loading/check-pallet/`)
             setSubmitting(false)
-          } catch (error) {
-            alert(error)
+          } catch (error: any) {
+            if (error.response) {
+              alert(JSON.stringify(error.response.data.detail))
+            }
           }
-
-          // resetForm()
-          // window.confirm('test')
         }}
       >
         {props => showForm(props)}
@@ -184,7 +216,7 @@ const View = ({ checksheets, id }: any) => {
 // This gets called on every request
 export async function getServerSideProps(context: any) {
   const id = context.query.id
-  const response = await httpClient.get(`/pallet/${id}/section/1/question/`, {
+  const response = await httpClient.get(`/pallet/${id}/section/3/question/`, {
     headers: {
       Accept: 'application/json'
     }

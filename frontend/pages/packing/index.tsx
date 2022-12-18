@@ -1,5 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
+import httpClient from '@/utils/httpClient'
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
@@ -22,8 +23,8 @@ const Overall = ({ packingList }: any) => {
 
   const columns: GridColDef[] = [
     {
-      field: 'palletID',
-      headerName: 'Pallet No.',
+      field: 'internal_pallet_no',
+      headerName: 'Internal Pallet No.',
       headerAlign: 'center',
       headerClassName: 'headerField',
       align: 'center',
@@ -31,7 +32,7 @@ const Overall = ({ packingList }: any) => {
       width: 150
     },
     {
-      field: 'modelCode',
+      field: 'model_code',
       headerName: 'Model Code',
       headerAlign: 'center',
       headerClassName: 'headerField',
@@ -41,7 +42,7 @@ const Overall = ({ packingList }: any) => {
       width: 150
     },
     {
-      field: 'modelName',
+      field: 'model_name',
       headerName: 'Model Name',
       headerAlign: 'center',
       headerClassName: 'headerField',
@@ -50,7 +51,7 @@ const Overall = ({ packingList }: any) => {
       width: 150
     },
     {
-      field: 'serialNo',
+      field: 'serial_no',
       headerName: 'Serial No.',
       headerAlign: 'center',
       headerClassName: 'headerField',
@@ -59,8 +60,35 @@ const Overall = ({ packingList }: any) => {
       width: 150
     },
     {
-      field: 'createDate',
-      headerName: 'Create Date',
+      field: 'country_code',
+      headerName: 'Country Code',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'country_name',
+      headerName: 'Country Name',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'distributor_code',
+      headerName: 'Distributor Code',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'distributor_name',
+      headerName: 'Distributor Name',
       headerAlign: 'center',
       headerClassName: 'headerField',
       align: 'center',
@@ -159,6 +187,7 @@ const Overall = ({ packingList }: any) => {
         }}
       >
         <DataGrid
+          getRowId={packingList => packingList.pallet_id}
           sx={{
             boxShadow: 2,
             '& .MuiDataGrid-cell:hover': {
@@ -168,7 +197,7 @@ const Overall = ({ packingList }: any) => {
               outline: 'none'
             }
           }}
-          rows={rows}
+          rows={packingList}
           columns={columns}
           getCellClassName={(params: GridCellParams<string>) => {
             if (params.field === 'customer') {
@@ -198,17 +227,16 @@ const Overall = ({ packingList }: any) => {
 }
 
 // This gets called on every request
-// export async function getServerSideProps() {
-//   const response = await httpClient.get('/pallet/', {
-//     headers: {
-//       Accept: 'application/json'
-//     }
-//   })
-
-//   return {
-//     props: {
-//       packingList: response.data.results
-//     }
-//   }
-// }
+export async function getServerSideProps() {
+  const response = await httpClient.get(`/pallet/part-list/?status=finish_pack`, {
+    headers: {
+      Accept: 'application/json'
+    }
+  })
+  return {
+    props: {
+      packingList: response.data.results
+    }
+  }
+}
 export default withAuth(Overall)

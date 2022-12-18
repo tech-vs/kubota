@@ -356,9 +356,6 @@ const Scan = ({}: Props) => {
               alert(JSON.stringify(error.response.data))
             }
           }
-
-          // resetForm()
-          // window.confirm('test')
         }}
       >
         {props => showForm(props)}

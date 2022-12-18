@@ -19,7 +19,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 type Props = {}
 
-const View = ({ checksheets,id }: any) => {
+const View = ({ checksheets, id }: any) => {
   const router = useRouter()
   // Call this function whenever you want to
   // refresh props!
@@ -166,12 +166,11 @@ const View = ({ checksheets,id }: any) => {
             await confirmCheckSheet1(id)
             router.push(`/scan-packing/checksheet2?id=${id}`)
             setSubmitting(false)
-          } catch (error) {
-            alert(error)
+          } catch (error: any) {
+            if (error.response) {
+              alert(JSON.stringify(error.response.data.detail))
+            }
           }
-
-          // resetForm()
-          // window.confirm('test')
         }}
       >
         {props => showForm(props)}
@@ -181,7 +180,7 @@ const View = ({ checksheets,id }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps(context:any) {
+export async function getServerSideProps(context: any) {
   const id = context.query.id
   const response = await httpClient.get(`/pallet/${id}/section/1/question/`, {
     headers: {

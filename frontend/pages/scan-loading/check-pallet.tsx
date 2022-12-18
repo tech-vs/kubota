@@ -1,6 +1,7 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { scanLoading } from '@/services/serverServices'
+import httpClient from '@/utils/httpClient'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
@@ -9,7 +10,7 @@ import { ChangeEvent, useState } from 'react'
 type Props = {}
 const columns: GridColDef[] = [
   {
-    field: 'modelCode',
+    field: 'model_code',
     headerName: 'Model Code',
     headerAlign: 'center',
     headerClassName: 'headerField',
@@ -18,7 +19,7 @@ const columns: GridColDef[] = [
     width: 150
   },
   {
-    field: 'modelName',
+    field: 'model_name',
     headerName: 'Model Name',
     headerAlign: 'center',
     headerClassName: 'headerField',
@@ -28,7 +29,7 @@ const columns: GridColDef[] = [
     width: 250
   },
   {
-    field: 'serialNo',
+    field: 'serial_no',
     headerName: 'ID No.',
     headerAlign: 'center',
     headerClassName: 'headerField',
@@ -37,7 +38,7 @@ const columns: GridColDef[] = [
     width: 150
   },
   {
-    field: 'countryCode',
+    field: 'country_code',
     headerName: 'Country Code',
     headerAlign: 'center',
     headerClassName: 'headerField',
@@ -46,7 +47,7 @@ const columns: GridColDef[] = [
     width: 150
   },
   {
-    field: 'countryName',
+    field: 'country_name',
     headerName: 'Country Name',
     headerAlign: 'center',
     headerClassName: 'headerField',
@@ -55,7 +56,7 @@ const columns: GridColDef[] = [
     width: 150
   },
   {
-    field: 'distributoeCode',
+    field: 'distributor_code',
     headerName: 'Distributor Code',
     headerAlign: 'center',
     headerClassName: 'headerField',
@@ -64,7 +65,7 @@ const columns: GridColDef[] = [
     width: 150
   },
   {
-    field: 'distributoeName',
+    field: 'distributor_name',
     headerName: 'Distributor Name',
     headerAlign: 'center',
     headerClassName: 'headerField',
@@ -80,9 +81,9 @@ const columns: GridColDef[] = [
     flex: 1
   }
 ]
-
-let scanLoadingResponse: any[] = []
-const View = ({ checksheets }: any) => {
+let scanLoadingResponse: any = {}
+let scanLoadingResponseResult: any[] = []
+const View = ({ genDoc }: any) => {
   const router = useRouter()
   // Call this function whenever you want to
   // refresh props!
@@ -130,15 +131,18 @@ const View = ({ checksheets }: any) => {
             label='Pallet No.'
             variant='filled'
             value={scan.internalPalletNo}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            onChange={async (e: ChangeEvent<HTMLInputElement>) => {
               e.preventDefault()
               setScan({ ...scan, internalPalletNo: e.target.value })
               setFieldValue('scan.internalPalletNo', e.target.value)
+              scanLoadingResponse = await scanLoading(scan.internalPalletNo)
+              scanLoadingResponseResult = scanLoadingResponse.item_list
+              refreshData()
             }}
           />
           <Box sx={{ flexGrow: 1 }} />
         </Box>
-        <Box
+        {/* <Box
           component='main'
           sx={{
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
@@ -150,10 +154,8 @@ const View = ({ checksheets }: any) => {
           <Button
             variant='contained'
             onClick={async () => {
-              const response = await scanLoading(scan.internalPalletNo)
-              scanLoadingResponse = response.item_list
-              console.log(scanLoadingResponse)
-              alert(scanLoadingResponse)
+              response = await scanLoading(scan.internalPalletNo)
+
               refreshData()
             }}
             color='primary'
@@ -162,7 +164,7 @@ const View = ({ checksheets }: any) => {
             Check
           </Button>
           <Box sx={{ flexGrow: 1 }} />
-        </Box>
+        </Box> */}
         <Box
           sx={{
             height: 360,
@@ -187,6 +189,7 @@ const View = ({ checksheets }: any) => {
           }}
         >
           <DataGrid
+            getRowId={scanLoadingResponseResult => scanLoadingResponseResult.serial_no}
             sx={{
               boxShadow: 2,
               '& .MuiDataGrid-cell:hover': {
@@ -196,7 +199,7 @@ const View = ({ checksheets }: any) => {
                 outline: 'none'
               }
             }}
-            rows={[]}
+            rows={scanLoadingResponseResult}
             columns={columns}
             getCellClassName={(params: GridCellParams<string>) => {
               if (params.field === 'customer') {
@@ -234,24 +237,13 @@ const View = ({ checksheets }: any) => {
           <Button
             variant='contained'
             onClick={() => {
-              alert('test success')
+              router.push(`/scan-loading/checksheet1?id=${genDoc.id}&internalpalletid=${scanLoadingResponse.pallet_id}`)
               refreshData()
             }}
             color='primary'
             sx={{ marginRight: 1 }}
           >
-            Submit
-          </Button>
-          <Button
-            variant='contained'
-            onClick={() => {
-              alert('test success')
-              refreshData()
-            }}
-            color='primary'
-            sx={{ marginRight: 1 }}
-          >
-            Submit & Request Approval
+            OK
           </Button>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
@@ -265,20 +257,20 @@ const View = ({ checksheets }: any) => {
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           // alert(values.customer)
           try {
-            setLoading(true)
-            setTimeout(() => {
-              setSucess(true)
-              setLoading(false)
-            }, 4000)
+            // setLoading(true)
+            // setTimeout(() => {
+            //   setSucess(true)
+            //   setLoading(false)
+            // }, 4000)
 
-            resetForm({
-              values: {
-                file: null,
-                customer: ''
-              }
-            })
-            setCustomer('')
-            setFileName('')
+            // resetForm({
+            //   values: {
+            //     file: null,
+            //     customer: ''
+            //   }
+            // })
+            // setCustomer('')
+            // setFileName('')
             setSubmitting(false)
           } catch (error) {
             alert('Error')
@@ -295,18 +287,18 @@ const View = ({ checksheets }: any) => {
 }
 
 // This gets called on every request
-// export async function getServerSideProps() {
-//   const response = await httpClient.get('/checksheet?questionID=1', {
-//     headers: {
-//       Accept: 'application/json'
-//     }
-//   })
+export async function getServerSideProps() {
+  const response = await httpClient.get('/pallet/document/gen-doc/', {
+    headers: {
+      Accept: 'application/json'
+    }
+  })
 
-//   return {
-//     props: {
-//       checksheets: response.data
-//     }
-//   }
-// }
+  return {
+    props: {
+      genDoc: response.data
+    }
+  }
+}
 
 export default withRouter(withAuth(View))
