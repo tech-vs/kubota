@@ -17,6 +17,7 @@ from pallet.models import (
     PalletStatus,
     PalletQuestion,
     PalletPart,
+    PalletStatus
 )
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
@@ -242,8 +243,14 @@ class PalletPartViewSet(viewsets.GenericViewSet):
         return Response(response, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
-        pallet = Pallet.objects.filter(id=kwargs.get('pallet_id', -1)).first()
+        pallet = Pallet.objects.filter(id=kwargs.get('pallet_id', -1)).prefetch_related('palletquestion_set', 'palletpart_set').first()
         response = self.get_serializer(pallet).data
         if pallet:
+            question_list = []
+            if pallet.status == PalletStatus.FINISH_PACK:
+                question_list = pallet.palletquestion_set.filter(section__in=[1,2])
+            elif pallet.status == PalletStatus.SHIPPED:
+                question_list = pallet.palletquestion_set.all()
             response['part_list'] = PalletPartListSerializer(pallet.palletpart_set.all(), many=True).data
+            response['question_list'] = QuestionListSerializer(question_list, many=True).data
         return Response(response, status=status.HTTP_200_OK)

@@ -14,6 +14,7 @@ from pallet.serializers_loading import (
     LoadingPalletSerializer,
     DocUpdateSerializer,
     PartItemSerializer,
+    DocDetailSerializer,
 )
 from pallet.filters import PalletLoadingFilter, DocumentListFilter
 
@@ -93,12 +94,14 @@ class DocumentViewSet(viewsets.GenericViewSet):
         'partial_update': DocUpdateSerializer,
         'gen_doc': DocNoGenSerializer,
         'list': DocNoGenSerializer,
+        'retrieve': DocDetailSerializer,
     }
 
     permission_classes_action = {
         'partial_update': [AllowAny],
         'gen_doc': [AllowAny],
         'list': [AllowAny],
+        'retrieve': [AllowAny],
     }
 
     def get_serializer_class(self):
@@ -138,4 +141,9 @@ class DocumentViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(page, many=True).data
         response = self.get_paginated_response(serializer).data
         response['total'] = int(len(self.get_queryset()))
+        return Response(response, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, *args, **kwargs):
+        doc = self.get_object()
+        response = self.get_serializer(doc).data
         return Response(response, status=status.HTTP_200_OK)

@@ -49,19 +49,20 @@ class AuthViewSet(viewsets.GenericViewSet):
 
 class UserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all().order_by('-created_at')
+    lookup_field = 'id'
     filter_backends = [SearchFilter]
     search_fields = ['first_name', 'last_name']
     
     action_serializers = {
         'create': UserCreateSerializer,
         'partial_update': UserChangePasswordSerializer,
-        'retrieve': UserSerializer,
+        'profile': UserSerializer,
         'list': UserSerializer,
     }
 
     permission_classes_action = {
         'create': [AllowAny],
-        'retrieve': [IsAuthenticated],
+        'profile': [IsAuthenticated],
         'partial_update': [IsAuthenticated],
         'list': [AllowAny],
         'destroy': [AllowAny],
@@ -91,11 +92,17 @@ class UserViewSet(viewsets.GenericViewSet):
         response = get_token(user)
         return Response(response, status=status.HTTP_201_CREATED)
 
-    def retrieve(self, request, *args, **kwargs):
-        # user = self.get_object()
+    @action(detail=False, methods=['GET'], url_path='profile')
+    def profile(self, request, *args, **kwargs):
         user = self.request.user
         response = self.get_serializer(user).data
         return Response(response, status=status.HTTP_200_OK)
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     # user = self.get_object()
+    #     user = self.request.user
+    #     response = self.get_serializer(user).data
+    #     return Response(response, status=status.HTTP_200_OK)
 
     def partial_update(self, request, *args, **kwargs):
         # user = self.get_object()

@@ -4,17 +4,24 @@ WORKDIR /app
 
 COPY . /app
 
-# ARG HTTP_PROXY=172.20.176.9:8080
-# ARG HTTPS_PROXY=172.20.176.9:8080
-# ADD proxy.conf /etc/apt/apt.conf.d/
+ARG HTTP_PROXY=172.20.176.9:8080
+ARG HTTPS_PROXY=172.20.176.9:8080
+ADD proxy.conf /etc/apt/apt.conf.d/
 ADD odbcinst.ini /etc/
 RUN apt-get update -y
+RUN apt-get install -y alien
+RUN apt-get install -y libaio1
 RUN apt-get install -y apt-utils
 RUN apt-get install -y unixodbc
 RUN apt-get install -y unixodbc-dev
 RUN apt-get install -y freetds-dev
 RUN apt-get install -y freetds-bin
 RUN apt-get install -y tdsodbc
+
+RUN alien -i oracle-instantclient12.2-basic-12.2.0.1.0-1.x86_64.rpm
+RUN export ORACLE_HOME=/usr/lib/oracle/12.2/client64
+RUN export LD_LIBRARY_PATH=/usr/lib/oracle/12.2/client64/lib
+RUN export ORACLE_SID=asdb
 
 
 RUN pip install --upgrade pip

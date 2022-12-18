@@ -52,6 +52,7 @@ class QuestionListSerializer(serializers.Serializer):
     text = serializers.CharField()
     status = serializers.BooleanField()
     type = serializers.ChoiceField(choices=QuestionType.choices)
+    section = serializers.IntegerField()
 
 
 class QuestionCheckSerializer(serializers.Serializer):
