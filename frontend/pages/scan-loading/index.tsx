@@ -141,7 +141,7 @@ const Scan = ({ genDoc }: any) => {
           <Typography variant='h5'>Scan Loading</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
-        <Card sx={{ mx: 6 }}>
+        <Card sx={{ mx: { xs: 0, md: 6 } }}>
           <CardContent sx={{ pb: 4, px: 4 }}>
             <Box
               component='main'

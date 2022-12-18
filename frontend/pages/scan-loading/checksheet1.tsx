@@ -47,8 +47,8 @@ const View = ({ checksheets, id }: any) => {
           <Typography variant='h5'>Check Sheet 1</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
-        <Card sx={{ mx: 6 }}>
-          <CardContent sx={{ pb: 4, px: 4 }}>
+        <Card sx={{ mx: { xs: 0, md: 6 } }}>
+          <CardContent sx={{ pb: 4, px: { xs: 2, md: 4 } }}>
             {checksheets.map((checksheet: any) => (
               <Box
                 key={checksheet.id}
@@ -57,12 +57,13 @@ const View = ({ checksheets, id }: any) => {
                   display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
                   my: 2,
                   position: 'relative',
-                  height: '55px'
+                  minHeight: '55px',
                 }}
               >
-                <FormControl>
+                <FormControl sx={{ minWidth: { xs: '140px'}, flexBasis: { xs: '140px'} }}>
                   {/* <FormLabel id='demo-row-radio-buttons-group-label'>Gender</FormLabel> */}
                   <RadioGroup
+                    sx={{ width: {xs: '140px'}}}
                     row
                     aria-labelledby='demo-row-radio-buttons-group-label'
                     name='row-radio-buttons-group'
