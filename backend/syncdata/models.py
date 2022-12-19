@@ -58,3 +58,7 @@ class ProdInfoHistory(CommonInfoModel):
 
     def __str__(self):
         return f'{self.id_no}-{self.plan_prod_finish_ym}'
+
+
+class Log(CommonInfoModel):
+    table = models.CharField(max_length=255)

@@ -2,6 +2,9 @@ import PDFFormat1 from '@/components/Pdf/PDFFormat1'
 import PDFFormat2 from '@/components/Pdf/PDFFormat2'
 import withAuth from '@/components/withAuth'
 import { IPreviewDataFormat1, IPreviewDataFormat2, mockupData1, mockupData2, TDataPreview } from '@/models/preview.model'
+import { checksheetPartList } from '@/services/serverServices'
+import httpClient from '@/utils/httpClient'
+import { Button } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -18,24 +21,20 @@ const PreviewDocumentWithId = ({ }: Props) => {
 
     useEffect(() => {
         if (!router.isReady) return;
-        const { id } = router.query
+        const { id, type } = router.query
         // codes using router.query
         console.log('id : ', id);
         console.log('id : ', router.query);
 
         const fetchData = async () => {
             setLoading(true)
-            const pm = new Promise<TDataPreview>((resolve, reject) => {
-                setTimeout(() => {
-                    if (id === "1")
-                        resolve(mockupData1)
-                    else if (id === "2") {
-                        resolve(mockupData2)
-                    }
-                }, 1000);
-            })
-            setData(await pm)
-            setFormShow(id || "1")
+            if (!id || !type) {
+                alert(`Not found 'type' of document or 'pallet id'`)
+                return
+            }
+            const res = await checksheetPartList(id.toString() || '')
+            setData(res)
+            setFormShow(type || "1")
             setLoading(false)
             setRender(true)
         }
@@ -55,9 +54,26 @@ const PreviewDocumentWithId = ({ }: Props) => {
         }
     }
 
+    function routeTo() {
+        switch (formShow) {
+            case "1":
+                router.push('/scan-packing')
+                break;
+            case "2":
+                router.push('/scan-loading')
+                break;
+
+            default:
+                break;
+        }
+    }
+
     return (
         <>
             {loading && <div>Loading...</div>}
+            <Button onClick={routeTo} variant="contained" color="primary" className="no-print" sx={{position: 'fixed', left: '1rem', top: '1rem'}}>
+                Done
+            </Button>
             <>{renderContent(data)}</>
         </>
     )

@@ -1,4 +1,32 @@
 export interface IPreviewDataFormat1 {
+    pallet_id: number;
+    pallet: string;
+    skewer: string;
+    internal_pallet_no: string;
+    part_list: {
+        pallet_id: number
+        pallet: string
+        skewer: string
+        internal_pallet_no: string
+        status: string
+        id_no: string
+        plan_prod_finish_ym: string
+        model_code: string
+        model_name: string
+        serial_no: string
+        country_code: string
+        country_name: string
+        distributor_code: string
+        distributor_name: string
+    }[]
+    question_list: {
+        id: number
+        text: string
+        status: boolean
+        type: string
+        section: number
+    }[]
+
     doc_id: string
     doc_date: string
     packing_date: string

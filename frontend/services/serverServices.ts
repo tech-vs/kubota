@@ -103,6 +103,11 @@ export const confirmCheckSheet2 = async (palletID: String): Promise<any> => {
   return response.data
 }
 
+export const checksheetPartList = async (palletID: String): Promise<any> => {
+  const response = await httpClient.get(`/pallet/part-list/${palletID}/`)
+  return response.data
+}
+
 // Loading
 export const inputLoadingDoc = async (data: inputLoadingDocProps, id: string): Promise<any> => {
   const response = await httpClient.patch(`/pallet/document/${id}/`, data)

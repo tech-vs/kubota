@@ -13,27 +13,56 @@ const PDFFormat1 = ({ content }: Props) => {
     displayValue: false,
     textMargin: 0,
     margin: 0,
+    marginLeft: 4,
+    marginRight: 4,
     fontSize: 8,
+    format: 'CODE128'
   })
 
-  const chunk = (arr: IPreviewDataFormat1["appearance_checks"], size: number) =>
+  const chunk = (arr: IPreviewDataFormat1["question_list"], size: number) =>
     Array.from({ length: Math.ceil(arr.length / size) }, (v, i) =>
       arr.slice(i * size, i * size + size)
     );
 
 
-  const [acc, setAcc] = useState<IPreviewDataFormat1["appearance_checks"][]>([])
+  const [question2, setQuestion2] = useState<IPreviewDataFormat1["question_list"][]>([])
+  const [changes, setChanges] = useState<IPreviewDataFormat1["changes"]>([])
+  
+  function mockChanges () {
+    const template = {
+      edition: '',
+      date: '',
+      detail: '',
+      approve_by: '',
+      approve_date: '',
+      authorized_by: '',
+      created_by: ''
+    }
+    let arr: IPreviewDataFormat1["changes"] = []
+    for(let i = 0 ; i < 3 ; i++) {
+      arr = [
+        ...arr,
+        template
+      ]
+    }
+    setChanges(arr) 
+  }
 
   useEffect(() => {
-    setAcc(chunk(content.appearance_checks, 5))
-  }, [content.appearance_checks])
+    const question_list = content.question_list.filter(f => f.section === 2)
+    setQuestion2(chunk(question_list, 5))
+  }, [content.question_list])
+
+  useEffect(() => {
+    mockChanges()
+  }, [])
 
   return (
     <>
       <div className="page" data-size="A4">
         <div className="flex justify-between items-center ">
           <div className="fs-17 bold">Checksheet Issuing</div>
-          <div className="fs-9 bold">Doc : {content.doc_id} Eff.: {content.doc_date}</div>
+          <div className="fs-9 bold">Doc : {content.doc_id || '-'} Eff.: {content.doc_date || '-'}</div>
         </div>
         <div className="section fs-11 bold">
           <table>
@@ -46,7 +75,7 @@ const PDFFormat1 = ({ content }: Props) => {
                   Packing Date : {content.packing_date || '-'}
                 </td>
                 <td style={{ width: '30%' }}>
-                  Distributor : {content.distributor}
+                  Distributor : THAILAND
                 </td>
               </tr>
             </tbody>
@@ -63,15 +92,15 @@ const PDFFormat1 = ({ content }: Props) => {
             </thead>
             <tbody>
               {
-                content.engine_models.map((m, i) =>
-                  <tr key={m.model_code + i}>
+                content.part_list.map((m, i) =>
+                  <tr key={m.id_no + i}>
                     <td>{m.model_code || ''}</td>
                     <td> <div className="flex justify-center items-center "><Barcode value={m.model_code || ''} {...barcodeOption} /></div> </td>
                     <td>{m.model_name || ''}</td>
-                    <td>{m.id_number || ''}</td>
+                    <td>{m.id_no || ''}</td>
                     <td>{m.serial_no || ''}</td>
-                    <td><div className="flex justify-center items-center "><Barcode value={m.serial_no || ''} {...barcodeOption} /></div></td>
-                    <td>{m.is_pass !== undefined ? m.is_pass ? '0' : 'X' : ''}</td>
+                    <td><div className="flex justify-center items-center "><Barcode value={ m.serial_no || ''} {...barcodeOption} /></div></td>
+                    <td></td>
                   </tr>,
                 )
               }
@@ -81,7 +110,7 @@ const PDFFormat1 = ({ content }: Props) => {
 
         <div className="flex items-center fs-9 bold" style={{ gap: '32pt', marginTop: '12pt' }}>
           <div style={{ width: '120pt' }}>
-            Pallet Code: {content.pallet_code}
+            Pallet Code: {content.pallet}
           </div>
           <div>
             <div>
@@ -121,14 +150,14 @@ const PDFFormat1 = ({ content }: Props) => {
             </thead>
             <tbody>
               {
-                content.checks.map((m, i) =>
-                  <tr style={{ fontSize: '8.5pt' }} key={m.check_no + i}>
+                content.question_list.filter(f => f.section === 1).map((m, i) =>
+                  <tr style={{ fontSize: '8.5pt' }} key={m.id}>
                     <td>
-                      {m.check_no ? m.check_no + 1 : ''}
+                      {m.id ? m.id : ''}
                     </td>
-                    <td style={{ textAlign: 'left' }}>{m.detail || ''}
+                    <td style={{ textAlign: 'left' }}>{m.text || ''}
                     </td>
-                    <td>{m.is_pass !== undefined ? m.is_pass ? '0' : 'X' : ''} </td>
+                    <td>{m.status !== undefined ? m.status ? '0' : 'X' : ''} </td>
                   </tr>)
               }
 
@@ -138,8 +167,8 @@ const PDFFormat1 = ({ content }: Props) => {
         <div className="section">
           <div className="fs-11 bold">Appearance check sheet (For Export engine only) [Mark =&gt; O : OK , X : NG ]</div>
           {
-            acc.map((table, itable) =>
-              <div className={`inline-flex ${content.appearance_checks.length <= 5 ? 'w-full' : 'w-50'}`} key={itable} >
+            question2.map((table, itable) =>
+              <div className={`inline-flex ${content.question_list.filter(f => f.section === 2).length <= 5 ? 'w-full' : 'w-50'}`} key={itable} >
                 <table>
                   <thead className="fs-11 bold">
                     <tr>
@@ -155,9 +184,9 @@ const PDFFormat1 = ({ content }: Props) => {
                     {
                       table.map((m, i) =>
                         <tr style={{ fontSize: '8.5pt' }} key={i}>
-                          <td>{m.mark ? 'O' : 'X'}</td>
+                          <td>{m.status ? 'O' : 'X'}</td>
                           <td style={{ textAlign: 'left' }}>
-                            {m.check_list || ''}
+                            {m.text || ''}
                           </td>
                         </tr>)
                     }
@@ -173,11 +202,11 @@ const PDFFormat1 = ({ content }: Props) => {
           <div className="fs-11 bold">Appearance check sheet (For Export engine only) [Mark =&gt; O : OK , X : NG ]</div>
           <div className="flex fs-9 bold">
             <div className="flex items-center" style={{ width: '70%', gap: '10pt' }}>
-              <div className="flex items-center" style={{ paddingLeft: '16pt' }}>
-                <input checked={content.bolt} type="checkbox" readOnly /> Bolt
+              <div className="flex items-center" style={{ paddingLeft: '16pt', gap: '6pt' }}>
+                <div style={{width: '20px', height: '20px', border: 'solid 1pt'}}></div> Bolt
               </div>
-              <div className="flex items-center">
-                <input checked={content.cover_turbo} type="checkbox" readOnly /> Cover Turbo
+              <div className="flex items-center" style={{ paddingLeft: '16pt', gap: '6pt' }}>
+                <div  style={{width: '20px', height: '20px', border: 'solid 1pt'}}></div> Cover Turbo
               </div>
             </div>
             <div style={{ width: '30%' }}>
@@ -186,7 +215,6 @@ const PDFFormat1 = ({ content }: Props) => {
                   <tr>
                     <td style={{ width: '40%' }}>ลงชื่อ<br />Sign</td>
                     <td style={{ width: '60%' }}>
-                      <img src={content.sign} alt="sign" width="100%" height="32" />
                     </td>
                   </tr>
                 </tbody>
@@ -223,28 +251,28 @@ const PDFFormat1 = ({ content }: Props) => {
             </thead>
             <tbody className="fs-9">
               {
-                content.changes.map((c, i) =>
-                  <tr key={c.edition + i}>
+                changes.map((c, i) =>
+                  <tr key={c.edition + i} style={{ height: '17px'}}>
                     <td>
-                      {c.edition}
+                      {c.edition || '' }
                     </td>
                     <td>
-                      {c.date}
+                      {c.date || '' }
                     </td>
                     <td>
-                      {c.detail}
+                      {c.detail || '' }
                     </td>
                     <td>
-                      {c.approve_by}
+                      {c.approve_by || '' }
                     </td>
                     <td>
-                      {c.approve_date}
+                      {c.approve_date || '' }
                     </td>
                     <td>
-                      {c.authorized_by}
+                      {c.authorized_by || '' }
                     </td>
                     <td>
-                      {c.created_by}
+                      {c.created_by || '' }
                     </td>
                   </tr>,
                 )
