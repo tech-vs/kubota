@@ -57,13 +57,13 @@ const View = ({ checksheets, id }: any) => {
                   display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
                   my: 2,
                   position: 'relative',
-                  minHeight: '55px',
+                  minHeight: '55px'
                 }}
               >
-                <FormControl sx={{ minWidth: { xs: '140px'}, flexBasis: { xs: '140px'} }}>
+                <FormControl sx={{ minWidth: { xs: '140px' }, flexBasis: { xs: '140px' } }}>
                   {/* <FormLabel id='demo-row-radio-buttons-group-label'>Gender</FormLabel> */}
                   <RadioGroup
-                    sx={{ width: {xs: '140px'}}}
+                    sx={{ width: { xs: '140px' } }}
                     row
                     aria-labelledby='demo-row-radio-buttons-group-label'
                     name='row-radio-buttons-group'
@@ -216,8 +216,8 @@ const View = ({ checksheets, id }: any) => {
 
 // This gets called on every request
 export async function getServerSideProps(context: any) {
-  const id = context.query.id
-  const response = await httpClient.get(`/pallet/${id}/section/3/question/`, {
+  const internalpalletid = context.query.internalpalletid
+  const response = await httpClient.get(`/pallet/${internalpalletid}/section/3/question/`, {
     headers: {
       Accept: 'application/json'
     }
@@ -226,7 +226,7 @@ export async function getServerSideProps(context: any) {
   return {
     props: {
       checksheets: response.data,
-      id
+      id: internalpalletid
     }
   }
 }

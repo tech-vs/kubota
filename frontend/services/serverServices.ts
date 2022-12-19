@@ -26,9 +26,10 @@ type exportExcelProps = {
 }
 
 type scanPalletProps = {
-  pallet_skewer: string
+  pallet_skewer?: string
   part_list: PartList[]
   question_type: string
+  nw_gw?: string
 }
 
 export interface PartList {
@@ -126,5 +127,12 @@ export const confirmCheckSheet3 = async (palletID: String): Promise<any> => {
 
 export const submitLoading = async (data: submitLoadingProps): Promise<any> => {
   const response = await httpClient.post(`/pallet/loading/submit/`, data)
+  return response.data
+}
+
+export const approveDocument = async (id: string): Promise<any> => {
+  const response = await httpClient.patch(`/pallet/document/${id}/`, {
+    status: 'approved'
+  })
   return response.data
 }

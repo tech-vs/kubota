@@ -160,9 +160,6 @@ const Scan = ({ genDoc }: any) => {
                 value={genDoc.doc_no}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
-
-                  // setInput({ ...input, refNo: e.target.value })
-                  // setFieldValue('input.refNo', e.target.value)
                 }}
               />
 
@@ -363,7 +360,7 @@ const Scan = ({ genDoc }: any) => {
                 }
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
-                  setAddress(e.target.value)
+                  setInput({ ...input, address: e.target.value })
                   setFieldValue('address', e.target.value)
                 }}
               />
@@ -432,6 +429,16 @@ const Scan = ({ genDoc }: any) => {
             //   address: ''
             // })
             // setDeEx('')
+            console.log({
+              ref_do_no: input.refNo,
+              question_type: input.question_type,
+              status: 'loading',
+              total_qty: input.qty,
+              invoice_no: input.invoiceNo,
+              round: input.round,
+              customer_name: input.customerName,
+              address: input.address
+            })
             await inputLoadingDoc(
               {
                 ref_do_no: input.refNo,
@@ -445,6 +452,7 @@ const Scan = ({ genDoc }: any) => {
               },
               genDoc.id
             )
+
             router.push(`/scan-loading/check-pallet`)
             // router.push(`/scan-loading/checksheet1?id=${genDoc.id}`)
             setSubmitting(false)
@@ -465,6 +473,7 @@ export async function getServerSideProps() {
       Accept: 'application/json'
     }
   })
+  console.log(response)
 
   return {
     props: {

@@ -1,72 +1,13 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
+import { approveDocument } from '@/services/serverServices'
+import httpClient from '@/utils/httpClient'
 import { Box, Button, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { useRouter } from 'next/router'
 type Props = {}
 
 const VISIBLE_FIELDS = ['modelCode']
-const columns: GridColDef[] = [
-  {
-    field: 'date',
-    headerName: 'Date',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'createdBy',
-    headerName: 'Created By',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    type: 'string',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'idNo',
-    headerName: 'ID No.',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'modelCode',
-    headerName: 'Model Code',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-
-  {
-    field: 'blank',
-    headerName: '',
-    headerClassName: 'headerField',
-    flex: 1
-  },
-
-  {
-    field: 'approve',
-    headerName: 'Approval',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    width: 125,
-    renderCell: () => {
-      return (
-        <Button variant='contained' onClick={() => null} sx={{ borderRadius: 50 }}>
-          Approve
-        </Button>
-      )
-    }
-  }
-]
 
 const rows = [
   { id: 1, customer: 'Toyota', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
@@ -79,7 +20,119 @@ const rows = [
   { id: 8, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
   { id: 9, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' }
 ]
-const Approval = ({}: Props) => {
+const Approval = ({ list }: any) => {
+  const router = useRouter()
+  // Call this function whenever you want to
+  // refresh props!
+  const refreshData = () => {
+    router.replace(router.asPath)
+  }
+
+  const columns: GridColDef[] = [
+    {
+      field: 'doc_no',
+      headerName: 'Document No.',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'delivery_date',
+      headerName: 'Delivery Date',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      type: 'string',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'ref_do_no',
+      headerName: 'Ref Doc No.',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'total_qty',
+      headerName: 'Total QTY',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'invoice_no',
+      headerName: 'Invoice No.',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'round',
+      headerName: 'Round',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'customer_name',
+      headerName: 'Customer Name',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'address',
+      headerName: 'Address',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+
+    {
+      field: 'blank',
+      headerName: '',
+      headerClassName: 'headerField',
+      flex: 1
+    },
+
+    {
+      field: 'approve',
+      headerName: 'Approval',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      width: 125,
+      renderCell: ({ row }: GridRenderCellParams<string>) => {
+        return (
+          <Button
+            variant='contained'
+            onClick={async () => {
+              await approveDocument(row.id)
+              refreshData()
+            }}
+            sx={{ borderRadius: 50 }}
+          >
+            Approve
+          </Button>
+        )
+      }
+    }
+  ]
   return (
     <Layout>
       <Box
@@ -127,7 +180,7 @@ const Approval = ({}: Props) => {
               outline: 'none'
             }
           }}
-          rows={rows}
+          rows={list.results}
           columns={columns}
           getCellClassName={(params: GridCellParams<string>) => {
             if (params.field === 'customer') {
@@ -154,6 +207,21 @@ const Approval = ({}: Props) => {
       </Box>
     </Layout>
   )
+}
+
+// This gets called on every request
+export async function getServerSideProps() {
+  const response = await httpClient.get(`pallet/document/?status=wait_approve`, {
+    headers: {
+      Accept: 'application/json'
+    }
+  })
+
+  return {
+    props: {
+      list: response.data
+    }
+  }
 }
 
 export default withAuth(Approval)

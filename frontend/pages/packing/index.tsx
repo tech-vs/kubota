@@ -2,7 +2,7 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
 import { Box, Button, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
 
 type Props = {}
@@ -109,52 +109,25 @@ const Overall = ({ packingList }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       width: 150,
-      renderCell: () => {
+      renderCell: ({ row }: GridRenderCellParams<string>) => {
         return (
-          <Button variant='contained' onClick={() => null} sx={{ borderRadius: 25 }}>
+          <Button
+            variant='contained'
+            onClick={() => router.push(`/preview/${packingList.pallet_id}?type=1`)}
+            sx={{ borderRadius: 25 }}
+          >
             View
           </Button>
         )
       }
     }
-    // {
-    //   field: 'view',
-    //   headerName: 'View',
-    //   headerAlign: 'center',
-    //   headerClassName: 'headerField',
-    //   align: 'center',
-    //   width: 125,
-    //   renderCell: () => {
-    //     return (
-    //       <Button variant='contained' onClick={() => null} sx={{ borderRadius: 50 }}>
-    //         <PageviewIcon sx={{ pr: 1 }} />
-    //         View
-    //       </Button>
-    //     )
-    //   }
-    // },
-    // {
-    //   field: 'confirm',
-    //   headerName: 'Confirm and Send Email',
-    //   headerAlign: 'center',
-    //   headerClassName: 'headerField',
-    //   align: 'center',
-    //   width: 125,
-    //   renderCell: () => {
-    //     return (
-    //       <Button variant='contained' onClick={() => null} sx={{ borderRadius: 50 }}>
-    //         Confirm
-    //       </Button>
-    //     )
-    //   }
-    // }
   ]
   return (
     <Layout>
       <Box
         component='main'
         sx={{
-          display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+          display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
           mb: 3,
           position: 'relative',
           height: '30px'
@@ -228,11 +201,9 @@ const Overall = ({ packingList }: any) => {
 
 // This gets called on every request
 export async function getServerSideProps() {
-  const response = await httpClient.get(`/pallet/part-list/?status=finish_pack`, {
-    headers: {
-      Accept: 'application/json'
-    }
-  })
+  const response = await httpClient.get(`/pallet/part-list/?status=finish_pack`)
+  console.log(response)
+
   return {
     props: {
       packingList: response.data.results

@@ -315,8 +315,29 @@ const Scan = ({}: Props) => {
               setLoading(false)
             }, 4000)
 
-            let data = {
+            let data_domestic = {
               pallet_skewer: scan.palletNo,
+              part_list: [
+                {
+                  prod_seq: '1',
+                  id_no: scan.partSeq01
+                },
+                {
+                  prod_seq: '2',
+                  id_no: scan.partSeq02
+                },
+                {
+                  prod_seq: '3',
+                  id_no: scan.partSeq03
+                },
+                {
+                  prod_seq: '4',
+                  id_no: scan.partSeq04
+                }
+              ],
+              question_type: values.deEx
+            }
+            let data_export = {
               part_list: [
                 {
                   prod_seq: '1',
@@ -338,7 +359,6 @@ const Scan = ({}: Props) => {
               question_type: values.deEx,
               nw_gw: values.unit
             }
-
             setScan({
               palletNo: '',
               partSeq01: '',
@@ -348,8 +368,10 @@ const Scan = ({}: Props) => {
             })
             setDeEx('')
             setUnit('')
-            const response = await scanPallet(data)
-            router.push(`/scan-packing/checksheet1?id=${response.id}`)
+            const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export)
+            console.log(response)
+
+            router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {

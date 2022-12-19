@@ -2,96 +2,10 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
 import { Box, Button, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 type Props = {}
 
 const VISIBLE_FIELDS = ['modelCode']
-const columns: GridColDef[] = [
-  {
-    field: 'palletNo',
-    headerName: 'Pallet No.',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'modelCode',
-    headerName: 'Model Code',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    type: 'string',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'modelName',
-    headerName: 'Model Name',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'serialNo',
-    headerName: 'Serial No.',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-  {
-    field: 'createDate',
-    headerName: 'Create Date',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    cellClassName: 'cellField',
-    width: 150
-  },
-
-  {
-    field: 'blank',
-    headerName: '',
-    headerClassName: 'headerField',
-    flex: 1
-  },
-  {
-    field: 'view',
-    headerName: 'View',
-    headerAlign: 'center',
-    headerClassName: 'headerField',
-    align: 'center',
-    width: 150,
-    renderCell: () => {
-      return (
-        <Button variant='contained' onClick={() => null} sx={{ borderRadius: 25 }}>
-          View
-        </Button>
-      )
-    }
-  }
-  // {
-  //   field: 'view',
-  //   headerName: 'View',
-  //   headerAlign: 'center',
-  //   headerClassName: 'headerField',
-  //   align: 'center',
-  //   width: 125,
-  //   renderCell: () => {
-  //     return (
-  //       <Button variant='contained' onClick={() => null} sx={{ borderRadius: 50 }}>
-  //         <PageviewIcon sx={{ pr: 1 }} />
-  //         View
-  //       </Button>
-  //     )
-  //   }
-  // },
-]
 
 const rows = [
   { id: 1, customer: 'Toyota', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
@@ -104,7 +18,104 @@ const rows = [
   { id: 8, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
   { id: 9, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' }
 ]
-const Overall = ({}: Props) => {
+const Overall = ({ loadingList }: any) => {
+  const columns: GridColDef[] = [
+    {
+      field: 'doc_no',
+      headerName: 'Document No.',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'delivery_date',
+      headerName: 'Delivery Date',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      type: 'string',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'ref_do_no',
+      headerName: 'Ref Doc No.',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'total_qty',
+      headerName: 'Total QTY',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'invoice_no',
+      headerName: 'Invoice No',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'round',
+      headerName: 'Round',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'customer_name',
+      headerName: 'Customer Name',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
+      field: 'address',
+      headerName: 'Customer Name',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+
+    {
+      field: 'blank',
+      headerName: '',
+      headerClassName: 'headerField',
+      flex: 1
+    },
+    {
+      field: 'view',
+      headerName: 'View',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      width: 150,
+      renderCell: ({ row }: GridRenderCellParams<string>) => {
+        return (
+          <Button variant='contained' onClick={() => null} sx={{ borderRadius: 25 }}>
+            View
+          </Button>
+        )
+      }
+    }
+  ]
   return (
     <Layout>
       <Box
@@ -152,7 +163,7 @@ const Overall = ({}: Props) => {
               outline: 'none'
             }
           }}
-          rows={rows}
+          rows={loadingList.results}
           columns={columns}
           getCellClassName={(params: GridCellParams<string>) => {
             if (params.field === 'customer') {
@@ -183,14 +194,14 @@ const Overall = ({}: Props) => {
 
 // This gets called on every request
 export async function getServerSideProps() {
-  const response = await httpClient.get(`/pallet/part-list/?status=shipped`, {
+  const response = await httpClient.get(`/pallet/document/?status=approved`, {
     headers: {
       Accept: 'application/json'
     }
   })
   return {
     props: {
-      packingList: response.data.results
+      loadingList: response.data
     }
   }
 }

@@ -15,22 +15,22 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=backend
 
-  django:
-    container_name: django
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - 4200:4200
-    depends_on:
-      - postgres
-    volumes:
-      - .:/app
-      - ./media:/app/media
-      - ./static:/app/static
-    command: bash -c "./start.sh"
-  # command: python manage.py runserver
+  # django:
+  #   container_name: django
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - 4200:4200
+  #   depends_on:
+  #     - postgres
+  #   volumes:
+  #     - .:/app
+  #     - ./media:/app/media
+  #     - ./static:/app/static
+  #   command: bash -c "./start.sh"
+  # # command: python manage.py runserver
 
 volumes:
   postgres_data_knex:
