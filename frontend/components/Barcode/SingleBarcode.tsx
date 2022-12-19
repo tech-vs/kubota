@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react'
+import { forwardRef, useState } from 'react'
 import Barcode, { Options } from 'react-barcode'
-
 interface Props {
-    //   content: IPreviewDataFormat1
+      content: any
 }
 
-const SingleBarcode = ({ content }: Props) => {
-    const [barcodeOption, setBarcodeOption] = useState<Options>({
+const SingleBarcode = forwardRef<HTMLDivElement, Props>(({ content }: Props, ref) => {
+    const [barcodeOption] = useState<Options>({
         width: 1.25,
         height: 34,
         displayValue: false,
@@ -17,9 +16,11 @@ const SingleBarcode = ({ content }: Props) => {
 
     return (
         <>
-            <div className="barcode-page" data-size="3x1">
+            {/* <button onClick={getDataImage}>getDataImage</button>
+            <div style={{ background: 'red' }}>hello</div> */}
+            <div className="barcode-page" data-size="3x1" ref={ref}>
                 <div className='flex items-center justify-center flex-col h-full'
-                    style={{ gap: '0.2cm' }}
+                    style={{ gap: '0.2px' }}
                 >
                     <Barcode value={'YYMM0000'} {...barcodeOption} />
                     <div className='no-line-height'>YYMM0000</div>
@@ -28,6 +29,6 @@ const SingleBarcode = ({ content }: Props) => {
             </div>
         </>
     )
-}
+})
 
 export default SingleBarcode

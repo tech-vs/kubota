@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react'
+import { forwardRef, useState } from 'react'
 import Barcode, { Options } from 'react-barcode'
 
 interface Props {
     content: any
 }
 
-const MultipleBarcode = ({ content }: Props) => {
-    const [barcodeOption, setBarcodeOption] = useState<Options>({
+const MultipleBarcode = forwardRef<HTMLDivElement, Props>(({ content }, ref) => {
+    const [barcodeOption] = useState<Options>({
         width: 0.8,
         height: 34,
         displayValue: false,
@@ -14,9 +14,10 @@ const MultipleBarcode = ({ content }: Props) => {
         margin: 0,
         fontSize: 8,
     })
+
     return (
         <>
-            <div className="barcode-page" data-size="3x3">
+            <div ref={ref} className="barcode-page" data-size="3x3">
                 <div className='text-center'>
                     <img src="/img/kubota-icon.jpg" width="50%" style={{ marginTop: '0.4cm' }} alt="kubota" />
                 </div>
@@ -42,6 +43,6 @@ const MultipleBarcode = ({ content }: Props) => {
             </div>
         </>
     )
-}
+})
 
 export default MultipleBarcode

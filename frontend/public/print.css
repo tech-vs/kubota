@@ -133,11 +133,14 @@ html, body {
 .barcode-page {
   background: white;
   display: block;
-  margin: 0 auto;
-  margin-bottom: 0.5cm;
-  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
-  font-size: 13pt;
+  /* margin: 0 auto; */
+  margin-bottom: 0.5px;
+  box-shadow: 0 0 0.5px rgba(0,0,0,0.5);
+  font-size: 17px;
+  color: #000;
   font-family: Browallia New;
+  width: 288px;
+  height: 96px; 
 }
 
 .barcode-page[data-size="3x1"] {  
@@ -260,16 +263,15 @@ td.clear-border-bottom {
     box-shadow: none;
   }
 
-  .barcode-page {
+  /* .barcode-page {
     padding: 0;
     margin: 0;
     box-shadow: 0 0 0 1px #000;
   }
 
   .barcode-page @page { 
-    /* margin: 0; */
     size: 3in 1in;
-  }
+  } */
 
   .no-print {
     display: none;
