@@ -22,19 +22,22 @@ from pallet.models import (
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
                           QuestionListSerializer, PalletPackingDoneSerializer,
-                          PalletPartListSerializer)
+                          PalletPartListSerializer, PalletRepackSerializer)
 from pallet.filters import PalletPartListFilter
 
 
 class PalletViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all().prefetch_related('part_list', 'question_list')
+    lookup_field = 'id'
 
     action_serializers = {
         'create': PalletCreateSerializer,
+        'repack': PalletRepackSerializer,
     }
 
     permission_classes_action = {
         'create': [AllowAny],
+        'repack': [AllowAny],
     }
 
     def get_serializer_class(self):
@@ -48,6 +51,20 @@ class PalletViewSet(viewsets.GenericViewSet):
             return [permission() for permission in self.permission_classes_action[self.action]]
         except KeyError:
             return [permission() for permission in self.permission_classes]
+
+    @action(detail=True, methods=['PATCH'], url_path='repack')
+    def repack(self, request, *args, **kwargs):
+        pallet = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        for field, value in data.items():
+            setattr(pallet, field, value)
+
+        pallet.save()
+        response = PalletListSerializer(pallet).data
+        return Response(response, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
