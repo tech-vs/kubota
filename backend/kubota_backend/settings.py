@@ -57,11 +57,18 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
     'Content-Disposition',
     'allow-access-control-origin',
+    'Access-Control-Allow-Methods'
 ]
 
 CORS_EXPOSE_HEADERS = [
     'Content-Disposition',
 ]
+
+CORS_ORIGIN_WHITELIST = (
+    "http://localhost:3000",
+    "http://172.20.176.22:3000",
+    "http://172.20.176.22",
+)
 
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1']
 
