@@ -18,6 +18,7 @@ class MyDocument extends Document {
           />
           <link rel="stylesheet" href="/fonts/Browallia-New.css" />
           <link rel="stylesheet" href="/print.css" />
+          <script type="text/javascript" src="/js/BrowserPrint-3.0.216.min.js" defer async></script>
         </Head>
         <body>
           <Main />
