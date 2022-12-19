@@ -124,7 +124,31 @@ html, body {
 .fs-16 {font-size: 16pt;}
 .fs-17 {font-size: 17pt;}
 .fs-18 {font-size: 18pt;}
+
+.no-line-height {
+  line-height: 0.5;
+}
 /* End Utility Font */
+
+.barcode-page {
+  background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5cm;
+  box-shadow: 0 0 0.5cm rgba(0,0,0,0.5);
+  font-size: 13pt;
+  font-family: Browallia New;
+}
+
+.barcode-page[data-size="3x1"] {  
+  width: 7.62cm;
+  height: 2.54cm; 
+}
+
+.barcode-page[data-size="3x3"] {  
+  width: 7.62cm;
+  height: 7.62cm; 
+}
 
 .page {
   background: white;
@@ -233,6 +257,18 @@ td.clear-border-bottom {
   .page {
     padding: var(--page-top) var(--page-right) var(--page-bottom) var(--page-left);
     margin: 0;
+    box-shadow: none;
+  }
+
+  .barcode-page {
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 0 0 1px #000;
+  }
+
+  .barcode-page @page { 
+    /* margin: 0; */
+    size: 3in 1in;
   }
 
   .no-print {
@@ -240,7 +276,7 @@ td.clear-border-bottom {
   }
       
   /** Seitenränder einstellen */       
-  @page { 
+  .page @page { 
     margin: 0;
   }
   
