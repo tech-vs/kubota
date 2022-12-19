@@ -95,17 +95,15 @@ class PalletViewSet(viewsets.GenericViewSet):
                     domestic_fail_text += f"item_sharp = {check.get('item_sharp', '')} ไม่มีในระบบ ,"
 
         if check_item.count(True) == 4:
-            pallet, is_created = Pallet.objects.get_or_create(
+            pallet = Pallet.objects.create(
                 **data,
                 pallet_string=pallet_string,
                 nw_gw=nw_gw,
                 question_type=question_type,
-                defaults={
-                    'internal_pallet_no': Pallet.generate_internal_pallet_no()
-                }
+                internal_pallet_no=Pallet.generate_internal_pallet_no()
             )
-            if not is_created:
-                return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
+            # if not is_created:
+            #     return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
             PalletPart.objects.bulk_create([PalletPart(pallet=pallet, part=part_item[1]) for part_item in part_to_set_list])
             pallet.generate_question(question_type)
         else:
