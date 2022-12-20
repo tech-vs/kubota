@@ -83,3 +83,17 @@ class MasterLoading(CommonInfoModel):
 
     def __str__(self):
         return f'{self.serial_no}'
+
+
+class MSPackingStyle(CommonInfoModel):
+    row_id = models.CharField(max_length=255, unique=True)
+    model_code = models.CharField(max_length=255, null=True)
+    packing_style_code = models.CharField(max_length=255, null=True)
+    net_weight = models.CharField(max_length=255, null=True)
+    gross_weight = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f'{self.row_id}'
