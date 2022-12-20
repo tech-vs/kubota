@@ -18,7 +18,7 @@ import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
 import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -45,14 +45,20 @@ const View = ({ checksheets, id }: any) => {
     return new Promise<void>(async (resolve, reject) => {
       if (selectedDevice && singleBarcodeRef.current) {
         console.log(barcodeContent)
-        selectedDevice.convertAndSendFile(await toPng(singleBarcodeRef.current),
+        selectedDevice.convertAndSendFile(
+          await toPng(singleBarcodeRef.current),
           (res: any) => {
             console.log(res)
             resolve()
-          }, (err: any) => {
+          },
+          (err: any) => {
             console.error(err)
             resolve()
-          })
+          }
+        ),
+          {
+            resize: { width: 600, height: 200 }
+          }
       }
     })
   }
@@ -60,12 +66,16 @@ const View = ({ checksheets, id }: any) => {
   function setupPrinter() {
     //Get the default device from the application as a first step. Discovery takes longer to complete.
     const BP = window.BrowserPrint
-    BP.getDefaultDevice("printer", function (device: any) {
-      console.log(device)
-      setSelectedDevice(device)
-    }, function (error: any) {
-      console.log(error)
-    })
+    BP.getDefaultDevice(
+      'printer',
+      function (device: any) {
+        console.log(device)
+        setSelectedDevice(device)
+      },
+      function (error: any) {
+        console.log(error)
+      }
+    )
   }
 
   useEffect(() => {
@@ -79,7 +89,6 @@ const View = ({ checksheets, id }: any) => {
   useEffect(() => {
     setupPrinter()
   }, [])
-
 
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
     return (
@@ -218,7 +227,7 @@ const View = ({ checksheets, id }: any) => {
             await confirmCheckSheet2(id)
             // get data for render barcode to printer
             const { internal_pallet_no } = await checksheetPartList(id.toString() || '')
-            console.log(internal_pallet_no);
+            console.log(internal_pallet_no)
             setBarcodeContent(barcodeContent => ({
               ...barcodeContent,
               internal_pallet_no
@@ -237,9 +246,11 @@ const View = ({ checksheets, id }: any) => {
       >
         {props => showForm(props)}
       </Formik>
-      <div style={{ position: 'relative'}}>
-          <SingleBarcode ref={singleBarcodeRef} content={barcodeContent}></SingleBarcode>
-          <div style={{ position: 'absolute', top: 0, left:0, width: '100%', height: '100%', background: 'white'}}></div>
+      <div style={{ position: 'relative' }}>
+        <SingleBarcode ref={singleBarcodeRef} content={barcodeContent}></SingleBarcode>
+        <div
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
+        ></div>
       </div>
     </Layout>
   )
