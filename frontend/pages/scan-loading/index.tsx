@@ -371,8 +371,12 @@ const Scan = ({ genDoc }: any) => {
                 }
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
-                  setInput({ ...input, address: e.target.value })
-                  setFieldValue('address', e.target.value)
+                  if (input.address == null) {
+                    setInput({ ...input, address: Amatanakhon })
+                  } else {
+                    setInput({ ...input, address: e.target.value })
+                    setFieldValue('address', e.target.value)
+                  }
                 }}
               />
               <Box sx={{ flexGrow: 1 }} />
