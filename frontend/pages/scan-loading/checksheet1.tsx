@@ -1,3 +1,4 @@
+import MultipleBarcode, { ILoadingSubmit, IMultipleBarcode } from '@/components/Barcode/MultipleBarcode'
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { confirmCheckSheet1, submitLoading } from '@/services/serverServices'
@@ -15,8 +16,9 @@ import {
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
+import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -31,6 +33,99 @@ const View = ({ checksheets, id }: any) => {
 
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
+
+  const [selectedDevice, setSelectedDevice] = useState<any>()
+  const [barcodeContent, setBarcodeContent] = useState<IMultipleBarcode>(
+    {
+      barcodes: [
+        {
+          serial_no: 'test',
+          model_code: 'test',
+          model_name: 'test',
+          gross_weight: 'test',
+          net_weight: 'test',
+          country_name: 'test',
+        },
+        {
+          serial_no: 'test',
+          model_code: 'test',
+          model_name: 'test',
+          gross_weight: 'test',
+          net_weight: 'test',
+          country_name: 'test',
+        },
+        {
+          serial_no: 'test',
+          model_code: 'test',
+          model_name: 'test',
+          gross_weight: 'test',
+          net_weight: 'test',
+          country_name: 'test',
+        },
+        {
+          serial_no: 'test',
+          model_code: 'test',
+          model_name: 'test',
+          gross_weight: 'test',
+          net_weight: 'test',
+          country_name: 'test',
+        },
+      ],
+      country_name: 'test',
+      net_weight: 'test',
+      gross_weight: 'tes',
+    }
+  )
+  const multipleBarcodeRef = useRef<HTMLDivElement>(null)
+
+  function printImage() {
+    return new Promise<void>(async (resolve, reject) => {
+      if (selectedDevice && multipleBarcodeRef.current) {
+        console.log(barcodeContent)
+        selectedDevice.convertAndSendFile(
+          await toPng(multipleBarcodeRef.current),
+          (res: any) => {
+            console.log(res)
+            resolve()
+          },
+          (err: any) => {
+            console.error(err)
+            resolve()
+          },
+          {
+            resize: { width: 600, height: 200 }
+          }
+        )
+      }
+    })
+  }
+
+  function setupPrinter() {
+    //Get the default device from the application as a first step. Discovery takes longer to complete.
+    const BP = window.BrowserPrint
+    BP.getDefaultDevice(
+      'printer',
+      function (device: any) {
+        console.log(device)
+        setSelectedDevice(device)
+      },
+      function (error: any) {
+        console.log(error)
+      }
+    )
+  }
+
+  useEffect(() => {
+    async function call() {
+      await printImage()
+      router.push(`/scan-loading/check-pallet`)
+    }
+    call()
+  }, [barcodeContent])
+
+  useEffect(() => {
+    setupPrinter()
+  }, [])
 
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
     return (
@@ -148,13 +243,30 @@ const View = ({ checksheets, id }: any) => {
                 onClick={async () => {
                   if (typeof internalpalletid === 'string') {
                     const internalpalletidInt = parseInt(internalpalletid)
-                    await submitLoading({
+                    const res: ILoadingSubmit[] = await submitLoading({
                       is_send_approve: false,
                       pallet_id: internalpalletidInt
                     })
+                    console.log(res);
+                    let template: IMultipleBarcode = {
+                      barcodes: [],
+                      country_name: '',
+                      net_weight: '',
+                      gross_weight: ''
+                    }
+  
+                    template = {
+                      ...template,
+                      barcodes: res,
+                      country_name: res[0]?.country_name,
+                      net_weight: res[0]?.net_weight,
+                      gross_weight: res[0]?.gross_weight,
+                    }
+  
+                    setBarcodeContent(template)
+  
+                    alert('Loading successfully')
                   }
-                  alert('Loading successfully')
-                  router.push(`/scan-loading/check-pallet`)
                 }}
                 color='primary'
                 sx={{ marginRight: 1 }}
@@ -210,6 +322,12 @@ const View = ({ checksheets, id }: any) => {
       >
         {props => showForm(props)}
       </Formik>
+      <div style={{ position: 'relative' }}>
+        <MultipleBarcode ref={multipleBarcodeRef} content={barcodeContent}></MultipleBarcode>
+        <div
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
+        ></div>
+      </div>
     </Layout>
   )
 }

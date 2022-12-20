@@ -13,27 +13,41 @@ const Test = ({ }: Props) => {
     {
       barcodes: [
         {
-          internal_pallet_no: 'test',
-          doc_no: 'test',
+          serial_no: 'test',
+          model_code: 'test',
           model_name: 'test',
+          gross_weight: 'test',
+          net_weight: 'test',
+          country_name: 'test',
         },
         {
-          internal_pallet_no: 'test',
-          doc_no: 'test',
+          serial_no: 'test',
+          model_code: 'test',
           model_name: 'test',
+          gross_weight: 'test',
+          net_weight: 'test',
+          country_name: 'test',
         },
         {
-          internal_pallet_no: 'test',
-          doc_no: 'test',
+          serial_no: 'test',
+          model_code: 'test',
           model_name: 'test',
+          gross_weight: 'test',
+          net_weight: 'test',
+          country_name: 'test',
         },
         {
-          internal_pallet_no: 'test',
-          doc_no: 'test',
+          serial_no: 'test',
+          model_code: 'test',
           model_name: 'test',
+          gross_weight: 'test',
+          net_weight: 'test',
+          country_name: 'test',
         },
       ],
-      country_name: 'test'
+      country_name: 'test',
+      net_weight: 'test',
+      gross_weight: 'tes',
     })
 
   const siggleBarcodeRef = useRef<HTMLDivElement>(null)
