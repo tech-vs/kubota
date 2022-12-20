@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
 import pyodbc
-from syncdata.models import PSETSDataUpload
+from syncdata.models import PSETSDataUpload, LogSyncData
 
 
 class Command(BaseCommand):
@@ -39,4 +39,5 @@ class Command(BaseCommand):
                 )
                 count_create += 1
         PSETSDataUpload.objects.bulk_create(psetsdata_list)
+        LogSyncData.objects.create(table='PSETSDataUpload', detail={'row_created': count_create})
         print(f'mssql "PSETSDataUpload" create = {count_create} row Done')

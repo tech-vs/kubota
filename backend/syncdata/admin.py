@@ -3,6 +3,8 @@ from django.contrib import admin
 from syncdata.models import (
     PSETSDataUpload,
     ProdInfoHistory,
+    MasterLoading,
+    LogSyncData,
 )
 
 
@@ -16,3 +18,15 @@ class PSEAdmin(admin.ModelAdmin):
 class ProdInfoHistoryAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_display = ('id', 'id_no', 'plan_prod_finish_ym', 'model_code', 'model_name', 'serial_no', 'country_code', 'country_name', 'distributor_code', 'distributor_name')
+
+
+@admin.register(MasterLoading)
+class MasterLoadingAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_display = ('id', 'stopshipment_date', 'model_code', 'model_name', 'serial_no', 'status')
+
+
+@admin.register(LogSyncData)
+class LogSyncDataAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_display = ('id', 'table', 'created_at', 'detail')

@@ -60,6 +60,12 @@ class LoadingPalletSerializer(serializers.Serializer):
     pallet_id = serializers.IntegerField()
 
 
+class QuestionColumnSerializer(serializers.Serializer):
+    text = serializers.CharField()
+    type = serializers.ChoiceField(choices=QuestionType.choices)
+    section = serializers.IntegerField()
+
+
 class DocDetailSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     doc_no = serializers.CharField()
@@ -71,8 +77,17 @@ class DocDetailSerializer(serializers.Serializer):
     round = serializers.CharField(allow_null=True)
     customer_name = serializers.CharField(allow_null=True)
     address = serializers.CharField(allow_null=True)
+    question_list = serializers.SerializerMethodField()
     question_type = serializers.ChoiceField(choices=QuestionType.choices, allow_null=True)
     pallet_list = serializers.SerializerMethodField()
+
+    def get_question_list(self, obj):
+        pallet = obj.pallet_list.prefetch_related('palletquestion_set').first()
+        question_list = []
+        if pallet and pallet.palletquestion_set.exists():
+            question_list = QuestionColumnSerializer(pallet.palletquestion_set.all(), many=True).data
+        return question_list
+
 
     def get_pallet_list(self, obj):
         pallet_list = obj.pallet_list.all().prefetch_related('part_list', 'palletquestion_set')
