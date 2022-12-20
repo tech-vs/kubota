@@ -7,8 +7,7 @@ type Props = {}
 
 const Test = ({ }: Props) => {
   const [barcode] = useState({
-    internal_pallet_no: "22120001",
-    pallet: "YYMM0000"
+    internal_pallet_no: "22120001"
   })
   const [barcodes] = useState([1, 2, 3, 4])
 

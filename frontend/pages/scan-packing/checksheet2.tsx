@@ -41,18 +41,10 @@ const View = ({ checksheets, id }: any) => {
   })
   const singleBarcodeRef = useRef<HTMLDivElement>(null)
 
-  // async function getDataImage() {
-  //   if (singleBarcodeRef.current) {
-  //       const imgUrl = toPng(singleBarcodeRef.current)
-  //       console.log(await imgUrl)
-  //       setImagePrint(await imgUrl)
-  //       return imgUrl
-  //   }
-  // }
-
   function printImage() {
     return new Promise<void>(async (resolve, reject) => {
       if (selectedDevice && singleBarcodeRef.current) {
+        console.log(barcodeContent)
         selectedDevice.convertAndSendFile(await toPng(singleBarcodeRef.current),
           (res: any) => {
             console.log(res)
@@ -75,6 +67,14 @@ const View = ({ checksheets, id }: any) => {
       console.log(error)
     })
   }
+
+  useEffect(() => {
+    async function call() {
+      await printImage()
+      router.push(`/preview/${id}?type=1`)
+    }
+    call()
+  }, [barcodeContent])
 
   useEffect(() => {
     setupPrinter()
@@ -219,13 +219,11 @@ const View = ({ checksheets, id }: any) => {
             // get data for render barcode to printer
             const { internal_pallet_no } = await checksheetPartList(id.toString() || '')
             console.log(internal_pallet_no);
-            setBarcodeContent({
+            setBarcodeContent(barcodeContent => ({
+              ...barcodeContent,
               internal_pallet_no
-            })
+            }))
             alert('Packing Successfully')
-            // await getDataImage()
-            await printImage()
-            router.push(`/preview/${id}?type=1`)
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {
