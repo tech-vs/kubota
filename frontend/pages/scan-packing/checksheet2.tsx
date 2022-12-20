@@ -54,11 +54,11 @@ const View = ({ checksheets, id }: any) => {
           (err: any) => {
             console.error(err)
             resolve()
-          }
-        ),
+          },
           {
             resize: { width: 600, height: 200 }
           }
+        )
       }
     })
   }
