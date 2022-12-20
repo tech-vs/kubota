@@ -321,134 +321,11 @@ export const mockupData1: any = {
 }
 export const mockupData2: IPreviewDataFormat2 = {
   doc_no: '00122022002',
-  del_date: '2022-11-05T09:35:25+00:00',
   ref_do_no: 'test',
   total_qty: '64',
   invoice_no: 'test_invoice',
   customer_name: 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)',
-  address:
-    '700/867 Moo 3 Amata Nakhon Industrial Estate,Tambon Nong Ka Kha, District, Panthong District,Chon Buri 20160',
-  pallets: [
-    {
-      item: 1,
-      pallet_no: '40-831',
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201',
-      check: [false, false, false, false]
-    },
-    {
-      item: 2,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    },
-    {
-      item: 3,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    },
-    {
-      item: 4,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    },
-    {
-      item: 5,
-      pallet_no: '40-831',
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201',
-      check: [false, false, false, false]
-    },
-    {
-      item: 6,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    },
-    {
-      item: 7,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    },
-    {
-      item: 8,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    },
-    {
-      item: 9,
-      pallet_no: '40-831',
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201',
-      check: [false, false, false, false]
-    },
-    {
-      item: 10,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    },
-    {
-      item: 11,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    },
-    {
-      item: 12,
-      model_name: 'D1803-M-DI-E_TS5T',
-      model_code: '1J65813000',
-      serial_no: 'BNW7201'
-    }
-    // {
-    //     no: 1,
-    //     palletNo: '40-831',
-    //     palletItem: [
-    //         {
-    //             itemNo: 1,
-    //             model_name: 'D1803-M-DI-E_TS5T',
-    //             model_code: '1J65813000',
-    //             serial_no: 'BNW7201',
-    //         },
-    //         {
-    //             itemNo: 2,
-    //             model_name: 'D1803-M-DI-E_TS5T',
-    //             model_code: '1J65813000',
-    //             serial_no: 'BNW7201',
-    //         },
-    //         {
-    //             itemNo: 3,
-    //             model_name: 'D1803-M-DI-E_TS5T',
-    //             model_code: '1J65813000',
-    //             serial_no: 'BNW7201',
-    //         },
-    //         {
-    //             itemNo: 4,
-    //             model_name: 'D1803-M-DI-E_TS5T',
-    //             model_code: '1J65813000',
-    //             serial_no: 'BNW7201',
-    //         },
-    //     ],
-    //     check: [false, false, false, false]
-    // }
-  ],
-  pallets_check_header: [
-    'ID Tag SEQ Delivery Tag ใส่ถูกต้องหรือไม่',
-    'ตำแหน่งเครื่องยนต์วางถูกต้องหรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่'
-  ],
-  abnormal_recode: 'test',
-  fix_solution_abnormal: 'test',
-  sign: 'https://www.pinclipart.com/picdir/middle/383-3835937_signatures-samples-png-png-signatures-clipart.png',
+  address: '700/867 Moo 3 Amata Nakhon Industrial Estate,Tambon Nong Ka Kha, District, Panthong District,Chon Buri 20160',
   prepare_by: {
     name: 'KET',
     date: '2022-11-05T09:35:25+00:00',
@@ -463,7 +340,14 @@ export const mockupData2: IPreviewDataFormat2 = {
     name: 'KET',
     date: '2022-11-05T09:35:25+00:00',
     start_time: '2022-11-05T09:35:25+00:00'
-  }
+  },
+  id: 0,
+  delivery_date: "",
+  status: "",
+  round: "",
+  question_type: "",
+  question_list: [],
+  pallet_list: []
 }
 
 export type TDataPreview = IPreviewDataFormat1 | IPreviewDataFormat2
