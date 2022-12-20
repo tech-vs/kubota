@@ -54,5 +54,5 @@ class DocumentInline(admin.TabularInline):
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'doc_no', 'delivery_date', 'status')
+    list_display = ('id', 'doc_no', 'delivery_date', 'status',)
     inlines = [DocumentInline]
