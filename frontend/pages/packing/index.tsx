@@ -113,7 +113,7 @@ const Overall = ({ packingList }: any) => {
         return (
           <Button
             variant='contained'
-            onClick={() => router.push(`/preview/${packingList.pallet_id}?type=1`)}
+            onClick={() => router.push(`/preview/${row.pallet_id}?type=1`)}
             sx={{ borderRadius: 25 }}
           >
             View

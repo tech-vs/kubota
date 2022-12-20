@@ -2,7 +2,14 @@ import { forwardRef, useState } from 'react'
 import Barcode, { Options } from 'react-barcode'
 
 interface Props {
-  content: any
+  content: {
+    barcodes: {
+      internal_pallet_no: string
+      doc_no: string
+      model_name: string
+    }[],
+    country_name: string
+  }
 }
 
 const MultipleBarcode = forwardRef<HTMLDivElement, Props>(({ content }, ref) => {
@@ -21,20 +28,20 @@ const MultipleBarcode = forwardRef<HTMLDivElement, Props>(({ content }, ref) => 
         <div className='text-center'>
           <img src='/img/kubota-icon.jpg' width='50%' style={{ marginTop: '0.4cm' }} alt='kubota' />
         </div>
-        <div className='text-center'>USA</div>
+        <div className='text-center'>THAILAND</div>
         <div className='barcode-wrapper flex flex-wrap' style={{ rowGap: '0.2cm' }}>
-          {content.map((m: any) => (
-            <div className='flex flex-col items-center justify-center w-50 ' style={{ gap: '0.2cm' }} key={m}>
-              <Barcode value={'YYMM0000'} {...barcodeOption} />
-              <div className='no-line-height'>YYMM0000</div>
-              <div className='no-line-height'>2022102040832</div>
-              <div className='no-line-height'>D1803-N0DU0E0TS5T</div>
+          {content.barcodes.map((m: any) => (
+            <div className='flex flex-col items-center justify-center w-50 ' style={{ gap: '0.2cm' }} key={m.internal_pallet_no}>
+              <Barcode value={ m.internal_pallet_no || '-' } {...barcodeOption} />
+              <div className='no-line-height'>{ m.internal_pallet_no || '-' }</div>
+              <div className='no-line-height'>{ m.doc_no || '-' }</div>
+              <div className='no-line-height'>{ m.model_name || '-' }</div>
             </div>
           ))}
         </div>
         <div className='flex justify-center' style={{ gap: '0.3cm', marginTop: '0.2cm' }}>
-          <div>NW-660</div>
-          <div>GW:745</div>
+          <div>NW: -</div>
+          <div>GW: -</div>
         </div>
       </div>
     </>

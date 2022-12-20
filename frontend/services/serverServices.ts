@@ -124,6 +124,11 @@ export const scanRepack = async (palletID: String): Promise<any> => {
   return response.data
 }
 
+export const previewDocLoading = async (id: String): Promise<any> => {
+  const response = await httpClient.get(`/pallet/document/${id}/`)
+  return response.data
+}
+
 export const confirmCheckSheet3 = async (palletID: String): Promise<any> => {
   const response = await httpClient.get(`/pallet/${palletID}/section/3/submit/`)
   return response.data

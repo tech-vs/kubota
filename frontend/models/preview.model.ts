@@ -64,25 +64,49 @@ export interface IPreviewDataFormat1 {
 }
 
 export interface IPreviewDataFormat2 {
+  id: number
   doc_no: string
-  del_date: string
+  delivery_date: string
+  status: string
   ref_do_no: string
   total_qty: string
   invoice_no: string
+  round: string
   customer_name: string
   address: string
-  pallets: {
-    item: number
-    pallet_no?: string
-    model_name: string
-    model_code: string
-    serial_no: string
-    check?: boolean[]
+  question_type: string
+  question_list: {
+    text: string
+    type: string
+    section: number
   }[]
-  pallets_check_header: string[]
-  abnormal_recode: string
-  fix_solution_abnormal: string
-  sign: string
+  pallet_list: {
+    pallet: {
+      pallet_id: number
+      pallet: any
+      skewer: any
+      internal_pallet_no: string
+      status: string
+    }
+    part_list: {
+      id_no: string
+      plan_prod_finish_ym: string
+      model_code: string
+      model_name: string
+      serial_no: string
+      country_code: string
+      country_name: string
+      distributor_code: string
+      distributor_name: string
+    }[]
+    question_list: {
+      id: number
+      text: string
+      status: boolean
+      type: string
+      section: number
+    }[]
+  }[]
   prepare_by: {
     name: string
     date: string

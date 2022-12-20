@@ -3,6 +3,7 @@ import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
 import { Box, Button, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { useRouter } from 'next/router'
 type Props = {}
 
 const VISIBLE_FIELDS = ['modelCode']
@@ -19,6 +20,7 @@ const rows = [
   { id: 9, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' }
 ]
 const Overall = ({ loadingList }: any) => {
+  const router = useRouter()
   const columns: GridColDef[] = [
     {
       field: 'doc_no',
@@ -109,7 +111,7 @@ const Overall = ({ loadingList }: any) => {
       width: 150,
       renderCell: ({ row }: GridRenderCellParams<string>) => {
         return (
-          <Button variant='contained' onClick={() => null} sx={{ borderRadius: 25 }}>
+          <Button variant='contained' onClick={() => router.push(`/preview/${row.id}?type=2`)} sx={{ borderRadius: 25 }}>
             View
           </Button>
         )
