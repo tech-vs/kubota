@@ -9,7 +9,32 @@ const Test = ({ }: Props) => {
   const [barcode] = useState({
     internal_pallet_no: "22120001"
   })
-  const [barcodes] = useState([1, 2, 3, 4])
+  const [barcodes] = useState(
+    {
+      barcodes: [
+        {
+          internal_pallet_no: 'test',
+          doc_no: 'test',
+          model_name: 'test',
+        },
+        {
+          internal_pallet_no: 'test',
+          doc_no: 'test',
+          model_name: 'test',
+        },
+        {
+          internal_pallet_no: 'test',
+          doc_no: 'test',
+          model_name: 'test',
+        },
+        {
+          internal_pallet_no: 'test',
+          doc_no: 'test',
+          model_name: 'test',
+        },
+      ],
+      country_name: 'test'
+    })
 
   const siggleBarcodeRef = useRef<HTMLDivElement>(null)
   const multipleBarcodeRef = useRef<HTMLDivElement>(null)
@@ -18,30 +43,30 @@ const Test = ({ }: Props) => {
   function setupPrinter() {
     const BP = window.BrowserPrint
     //Get the default device from the application as a first step. Discovery takes longer to complete.
-    BP.getDefaultDevice("printer", function (device) {
+    BP.getDefaultDevice("printer", function (device: any) {
       console.log(device);
-    }, function (error) {
+    }, function (error: any) {
       console.log(error);
     })
   }
 
   const getDataImage = useCallback(async () => {
     if (siggleBarcodeRef.current) {
-        console.dir(siggleBarcodeRef.current);
-        
-        // callbackDataUrl(await toPng(ref.current))
-        console.log(await toPng(siggleBarcodeRef.current))
+      console.dir(siggleBarcodeRef.current);
+
+      // callbackDataUrl(await toPng(ref.current))
+      console.log(await toPng(siggleBarcodeRef.current))
     }
-}, [siggleBarcodeRef?.current])
+  }, [siggleBarcodeRef?.current])
 
   const getDataImage2 = useCallback(async () => {
     if (multipleBarcodeRef.current) {
-        console.dir(multipleBarcodeRef.current);
-        
-        // callbackDataUrl(await toPng(ref.current))
-        console.log(await toPng(multipleBarcodeRef.current))
+      console.dir(multipleBarcodeRef.current);
+
+      // callbackDataUrl(await toPng(ref.current))
+      console.log(await toPng(multipleBarcodeRef.current))
     }
-}, [multipleBarcodeRef?.current])
+  }, [multipleBarcodeRef?.current])
 
   useEffect(() => {
     setupPrinter()
