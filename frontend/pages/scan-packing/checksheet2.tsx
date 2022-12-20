@@ -36,10 +36,8 @@ const View = ({ checksheets, id }: any) => {
   // const [imagePrint, setImagePrint] = useState<string>('')
   const [barcodeContent, setBarcodeContent] = useState<{
     internal_pallet_no: string
-    pallet: string
   }>({
-    internal_pallet_no: 'abc',
-    pallet: 'abc',
+    internal_pallet_no: 'test'
   })
   const singleBarcodeRef = useRef<HTMLDivElement>(null)
 
@@ -219,11 +217,10 @@ const View = ({ checksheets, id }: any) => {
             // submit check sheet 2
             await confirmCheckSheet2(id)
             // get data for render barcode to printer
-            const { internal_pallet_no, pallet } = await checksheetPartList(id.toString() || '')
+            const { internal_pallet_no } = await checksheetPartList(id.toString() || '')
             console.log(internal_pallet_no);
             setBarcodeContent({
-              internal_pallet_no,
-              pallet
+              internal_pallet_no
             })
             alert('Packing Successfully')
             // await getDataImage()
