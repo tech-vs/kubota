@@ -356,9 +356,9 @@ const Scan = ({ genDoc }: any) => {
                 label='Address'
                 variant='filled'
                 value={
-                  input.customerName == 'Amatanakhon'
+                  input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
                     ? Amatanakhon
-                    : input.customerName == 'Navanakorn'
+                    : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
                     ? Navanakorn
                     : ''
                 }

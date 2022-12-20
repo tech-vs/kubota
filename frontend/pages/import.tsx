@@ -117,11 +117,11 @@ const Import = ({}: Props) => {
 
               await importExcel(data)
 
-              setLoading(true)
-              setTimeout(() => {
-                setSucess(true)
-                setLoading(false)
-              }, 1000)
+              // setLoading(true)
+              // setTimeout(() => {
+              //   setSucess(true)
+              //   setLoading(false)
+              // }, 1000)
 
               resetForm({
                 values: {

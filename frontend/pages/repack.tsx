@@ -3,10 +3,10 @@ import withAuth from '@/components/withAuth'
 import { scanLoading, scanRepack } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import { Box, Button, TextField, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import { GridColDef } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 type Props = {}
 const columns: GridColDef[] = [
   {
@@ -131,75 +131,8 @@ const View = ({ genDoc }: any) => {
             label='Pallet No.'
             variant='filled'
             value={scan.internalPalletNo}
-            onChange={async (e: ChangeEvent<HTMLInputElement>) => {
-              e.preventDefault()
-              setScan({ ...scan, internalPalletNo: e.target.value })
-              setFieldValue('scan.internalPalletNo', e.target.value)
-
-              refreshData()
-            }}
           />
           <Box sx={{ flexGrow: 1 }} />
-        </Box>
-
-        <Box
-          sx={{
-            height: 360,
-            width: '100%',
-            '& .cold': {
-              color: 'success.main'
-            },
-            '& .hot': {
-              color: 'error.main'
-            },
-            '& .headerField': {
-              fontSize: 16,
-              backgroundColor: '#55AAFF'
-            },
-            '& .customerField': {
-              backgroundColor: '#c7ddb5'
-            },
-            '& .cellField': {
-              fontSize: 20,
-              fontWeight: '700'
-            }
-          }}
-        >
-          <DataGrid
-            getRowId={scanLoadingResponseResult => scanLoadingResponseResult.serial_no}
-            sx={{
-              boxShadow: 2,
-              '& .MuiDataGrid-cell:hover': {
-                color: 'primary.main'
-              },
-              '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
-                outline: 'none'
-              }
-            }}
-            rows={scanLoadingResponseResult}
-            columns={columns}
-            getCellClassName={(params: GridCellParams<string>) => {
-              if (params.field === 'customer') {
-                return 'customerField'
-              }
-              if (params.value == 'OK') {
-                return 'cold'
-              }
-              if (params.value == 'Waiting') {
-                return 'hot'
-              }
-              return ''
-            }}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            disableSelectionOnClick
-            disableVirtualization
-            disableExtendRowFullWidth
-            disableIgnoreModificationsIfProcessingProps
-            disableColumnSelector
-            // disableColumnFilter
-            // disableColumnMenu
-          />
         </Box>
 
         <Box
@@ -213,8 +146,11 @@ const View = ({ genDoc }: any) => {
           <Box sx={{ flexGrow: 1 }} />
           <Button
             variant='contained'
-            onClick={() => {
-              router.push(`/scan-loading/checksheet1?id=${genDoc.id}&internalpalletid=${scanLoadingResponse.pallet_id}`)
+            onClick={async (e: any) => {
+              e.preventDefault()
+              setScan({ ...scan, internalPalletNo: e.target.value })
+              setFieldValue('scan.internalPalletNo', e.target.value)
+
               refreshData()
             }}
             color='primary'
