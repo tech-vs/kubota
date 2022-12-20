@@ -2,7 +2,7 @@ import PDFFormat1 from '@/components/Pdf/PDFFormat1'
 import PDFFormat2 from '@/components/Pdf/PDFFormat2'
 import withAuth from '@/components/withAuth'
 import { IPreviewDataFormat1, IPreviewDataFormat2, mockupData1, mockupData2, TDataPreview } from '@/models/preview.model'
-import { checksheetPartList } from '@/services/serverServices'
+import { checksheetPartList, previewDocLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import { Button } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -23,7 +23,6 @@ const PreviewDocumentWithId = ({ }: Props) => {
         if (!router.isReady) return;
         const { id, type } = router.query
         // codes using router.query
-        console.log('id : ', id);
         console.log('id : ', router.query);
 
         const fetchData = async () => {
@@ -32,8 +31,14 @@ const PreviewDocumentWithId = ({ }: Props) => {
                 alert(`Not found 'type' of document or 'pallet id'`)
                 return
             }
-            const res = await checksheetPartList(id.toString() || '')
-            setData(res)
+            let res
+            if (type === "1") {
+                res = await checksheetPartList(id.toString() || '')
+                setData(res)
+            } else if (type === "2") {
+                res = await previewDocLoading(id.toString() || '')
+                setData(res)
+            }
             setFormShow(type || "1")
             setLoading(false)
             setRender(true)
@@ -60,7 +65,7 @@ const PreviewDocumentWithId = ({ }: Props) => {
                 router.push('/scan-packing')
                 break;
             case "2":
-                router.push('/scan-loading')
+                router.push('/loading')
                 break;
 
             default:

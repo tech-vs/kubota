@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { IPreviewDataFormat2 } from '@/models/preview.model'
 
 interface Props {
@@ -6,20 +6,8 @@ interface Props {
 }
 
 const PDFFormat2 = ({ content }: Props) => {
-  const [checkColumn, setCheckColumn] = useState<string[]>([
-    'มี Tag อื่นๆ ติดอยู่กับเครื่องยนต์หรือไม่',
-    'ID Tag SEQ Delivery Tag ใส่ถูกต้องหรือไม่',
-    'ตำแหน่งเครื่องยนต์วางถูกต้องหรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-    'Barcode ติดที่เครื่องยนต์หรือไม่',
-  ])
-
-  useEffect(() => {
-    setCheckColumn(content.pallets_check_header)
-  }, [content.pallets_check_header])
+  // filter section === 3 only
+  const headerQuestion = useMemo(() => content.question_list.filter(f => f.section === 3), [content.question_list])
 
   return (
     <>
@@ -38,7 +26,7 @@ const PDFFormat2 = ({ content }: Props) => {
               <col style={{ width: '30pt' }} />
               <col style={{ width: '30pt' }} />
               {
-                checkColumn.map((m, i) =>
+                headerQuestion.map((m, i) =>
                   <col key={i + '_column'} style={{ width: '10pt' }} />,
                 )
               }
@@ -56,7 +44,7 @@ const PDFFormat2 = ({ content }: Props) => {
                           <td className="text-left">Doc.No :</td>
                           <td>{content.doc_no || ''}</td>
                           <td className="text-left">Del. Date:</td>
-                          <td>{content.del_date || ''}</td>
+                          <td>{content.delivery_date || ''}</td>
                         </tr>
                         <tr>
                           <td className="text-left">Ref. D/O No :</td>
@@ -80,11 +68,11 @@ const PDFFormat2 = ({ content }: Props) => {
                     </table>
                   </div>
                 </td>
-                <td colSpan={checkColumn.length} className="no-space-td clear-border-bottom">
-                  <table className="clear-border-cell-bottom clear-border-cell-left table-fixed no-border-space h-full">
+                <td colSpan={headerQuestion.length} className="no-space-td clear-border-bottom">
+                  <table className="clear-border-cell-bottom clear-border-cell-left table-fixed no-border-space h-full" style={{ width: 'calc(100% + 1pt)'}}>
                     <thead>
                       <tr>
-                        <td colSpan={checkColumn.length} className="fs-9 bold clear-border-top clear-border-right">
+                        <td colSpan={headerQuestion.length} className="fs-9 bold clear-border-top clear-border-right">
                           รายการตรวจเช็คเรื่องยนต์ก่อนส่ง
                         </td>
                       </tr>
@@ -92,8 +80,8 @@ const PDFFormat2 = ({ content }: Props) => {
                     <tbody>
                       <tr>
                         {
-                          checkColumn.map((m, i) =>
-                            <td key={i + '_check_column'} style={{ width: '10pt' }} className="no-space-td clear-border-bottom"><div className="rtl" style={{ height: '80pt', marginBottom: '-20pt' }}>{m}</div></td>,
+                          headerQuestion.map((m, i) =>
+                            <td key={i + '_check_column_1'} style={{ width: '10pt' }} className="no-space-td clear-border-bottom"><div className="rtl" style={{ height: '80pt', marginBottom: '0pt' }}>{m.text}</div></td>,
                           )
                         }
                       </tr>
@@ -110,25 +98,31 @@ const PDFFormat2 = ({ content }: Props) => {
                 <td style={{ width: '30pt' }}>MODEL CODE</td>
                 <td style={{ width: '30pt' }}>SERIAL NO.</td>
                 {
-                  checkColumn.map((m, i) =>
+                  headerQuestion.map((m, i) =>
                     <td key={i + '_column'} style={{ width: '10pt' }} className="clear-border-top" />,
                   )
                 }
               </tr>
               {
-                content.pallets.map((row, i) =>
-                  <tr key={i + '_row_data'}>
-                    <td className="bold">{row.item || ''}</td>
-                    {i % 4 === 0 && <td rowSpan={4} className="fs-9 bold">{row.pallet_no || ''}</td>}
-                    <td>{row.model_name || ''}</td>
-                    <td>{row.model_code || ''}</td>
-                    <td>{row.serial_no || ''}</td>
-                    {
-                      checkColumn.map((column, j) =>
-                        i % 4 === 0 && <td key={j + '_check_column'} rowSpan={4} />,
-                      )
-                    }
-                  </tr>,
+                // render group 4
+                content.pallet_list.map((row, i) =>
+                  // render row
+                  [...Array(4).keys()].map((indexOfData) => {
+                    return (
+                      <tr key={i + indexOfData + '_row_data_body'}>
+                        <td className="bold">{ (i * 4) + (indexOfData + 1) }</td>
+                        {indexOfData % 4 === 0 && <td rowSpan={4} className="fs-9 bold">{row.part_list[indexOfData].id_no || ''}</td>}
+                        <td>{row.part_list[indexOfData].model_name || ''}</td>
+                        <td>{row.part_list[indexOfData].model_code || ''}</td>
+                        <td>{row.part_list[indexOfData].serial_no || ''}</td>
+                        {
+                            headerQuestion.map((h, hIndex)=> 
+                              indexOfData % 4 === 0 && <td key={i + indexOfData + hIndex + 'header_status'} rowSpan={4}>{ row.question_list[indexOfData].status ? 'O' : 'X'  }</td>
+                            )
+                        }
+                      </tr>)
+                  }
+                  )
                 )
               }
             </tbody>
@@ -144,10 +138,10 @@ const PDFFormat2 = ({ content }: Props) => {
                 <div>X = ผิดปรกติ</div>
               </div>
             </div>
-            <div className="div4"> <img src={content.sign || ''} width="100%" height="32" alt="" /></div>
+            <div className="div4"></div>
             <div className="div5 text-center"> ผู้ตรวจเช็ค</div>
-            <div className="div6"> {content.abnormal_recode || ''}</div>
-            <div className="div7"> {content.fix_solution_abnormal || ''}</div>
+            <div className="div6"></div>
+            <div className="div7"></div>
           </div>
         </div>
         <div className="section" style={{ marginTop: '12pt' }}>

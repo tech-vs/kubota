@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from syncdata.models import PSETSDataUpload
 
-from pallet.models import Pallet, Document, DocumentPallet, PalletStatus, DocStatus
+from pallet.models import Pallet, Document, DocumentPallet, PalletStatus, DocStatus, QuestionType
 from pallet.serializers_loading import (
     NoneSerializer,
     DocNoGenSerializer,
@@ -15,9 +15,10 @@ from pallet.serializers_loading import (
     DocUpdateSerializer,
     PartItemSerializer,
     DocDetailSerializer,
+    PalletPartLoadingSerializer,
 )
 from pallet.filters import PalletLoadingFilter, DocumentListFilter
-from syncdata.models import MasterLoading
+from syncdata.models import MasterLoading, MSPackingStyle
 
 
 class LoadingViewSet(viewsets.GenericViewSet):
@@ -73,7 +74,12 @@ class LoadingViewSet(viewsets.GenericViewSet):
         if is_send_approve and doc:
             doc.status = DocStatus.WAIT_APRROVE
             doc.save()
-        return Response({}, status=status.HTTP_200_OK)
+
+        nw_gw = {}
+        if pallet.queustion_type == QuestionType.EXPORT:
+            nw_gw['nw_gw'] = pallet.nw_gw
+        response = PalletPartLoadingSerializer(pallet.part_list.all(), context=nw_gw, many=True).data
+        return Response(response, status=status.HTTP_200_OK)
 
     def list(self, request, *args, **kwargs):
         pallet = self.filter_queryset(self.get_queryset()).first()
