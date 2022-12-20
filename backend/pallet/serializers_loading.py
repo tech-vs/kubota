@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from pallet.models import DocStatus, QuestionType
 from pallet.serializers import PalletPartListSerializer, QuestionListSerializer, PalletListSerializer, PartSerializer
+from syncdata.models import MSPackingStyle
 
 
 class NoneSerializer(serializers.Serializer):
@@ -105,3 +106,19 @@ class DocDetailSerializer(serializers.Serializer):
 
 class QuestionCheckSerializer(serializers.Serializer):
     status = serializers.BooleanField()
+
+
+class PalletPartLoadingSerializer(serializers.Serializer):
+    model_name = serializers.CharField()
+    model_code = serializers.CharField()
+    serial_no = serializers.CharField()
+    country_name = serializers.CharField()
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        nw_gw = self.context.get('nw_gw', None)
+        if nw_gw:
+            packing_style = MSPackingStyle.objects.filter(model_code=instance.model_code, packing_style_code=nw_gw).first()
+            if packing_style:
+                ret['net_weight'] = int(packing_style.net_weight) * 4 if packing_style.net_weight else 0
+                ret['gross_weight'] = int(packing_style.gross_weight) * 4 if packing_style.gross_weight else 0
