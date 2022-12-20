@@ -116,9 +116,12 @@ class PalletPartLoadingSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         ret = super().to_representation(instance)
+        # print(instance.model_code)
         nw_gw = self.context.get('nw_gw', None)
         if nw_gw:
             packing_style = MSPackingStyle.objects.filter(model_code=instance.model_code, packing_style_code=nw_gw).first()
+            # print(packing_style)
             if packing_style:
                 ret['net_weight'] = int(packing_style.net_weight) * 4 if packing_style.net_weight else 0
                 ret['gross_weight'] = int(packing_style.gross_weight) * 4 if packing_style.gross_weight else 0
+        return ret

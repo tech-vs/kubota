@@ -76,8 +76,11 @@ class LoadingViewSet(viewsets.GenericViewSet):
             doc.save()
 
         nw_gw = {}
-        if pallet.queustion_type == QuestionType.EXPORT:
+        if pallet.question_type == QuestionType.EXPORT:
+            # print('export')
             nw_gw['nw_gw'] = pallet.nw_gw
+        # print(nw_gw)
+        # print(pallet.part_list.all())
         response = PalletPartLoadingSerializer(pallet.part_list.all(), context=nw_gw, many=True).data
         return Response(response, status=status.HTTP_200_OK)
 
