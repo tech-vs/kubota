@@ -329,6 +329,11 @@ const Scan = ({ genDoc }: any) => {
                     e.preventDefault()
                     setInput({ ...input, customerName: e.target.value })
                     setFieldValue('customerName', e.target.value)
+                    if (input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)')
+                      setInput({ ...input, address: Amatanakhon })
+                    else {
+                      setInput({ ...input, address: Navanakorn })
+                    }
                   }}
                 >
                   <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'}>
@@ -362,11 +367,11 @@ const Scan = ({ genDoc }: any) => {
                     ? Navanakorn
                     : ''
                 }
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setInput({ ...input, address: e.target.value })
-                  setFieldValue('address', e.target.value)
-                }}
+                // onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                //   e.preventDefault()
+                //   setInput({ ...input, address: e.target.value })
+                //   setFieldValue('address', e.target.value)
+                // }}
               />
               <Box sx={{ flexGrow: 1 }} />
             </Box>
