@@ -110,8 +110,8 @@ const Scan = ({ genDoc }: any) => {
     router.replace(router.asPath)
   }
   const [deEx, setDeEx] = useState<string>('')
-  const [customer, setCustomer] = useState<string>('')
-  const [address, setAddress] = useState<string>('')
+  const [customer, setCustomer] = useState<string>('SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)')
+  const [address, setAddress] = useState<string>(Amatanakhon)
   const [input, setInput] = useState({
     refNo: genDoc.ref_do_no,
     qty: genDoc.total_qty,
@@ -329,13 +329,13 @@ const Scan = ({ genDoc }: any) => {
                     e.preventDefault()
                     setInput({ ...input, customerName: e.target.value })
                     setFieldValue('customerName', e.target.value)
-                    if (input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)') {
-                      setInput({ ...input, address: Amatanakhon })
-                      setFieldValue('address', Amatanakhon)
-                    } else {
-                      setInput({ ...input, address: Navanakorn })
-                      setFieldValue('address', Navanakorn)
-                    }
+                    // if (input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)') {
+                    //   setInput({ ...input, address: Amatanakhon })
+                    //   setFieldValue('address', Amatanakhon)
+                    // } else {
+                    //   setInput({ ...input, address: Navanakorn })
+                    //   setFieldValue('address', Navanakorn)
+                    // }
                   }}
                 >
                   <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'}>
@@ -369,11 +369,11 @@ const Scan = ({ genDoc }: any) => {
                     ? Navanakorn
                     : ''
                 }
-                // onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                //   e.preventDefault()
-                //   setInput({ ...input, address: e.target.value })
-                //   setFieldValue('address', e.target.value)
-                // }}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  e.preventDefault()
+                  setInput({ ...input, address: e.target.value })
+                  setFieldValue('address', e.target.value)
+                }}
               />
               <Box sx={{ flexGrow: 1 }} />
             </Box>
