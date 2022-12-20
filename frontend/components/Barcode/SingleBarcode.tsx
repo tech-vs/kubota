@@ -1,7 +1,10 @@
 import { forwardRef, useState } from 'react'
 import Barcode, { Options } from 'react-barcode'
 interface Props {
-      content: any
+      content: {
+        internal_pallet_no: string
+        pallet: string
+      }
 }
 
 const SingleBarcode = forwardRef<HTMLDivElement, Props>(({ content }: Props, ref) => {
@@ -20,11 +23,11 @@ const SingleBarcode = forwardRef<HTMLDivElement, Props>(({ content }: Props, ref
             <div style={{ background: 'red' }}>hello</div> */}
             <div className="barcode-page" data-size="3x1" ref={ref}>
                 <div className='flex items-center justify-center flex-col h-full'
-                    style={{ gap: '0.2px' }}
+                    style={{ gap: '0.2cm' }}
                 >
-                    <Barcode value={'YYMM0000'} {...barcodeOption} />
-                    <div className='no-line-height'>YYMM0000</div>
-                    <div className='no-line-height'>2022102040832</div>
+                    <Barcode value={content.pallet || '-'} {...barcodeOption} />
+                    <div className='no-line-height'>{content.pallet || '-'}</div>
+                    <div className='no-line-height'>{content.internal_pallet_no || '-'}</div>
                 </div>
             </div>
         </>

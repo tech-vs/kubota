@@ -1,6 +1,7 @@
+import SingleBarcode from '@/components/Barcode/SingleBarcode'
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import { confirmCheckSheet2 } from '@/services/serverServices'
+import { checksheetPartList, confirmCheckSheet2 } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
   Box,
@@ -15,8 +16,9 @@ import {
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
+import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -29,6 +31,57 @@ const View = ({ checksheets, id }: any) => {
 
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
+
+  const [selectedDevice, setSelectedDevice] = useState<any>()
+  const [imagePrint, setImagePrint] = useState('')
+  const [barcodeContent, setBarcodeContent] = useState<{
+    internal_pallet_no: string
+    pallet: string
+  }>({
+    internal_pallet_no: 'abc',
+    pallet: 'abc',
+  })
+  const singleBarcodeRef = useRef<HTMLDivElement>(null)
+
+  async function getDataImage() {
+    if (singleBarcodeRef.current) {
+        const imgUrl = await toPng(singleBarcodeRef.current)
+        console.log(imgUrl)
+        setImagePrint(imgUrl)
+        return imgUrl
+    }
+  }
+
+  function printImage() {
+    return new Promise<void>((resolve, reject) => {
+      if (selectedDevice) {
+        selectedDevice.convertAndSendFile(imagePrint,
+          (res: any) => {
+            console.log(res)
+            resolve()
+          }, (err: any) => {
+            console.error(err)
+            resolve()
+          })
+      }
+    })
+  }
+
+  function setupPrinter() {
+    //Get the default device from the application as a first step. Discovery takes longer to complete.
+    const BP = window.BrowserPrint
+    BP.getDefaultDevice("printer", function (device: any) {
+      console.log(device)
+      setSelectedDevice(device)
+    }, function (error: any) {
+      console.log(error)
+    })
+  }
+
+  useEffect(() => {
+    setupPrinter()
+  }, [])
+
 
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
     return (
@@ -163,11 +216,19 @@ const View = ({ checksheets, id }: any) => {
             //   setSucess(true)
             //   setLoading(false)
             // }, 4000)
-
+            // submit check sheet 2
             await confirmCheckSheet2(id)
+            // get data for render barcode to printer
+            const { internal_pallet_no, pallet } = await checksheetPartList(id.toString() || '')
+            console.log(internal_pallet_no);
+            setBarcodeContent({
+              internal_pallet_no,
+              pallet
+            })
             alert('Packing Successfully')
+            await getDataImage()
+            await printImage()
             router.push(`/preview/${id}?type=1`)
-            // router.push(`/scan-packing`)
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {
@@ -181,6 +242,10 @@ const View = ({ checksheets, id }: any) => {
       >
         {props => showForm(props)}
       </Formik>
+      <div style={{ position: 'relative'}}>
+          <SingleBarcode ref={singleBarcodeRef} content={barcodeContent}></SingleBarcode>
+          <div style={{ position: 'absolute', top: 0, left:0, width: '100%', height: '100%', background: 'white'}}></div>
+      </div>
     </Layout>
   )
 }

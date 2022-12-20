@@ -1806,6 +1806,11 @@ hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.1, hoist-non-react-
   dependencies:
     react-is "^16.7.0"
 
+html-to-image@^1.11.3:
+  version "1.11.3"
+  resolved "https://registry.yarnpkg.com/html-to-image/-/html-to-image-1.11.3.tgz#ef34e367dc1b52b864acab7baabfc253bc481023"
+  integrity sha512-9E/uinAx0LrfGndny36FDh3j3shpp0vn/J1UFvpYZm/y6n8CjWJ+h6jyU1VzmOKAx/Fy/NPGath7nmRMpaocmg==
+
 html-tokenize@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/html-tokenize/-/html-tokenize-2.0.1.tgz#c3b2ea6e2837d4f8c06693393e9d2a12c960be5f"

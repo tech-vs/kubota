@@ -6,7 +6,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
 type Props = {}
 
 const Test = ({ }: Props) => {
-  const [barcode] = useState([])
+  const [barcode] = useState({
+    internal_pallet_no: "22120001",
+    pallet: "YYMM0000"
+  })
   const [barcodes] = useState([1, 2, 3, 4])
 
   const siggleBarcodeRef = useRef<HTMLDivElement>(null)
