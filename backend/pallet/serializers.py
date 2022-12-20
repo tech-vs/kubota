@@ -30,6 +30,10 @@ class PalletCreateSerializer(serializers.Serializer):
         return attrs
 
 
+class PalletRepackSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(choices=PalletStatus.choices, default=PalletStatus.REPACK)
+
+
 class PalletPackingDoneSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     pallet = serializers.CharField()
