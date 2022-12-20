@@ -1,5 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
+import { importExcel } from '@/services/serverServices'
 import { Alert, Box, Button, Card, CardContent, Snackbar, Typography } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
@@ -7,8 +8,8 @@ import { ChangeEvent, useState } from 'react'
 type Props = {}
 
 const Import = ({}: Props) => {
+  const [file, setFile] = useState<File>()
   const [fileName, setFileName] = useState<string>('')
-  const [customer, setCustomer] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
 
@@ -24,7 +25,7 @@ const Import = ({}: Props) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Import Stop Shipment File</Typography>
+          <Typography variant='h5'>Import Master plan file</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: 6 }}>
@@ -41,10 +42,12 @@ const Import = ({}: Props) => {
                 Choose file
                 <input
                   hidden
+                  multiple
                   type='file'
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
                     if (e.target.files) {
+                      setFile(e.target.files[0])
                       setFieldValue('file', e.target.files[0]) // for upload
                       setFileName(e.target.files[0].name)
                     }
@@ -74,9 +77,7 @@ const Import = ({}: Props) => {
               <Button
                 variant='contained'
                 onClick={() => {
-                  // window.location.reload()
                   setFieldValue('file', null)
-                  setCustomer('')
                   setFileName('')
                 }}
                 color='secondary'
@@ -91,7 +92,7 @@ const Import = ({}: Props) => {
               {success ? (
                 <Snackbar open={success} autoHideDuration={6000} onClose={() => setSucess(false)}>
                   <Alert onClose={() => setSucess(false)} severity='success' sx={{ width: '100%' }}>
-                    This is a success message!
+                    complete!
                   </Alert>
                 </Snackbar>
               ) : (
@@ -106,27 +107,33 @@ const Import = ({}: Props) => {
   return (
     <Layout>
       <Formik
-        initialValues={{ file: null, customer: '' }}
+        initialValues={{ file: null }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           // alert(values.customer)
           try {
-            setLoading(true)
-            setTimeout(() => {
-              setSucess(true)
-              setLoading(false)
-            }, 4000)
+            if (values.file) {
+              let data = new FormData()
+              data.append('file', values.file)
 
-            resetForm({
-              values: {
-                file: null,
-                customer: ''
-              }
-            })
-            setCustomer('')
-            setFileName('')
-            setSubmitting(false)
+              await importExcel(data)
+
+              setLoading(true)
+              setTimeout(() => {
+                setSucess(true)
+                setLoading(false)
+              }, 1000)
+
+              resetForm({
+                values: {
+                  file: null
+                }
+              })
+
+              setFileName('')
+              setSubmitting(false)
+            }
           } catch (error) {
-            alert('Error')
+            alert(error)
           }
 
           // resetForm()

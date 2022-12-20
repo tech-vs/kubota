@@ -1,6 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import { scanLoading } from '@/services/serverServices'
+import { scanLoading, scanRepack } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
@@ -98,6 +98,7 @@ const View = ({ genDoc }: any) => {
     useEffect(() => {
       async function call() {
         scanLoadingResponse = await scanLoading(scan.internalPalletNo)
+        await scanRepack(scanLoadingResponse.pallet_id)
       }
       call()
     }, [scan])
@@ -112,7 +113,7 @@ const View = ({ genDoc }: any) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Scan Internal Pallet</Typography>
+          <Typography variant='h5'>Repack</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Box
@@ -135,7 +136,6 @@ const View = ({ genDoc }: any) => {
               setScan({ ...scan, internalPalletNo: e.target.value })
               setFieldValue('scan.internalPalletNo', e.target.value)
 
-              scanLoadingResponseResult = scanLoadingResponse.item_list
               refreshData()
             }}
           />

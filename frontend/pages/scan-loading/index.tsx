@@ -331,8 +331,12 @@ const Scan = ({ genDoc }: any) => {
                     setFieldValue('customerName', e.target.value)
                   }}
                 >
-                  <MenuItem value={'Amatanakhon'}>SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)</MenuItem>
-                  <MenuItem value={'Navanakorn'}>SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)</MenuItem>
+                  <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'}>
+                    SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)
+                  </MenuItem>
+                  <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'}>
+                    SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)
+                  </MenuItem>
                 </Select>
               </FormControl>
               <Box sx={{ flexGrow: 1 }} />

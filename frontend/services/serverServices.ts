@@ -83,12 +83,12 @@ export const exportExcel = async (data: exportExcelProps): Promise<void> => {
   return response.data
 }
 
-export const importExcel = async (data: FormData): Promise<void> => {
-  const response = await httpClient.post('/import', data, {
-    baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API
-  })
-  return response.data
-}
+// export const importExcel = async (data: FormData): Promise<void> => {
+//   const response = await httpClient.post('/import', data, {
+//     baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API
+//   })
+//   return response.data
+// }
 
 export const scanPallet = async (data: scanPalletProps): Promise<any> => {
   const response = await httpClient.post('/pallet/', data)
@@ -119,6 +119,10 @@ export const scanLoading = async (internalPalletNo: String): Promise<any> => {
   const response = await httpClient.get(`/pallet/loading/?internal_pallet_no=${internalPalletNo}&status=finish_pack`)
   return response.data
 }
+export const scanRepack = async (palletID: String): Promise<any> => {
+  const response = await httpClient.patch(`/pallet/${palletID}/repack`)
+  return response.data
+}
 
 export const confirmCheckSheet3 = async (palletID: String): Promise<any> => {
   const response = await httpClient.get(`/pallet/${palletID}/section/3/submit/`)
@@ -135,4 +139,19 @@ export const approveDocument = async (id: string): Promise<any> => {
     status: 'approved'
   })
   return response.data
+}
+
+export const importExcel = async (data: FormData): Promise<any> => {
+  try {
+    const response = await httpClient.post('/syncdata/master-loading/upload/', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    return response.data
+  } catch (error) {
+    alert(error)
+
+    return error
+  }
 }

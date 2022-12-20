@@ -91,6 +91,12 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
       icon: <SummarizeIcon />,
       pathName: '/scan-loading',
       onClickAction: () => router.push('/scan-loading')
+    },
+    {
+      name: 'Repack',
+      icon: <SummarizeIcon />,
+      pathName: '/repack',
+      onClickAction: () => router.push('/repack')
     }
   ]
   const items = [

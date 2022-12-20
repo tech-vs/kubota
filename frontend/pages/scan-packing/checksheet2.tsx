@@ -218,11 +218,6 @@ const View = ({ checksheets, id }: any) => {
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           // alert(values.customer)
           try {
-            // setLoading(true)
-            // setTimeout(() => {
-            //   setSucess(true)
-            //   setLoading(false)
-            // }, 4000)
             // submit check sheet 2
             await confirmCheckSheet2(id)
             // get data for render barcode to printer
