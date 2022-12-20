@@ -1,37 +1,37 @@
+import pandas as pd
+from pathlib import Path
+
 from concurrent.futures import ThreadPoolExecutor
 from rest_framework.filters import SearchFilter
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from django.core.files.base import ContentFile
+from django.core.files.storage import FileSystemStorage
+from django.db import transaction
 
-from .syncdata import (
-    sync_data_mssql,
-    # sync_data_oracle,
+from syncdata.serializers import FileSerializer
+from syncdata.models import (
+    MasterLoading,
 )
-from pallet.serializers import NoneSerializer
-from .models import (
-    PSETSDataUpload,
-    ProdInfoHistory,
-)
+from syncdata.master_loading import insert_data
 
-def run_sync_mssql():
-    with ThreadPoolExecutor(max_workers=1) as executor:
-        executor.submit(sync_data_mssql)
+def run_insert_data(df: pd.DataFrame):
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        executor.submit(insert_data, df)
 
+# fs = FileSystemStorage(location='tmp/')
 
-class SyncMSSQLViewSet(viewsets.GenericViewSet):
-    
+class MasterLoadingViewSet(viewsets.GenericViewSet):
+    queryset = MasterLoading.objects.all()
+    permission_classes = (AllowAny,)
     action_serializers = {
-        'list': NoneSerializer,
-        'pse_ts_data_upload': NoneSerializer,
-        'prod_info_history': NoneSerializer,
+        'upload': FileSerializer,
     }
 
     permission_classes_action = {
-        'list': [AllowAny],
-        'pse_ts_data_upload': [AllowAny],
-        'prod_info_history': [AllowAny],
+        'upload': [AllowAny],
     }
 
     def get_serializer_class(self):
@@ -46,18 +46,16 @@ class SyncMSSQLViewSet(viewsets.GenericViewSet):
         except KeyError:
             return [permission() for permission in self.permission_classes]
 
-    def list(self, request, *args, **kwargs):
-        return Response({'status': 'ok'}, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=['GET'], url_path='pse-ts-data-upload')
-    def pse_ts_data_upload(self, request, *args, **kwargs):
-        # Create a thread pool with a specified number of threads
-        # results = sync_data_mssql()
-        run_sync_mssql()
-        
-        return Response(status=status.HTTP_200_OK)
-
-    # @action(detail=False, methods=['GET'], url_path='prod-info-history')
-    # def prod_info_history(self, request, *args, **kwargs):
-    #     results = sync_data_oracle()
-    #     return Response(status=status.HTTP_200_OK)
+    @action(detail=False, methods=['POST'], url_path='upload')
+    def upload(self, request, *args, **kwargs):
+        file = request.FILES['file']
+        if file.content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            df = pd.read_excel(file.read(), engine='openpyxl', sheet_name=0, skiprows=1, dtype=str)  # XLSX
+            df = df.where(pd.notnull(df), '')
+        elif file.content_type == 'application/vnd.ms-excel':
+            df = pd.read_excel(file.read(), sheet_name=0, skiprows=1, dtype=str)  # XLS
+            df = df.where(pd.notnull(df), '')
+        else:
+            raise Exception("File not supported")
+        run_insert_data(df)
+        return Response({'detail': 'Master Loading Done'}, status=status.HTTP_200_OK)

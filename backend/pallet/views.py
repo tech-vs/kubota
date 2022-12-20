@@ -28,6 +28,7 @@ from pallet.filters import PalletPartListFilter
 
 class PalletViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all().prefetch_related('part_list', 'question_list')
+    permission_classes = (AllowAny,)
     lookup_field = 'id'
 
     action_serializers = {
@@ -86,6 +87,7 @@ class PalletViewSet(viewsets.GenericViewSet):
 
         check_item = []
         domestic_fail_text = ''
+        fail_dict = {'detail': []}
         part_to_set_list = []
         ## prepare part_list to compare and set to pallet
         for part in part_list:
@@ -93,14 +95,15 @@ class PalletViewSet(viewsets.GenericViewSet):
             part_item = ProdInfoHistory.objects.filter(**part).first()
             if part_item:
                 part_to_set_list.append((prod_seq, part_item))
+            else:
+                fail_dict['detail'].append({'prod_seq': prod_seq})
         if len(part_to_set_list) != 4:
-            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(fail_dict, status=status.HTTP_400_BAD_REQUEST)
         
         if question_type == QuestionType.EXPORT:
             #logic check part_list export
             for part in part_list:
-                if part_list[0].get('id_no', '') == part.get('id_no', ''):
-                    check_item.append(True)
+                check_item.append(True) if part_list[0].get('id_no', '') == part.get('id_no', '') else fail_dict['detail'].append('item_sharp ไม่ตรงกัน')
         if question_type == QuestionType.DOMESTIC:
             # logic check part_list domestic
             check_dict_list = [{'delivery_date': date, **pallet_skewer_check, 'prod_seq': part_item[0], 'item_sharp': part_item[1].model_code} for part_item in part_to_set_list]
@@ -109,7 +112,10 @@ class PalletViewSet(viewsets.GenericViewSet):
                 if PSETSDataUpload.objects.filter(**check).exists():
                     check_item.append(True)
                 else:
-                    domestic_fail_text += f"item_sharp = {check.get('item_sharp', '')} ไม่มีในระบบ ,"
+                    fail_dict['detail'].append({
+                        'prod_seq': check.get('prod_seq', ''),
+                        'item_sharp': check.get('item_sharp', ''),
+                    })
 
         if check_item.count(True) == 4:
             pallet = Pallet.objects.create(
@@ -124,7 +130,7 @@ class PalletViewSet(viewsets.GenericViewSet):
             PalletPart.objects.bulk_create([PalletPart(pallet=pallet, part=part_item[1]) for part_item in part_to_set_list])
             pallet.generate_question(question_type)
         else:
-            return Response({'detail': f'item_sharp ไม่ตรงกัน {domestic_fail_text}'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(fail_dict, status=status.HTTP_400_BAD_REQUEST)
                 
         response = PalletListSerializer(pallet).data
         return Response(response, status=status.HTTP_201_CREATED)
@@ -133,6 +139,7 @@ class PalletViewSet(viewsets.GenericViewSet):
 class PalletListQuestionViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all().prefetch_related('palletquestion_set')
     lookup_field = None
+    permission_classes = (AllowAny,)
     action_serializers = {
         'list': QuestionListSerializer,
         'retrieve': NoneSerializer,
@@ -186,6 +193,7 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
 
 class QuestionViewSet(viewsets.GenericViewSet):
     queryset = PalletQuestion.objects.all()
+    permission_classes = (AllowAny,)
     lookup_field = 'id'
     action_serializers = {
         'partial_update': QuestionCheckSerializer,
@@ -226,6 +234,7 @@ class PalletPartViewSet(viewsets.GenericViewSet):
     lookup_url_kwarg = 'pallet_id'
     filter_backends = [DjangoFilterBackend]
     filterset_class = PalletPartListFilter
+    permission_classes = (AllowAny,)
 
     action_serializers = {
         'list': PalletPartListSerializer,

@@ -60,5 +60,26 @@ class ProdInfoHistory(CommonInfoModel):
         return f'{self.id_no}-{self.plan_prod_finish_ym}'
 
 
-class Log(CommonInfoModel):
+class LogSyncData(CommonInfoModel):
     table = models.CharField(max_length=255)
+    detail = models.JSONField(default=dict)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.created_at}'
+
+
+class MasterLoading(CommonInfoModel):
+    stopshipment_date = models.CharField(max_length=255, null=True)
+    model_code = models.CharField(max_length=255, null=True)
+    model_name = models.CharField(max_length=255, null=True)
+    serial_no = models.CharField(max_length=255, null=True)
+    status = models.CharField(max_length=255, null=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f'{self.serial_no}'

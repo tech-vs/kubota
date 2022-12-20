@@ -3,7 +3,7 @@ from django.core.management.base import BaseCommand
 from django.core.exceptions import ObjectDoesNotExist
 
 import pyodbc
-from syncdata.models import ProdInfoHistory
+from syncdata.models import ProdInfoHistory, LogSyncData
 
 
 class Command(BaseCommand):
@@ -50,4 +50,5 @@ class Command(BaseCommand):
                 )
                 count_create += 1
         ProdInfoHistory.objects.bulk_create(prodinfohistory_list)
+        LogSyncData.objects.create(table='ProdInfoHistory', detail={'row_created': count_create})
         print(f'oracle "ProdInfoHistory" create = {count_create} row Done')

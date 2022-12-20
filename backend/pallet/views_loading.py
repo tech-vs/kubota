@@ -17,12 +17,14 @@ from pallet.serializers_loading import (
     DocDetailSerializer,
 )
 from pallet.filters import PalletLoadingFilter, DocumentListFilter
+from syncdata.models import MasterLoading
 
 
 class LoadingViewSet(viewsets.GenericViewSet):
-    queryset = Pallet.objects.all().prefetch_related('palletpart_set')
+    queryset = Pallet.objects.all().prefetch_related('palletpart_set', 'part_list')
     filter_backends = [DjangoFilterBackend]
     filterset_class = PalletLoadingFilter
+    permission_classes = (AllowAny,)
 
     action_serializers = {
         'list':  PartItemSerializer,
@@ -78,6 +80,12 @@ class LoadingViewSet(viewsets.GenericViewSet):
         item_list = []
         if pallet:
             item_list  = pallet.part_list.all()
+            for item in item_list:
+                # print(f'item = {item.serial_no}')
+                serial_no = str(item.serial_no).strip()
+                if MasterLoading.objects.filter(serial_no=serial_no).exists():
+                    # print('stop')
+                    return Response({'detail': 'pallet นี้อยู่ใน list stopshipment'}, status=status.HTTP_400_BAD_REQUEST)
         response = {
             'pallet_id': pallet.id if pallet else 0,
             'item_list': self.get_serializer(item_list, many=True).data,
@@ -90,6 +98,7 @@ class DocumentViewSet(viewsets.GenericViewSet):
     lookup_field = 'id'
     filter_backends = [DjangoFilterBackend]
     filterset_class = DocumentListFilter
+    permission_classes = (AllowAny,)
     action_serializers = {
         'partial_update': DocUpdateSerializer,
         'gen_doc': DocNoGenSerializer,
