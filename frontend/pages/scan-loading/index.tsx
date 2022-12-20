@@ -329,10 +329,12 @@ const Scan = ({ genDoc }: any) => {
                     e.preventDefault()
                     setInput({ ...input, customerName: e.target.value })
                     setFieldValue('customerName', e.target.value)
-                    if (input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)')
+                    if (input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)') {
                       setInput({ ...input, address: Amatanakhon })
-                    else {
+                      setFieldValue('address', Amatanakhon)
+                    } else {
                       setInput({ ...input, address: Navanakorn })
+                      setFieldValue('address', Navanakorn)
                     }
                   }}
                 >
