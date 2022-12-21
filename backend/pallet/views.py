@@ -86,36 +86,36 @@ class PalletViewSet(viewsets.GenericViewSet):
         date = Pallet.get_date_from_pallet_string(pallet_string)
 
         check_item = []
-        domestic_fail_text = ''
-        fail_dict = {'detail': []}
         part_to_set_list = []
+        prod_seq_fail_text = ''
         ## prepare part_list to compare and set to pallet
+        if question_type == QuestionType.DOMESTIC and not PSETSDataUpload.objects.filter(pallet_sharp=data.get('pallet', ''), skewer_sharp=data.get('skewer', ''), delivery_date=date).exists():
+            return Response("Pallet ไม่ตรงกับข้อมูลในระบบ", status=status.HTTP_400_BAD_REQUEST)
         for part in part_list:
             prod_seq = part.pop('prod_seq', '')
             part_item = ProdInfoHistory.objects.filter(**part).first()
             if part_item:
                 part_to_set_list.append((prod_seq, part_item))
-            else:
-                fail_dict['detail'].append({'prod_seq': prod_seq})
         if len(part_to_set_list) != 4:
-            return Response(fail_dict, status=status.HTTP_400_BAD_REQUEST)
+            return Response("Part มีไม่ครบ 4", status=status.HTTP_400_BAD_REQUEST)
         
         if question_type == QuestionType.EXPORT:
             #logic check part_list export
-            for part in part_list:
-                check_item.append(True) if part_list[0].get('id_no', '') == part.get('id_no', '') else fail_dict['detail'].append('item_sharp ไม่ตรงกัน')
+            for part_item in part_to_set_list:
+                if part_to_set_list[0][1].model_code == part_item[1].model_code:
+                    check_item.append(True)
+                else:
+                    return Response("Model Code ไม่ตรงกันในทุก Part", status=status.HTTP_400_BAD_REQUEST)
         if question_type == QuestionType.DOMESTIC:
             # logic check part_list domestic
             check_dict_list = [{'delivery_date': date, **pallet_skewer_check, 'prod_seq': part_item[0], 'item_sharp': part_item[1].model_code} for part_item in part_to_set_list]
             for check in check_dict_list:
-                # print(f'check = {check}')
                 if PSETSDataUpload.objects.filter(**check).exists():
                     check_item.append(True)
                 else:
-                    fail_dict['detail'].append({
-                        'prod_seq': check.get('prod_seq', ''),
-                        'item_sharp': check.get('item_sharp', ''),
-                    })
+                    prod_seq_fail_text += f"Part ใน Sequence {check.get('prod_seq', '')} ไม่ตรงกับข้อมูลในระบบ, "
+            if prod_seq_fail_text:
+                return Response(prod_seq_fail_text, status=status.HTTP_400_BAD_REQUEST)
 
         if check_item.count(True) == 4:
             pallet = Pallet.objects.create(
@@ -125,13 +125,8 @@ class PalletViewSet(viewsets.GenericViewSet):
                 question_type=question_type,
                 internal_pallet_no=Pallet.generate_internal_pallet_no()
             )
-            # if not is_created:
-            #     return Response({'detail': 'pallet-skewer นี้มีการเรียกใช้ไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
             PalletPart.objects.bulk_create([PalletPart(pallet=pallet, part=part_item[1]) for part_item in part_to_set_list])
             pallet.generate_question(question_type)
-        else:
-            return Response(fail_dict, status=status.HTTP_400_BAD_REQUEST)
-                
         response = PalletListSerializer(pallet).data
         return Response(response, status=status.HTTP_201_CREATED)
 
