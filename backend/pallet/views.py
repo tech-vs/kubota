@@ -84,7 +84,6 @@ class PalletViewSet(viewsets.GenericViewSet):
         }
 
         date = Pallet.get_date_from_pallet_string(pallet_string)
-
         check_item = []
         part_to_set_list = []
         prod_seq_fail_text = ''

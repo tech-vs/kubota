@@ -101,7 +101,7 @@ class Pallet(CommonInfoModel):
     def get_date_from_pallet_string(pallet_string: str) -> str:
         if pallet_string:
             date = pallet_string[-8:]
-            return f'{date[6:8]}/{date[4:6]}/{date[0:4]}'
+            return f'{date[0:2]}/{date[2:4]}/{date[4:8]}'
         return ''
 
     def generate_question(self, type: str) -> None:
