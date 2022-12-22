@@ -87,14 +87,18 @@ class LoadingViewSet(viewsets.GenericViewSet):
     def list(self, request, *args, **kwargs):
         pallet = self.filter_queryset(self.get_queryset()).first()
         if not pallet or not self.request.query_params.get('internal_pallet_no', None):
-            return Response("ไม่พบ Internal Pallet No. นี้")
-        item_list  = pallet.part_list.all()
-        for item in item_list:
-            # print(f'item = {item.serial_no}')
-            serial_no = str(item.serial_no).strip()
-            if MasterLoading.objects.filter(serial_no=serial_no).exists():
+            pallet = None
+            # return Response("ไม่พบ Internal Pallet No. นี้", status=status.HTTP_400_BAD_REQUEST)
+        item_list = []    
+        if pallet:
+            item_list  = pallet.part_list.all()
+            for item in item_list:
+                # print(f'item = {item.serial_no}')
+                serial_no = str(item.serial_no).strip()
+                if MasterLoading.objects.filter(serial_no=serial_no).exists():
+                    pallet = None
                 # print('stop')
-                return Response({'detail': 'Pallet นี้อยู่ใน List Stopshipment'}, status=status.HTTP_400_BAD_REQUEST)
+                # return Response("Pallet นี้อยู่ใน List Stopshipment", status=status.HTTP_400_BAD_REQUEST)
         response = {
             'pallet_id': pallet.id if pallet else 0,
             'item_list': self.get_serializer(item_list, many=True).data,
