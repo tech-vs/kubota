@@ -37,9 +37,14 @@ def migrate_account_data(apps, schema_editor):
     
     account_list = []
     for data in user_data:
-        account_list.append(Account(username=user_data['username'], type=user_data['password'], role=user_data['role']))
+        account_list.append(Account(username=data['username'], role=data['role']))
     
     Account.objects.bulk_create(account_list)
+
+    account_queryset = Account.objects.all()
+    for account in account_queryset:
+        account.set_password('1234')
+        account.save()
 
 
 class Migration(migrations.Migration):
