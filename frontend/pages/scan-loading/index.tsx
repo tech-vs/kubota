@@ -197,7 +197,7 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
-                <InputLabel id='demo-simple-select-required-label'>Select Domestic/Export</InputLabel>
+                <InputLabel id='demo-simple-select-required-label'>Select...</InputLabel>
                 <Select
                   labelId='demo-simple-select-required-label'
                   id='demo-simple-select-required'
