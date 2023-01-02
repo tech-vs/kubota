@@ -1,9 +1,8 @@
+import { IContentSingleBarcode } from '@/models/barcode.model'
 import { forwardRef, useState } from 'react'
 import Barcode, { Options } from 'react-barcode'
 interface Props {
-      content: {
-        internal_pallet_no: string
-      }
+    content: IContentSingleBarcode
 }
 
 const SingleBarcode = forwardRef<HTMLDivElement, Props>(({ content }: Props, ref) => {
@@ -22,8 +21,19 @@ const SingleBarcode = forwardRef<HTMLDivElement, Props>(({ content }: Props, ref
                 <div className='flex items-center justify-center flex-col h-full'
                     style={{ gap: '0.2cm' }}
                 >
-                    <Barcode value={content.internal_pallet_no || '-'} {...barcodeOption} />
-                    <div className='no-line-height'>{content.internal_pallet_no || '-'}</div>
+                    {
+                        content.question_type === 'Export' && <>
+                            <Barcode value={content.internal_pallet_no || '-'} {...barcodeOption} />
+                            <div className='no-line-height'>{content.internal_pallet_no || '-'}</div>
+                        </>
+                    }
+                    { 
+                        content.question_type === 'Domestic' && <>
+                            <Barcode value={content.internal_pallet_no || '-'} {...barcodeOption} />
+                            <div className='no-line-height'>{content.internal_pallet_no || '-'}</div>
+                            <div className='no-line-height'>{content.pallet_string || '-'}</div>
+                        </>
+                    }
                 </div>
             </div>
         </>

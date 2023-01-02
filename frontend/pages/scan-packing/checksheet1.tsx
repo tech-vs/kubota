@@ -24,7 +24,9 @@ const View = ({ checksheets, id }: any) => {
   // Call this function whenever you want to
   // refresh props!
   const refreshData = () => {
-    router.replace(router.asPath)
+    router.replace(router.asPath, undefined, {
+      scroll: false
+    })
   }
 
   const [loading, setLoading] = useState<boolean>(false)

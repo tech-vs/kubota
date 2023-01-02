@@ -1,6 +1,7 @@
 import SingleBarcode from '@/components/Barcode/SingleBarcode'
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
+import { IContentSingleBarcode } from '@/models/barcode.model'
 import { checksheetPartList, confirmCheckSheet2 } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
@@ -36,10 +37,10 @@ const View = ({ checksheets, id }: any) => {
 
   const [selectedDevice, setSelectedDevice] = useState<any>()
   // const [imagePrint, setImagePrint] = useState<string>('')
-  const [barcodeContent, setBarcodeContent] = useState<{
-    internal_pallet_no: string
-  }>({
-    internal_pallet_no: 'test'
+  const [barcodeContent, setBarcodeContent] = useState<IContentSingleBarcode>({
+    internal_pallet_no: 'test',
+    pallet_string: 'test',
+    question_type: 'Export'
   })
   const singleBarcodeRef = useRef<HTMLDivElement>(null)
 
@@ -223,11 +224,13 @@ const View = ({ checksheets, id }: any) => {
             // submit check sheet 2
             await confirmCheckSheet2(id)
             // get data for render barcode to printer
-            const { internal_pallet_no } = await checksheetPartList(id.toString() || '')
+            const { internal_pallet_no, pallet_string, question_type } = await checksheetPartList(id.toString() || '')
             console.log(internal_pallet_no)
             setBarcodeContent(barcodeContent => ({
               ...barcodeContent,
-              internal_pallet_no
+              internal_pallet_no,
+              pallet_string,
+              question_type
             }))
             alert('Packing Successfully')
             setSubmitting(false)
