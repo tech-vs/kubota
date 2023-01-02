@@ -111,7 +111,7 @@ const PDFFormat2 = ({ content }: Props) => {
                     return (
                       <tr key={i + indexOfData + '_row_data_body'}>
                         <td className="bold">{ (i * 4) + (indexOfData + 1) }</td>
-                        {indexOfData % 4 === 0 && <td rowSpan={4} className="fs-9 bold">{row.part_list[indexOfData].id_no || ''}</td>}
+                        {indexOfData % 4 === 0 && <td rowSpan={4} className="fs-9 bold">{row.pallet.internal_pallet_no || ''}</td>}
                         <td>{row.part_list[indexOfData].model_name || ''}</td>
                         <td>{row.part_list[indexOfData].model_code || ''}</td>
                         <td>{row.part_list[indexOfData].serial_no || ''}</td>
