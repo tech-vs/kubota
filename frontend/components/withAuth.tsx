@@ -46,6 +46,7 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
         } else if (role == 'Administrator') {
           router.push('/user')
         }
+
         return null
       }
     }
