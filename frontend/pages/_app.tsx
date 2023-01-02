@@ -6,6 +6,7 @@ import Head from 'next/head'
 import { env } from 'process'
 import { useEffect } from 'react'
 import { Provider } from 'react-redux'
+import '../global.css';
 function MyApp({ Component, pageProps }: AppProps) {
   const theme = createTheme({
     palette: {

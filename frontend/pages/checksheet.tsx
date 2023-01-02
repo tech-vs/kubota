@@ -15,9 +15,14 @@ import {
 import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
 import { useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 type Props = {}
 
 const View = ({ checksheets }: any) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const [fileName, setFileName] = useState<string>('')
   const [customer, setCustomer] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -170,7 +175,12 @@ const View = ({ checksheets }: any) => {
             setFileName('')
             setSubmitting(false)
           } catch (error) {
-            alert('Error')
+            // alert('Error')
+            MySwal.fire({
+              text: 'Error',
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
           }
 
           // resetForm()

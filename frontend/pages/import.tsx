@@ -5,9 +5,14 @@ import { Alert, Box, Button, Card, CardContent, Snackbar, Typography } from '@mu
 import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
 import { ChangeEvent, useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 type Props = {}
 
 const Import = ({}: Props) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const [file, setFile] = useState<File>()
   const [fileName, setFileName] = useState<string>('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -133,7 +138,12 @@ const Import = ({}: Props) => {
               setSubmitting(false)
             }
           } catch (error) {
-            alert(error)
+            console.error(error)
+            MySwal.fire({
+              text: JSON.stringify(error),
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
           }
 
           // resetForm()

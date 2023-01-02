@@ -15,12 +15,15 @@ import {
   SelectChangeEvent,
   Snackbar,
   TextField,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
 
 type Props = {}
 // let scanLoadingResponse: any[] = []
@@ -140,6 +143,8 @@ const Scan = ({ genDoc }: any) => {
 
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
     return (
       <Form>
@@ -463,7 +468,12 @@ const Scan = ({ genDoc }: any) => {
             // router.push(`/scan-loading/checksheet1?id=${genDoc.id}`)
             setSubmitting(false)
           } catch (error) {
-            alert(error)
+            await MySwal.fire({
+              text: JSON.stringify(error),
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
+            // alert(error)
           }
         }}
       >

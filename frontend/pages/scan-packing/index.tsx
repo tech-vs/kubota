@@ -17,6 +17,9 @@ import {
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 
 type Props = {}
 
@@ -29,6 +32,8 @@ type scanProps = {
 }
 
 const Scan = ({}: Props) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const router = useRouter()
   const [deEx, setDeEx] = useState<string>('')
   const [unit, setUnit] = useState<string>('')
@@ -375,7 +380,13 @@ const Scan = ({}: Props) => {
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {
-              alert(JSON.stringify(error.response.data))
+              MySwal.fire({
+                text: JSON.stringify(error.response.data),
+                position: 'top',
+                confirmButtonColor: theme.palette.primary.main
+              })
+              console.error(error)
+              // alert(JSON.stringify(error.response.data))
             }
           }
         }}

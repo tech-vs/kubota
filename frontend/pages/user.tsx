@@ -26,6 +26,9 @@ import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui
 import { Formik } from 'formik'
 import { useRouter } from 'next/router'
 import { ChangeEvent, Fragment, useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 import * as Yup from 'yup'
 {
   /* <Avatar sx={{ mr: 2 }}>test</Avatar> */
@@ -50,6 +53,8 @@ const rows = [
 ]
 
 const User = ({ user }: any) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const router = useRouter()
   // Call this function whenever you want to
   // refresh props!
@@ -256,7 +261,12 @@ const User = ({ user }: any) => {
             setSubmitting(false)
             setAddUserPopUpOpen(false)
           } catch (error) {
-            alert('Error')
+            MySwal.fire({
+              text: 'Error',
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
+            // alert('Error')
           }
         }}
       >

@@ -7,12 +7,17 @@ import httpClient from '@/utils/httpClient'
 import { Button } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 
 type Props = {}
 
 export type TFormId = number | string | string[]
 
 const PreviewDocumentWithId = ({ }: Props) => {
+    const MySwal = withReactContent(Swal)
+    const theme = useTheme()
     const [formShow, setFormShow] = useState<TFormId>(1)
     const [loading, setLoading] = useState<boolean>(false)
     const [render, setRender] = useState<boolean>(false)
@@ -28,7 +33,12 @@ const PreviewDocumentWithId = ({ }: Props) => {
         const fetchData = async () => {
             setLoading(true)
             if (!id || !type) {
-                alert(`Not found 'type' of document or 'pallet id'`)
+                // alert(`Not found 'type' of document or 'pallet id'`)
+                MySwal.fire({
+                    text: `Not found 'type' of document or 'pallet id'`,
+                    position: 'top',
+                    confirmButtonColor: theme.palette.primary.main
+                  })
                 return
             }
             let res

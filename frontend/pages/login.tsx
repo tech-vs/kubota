@@ -7,6 +7,9 @@ import { Field, Form, Formik, FormikProps } from 'formik'
 import { TextField } from 'formik-material-ui'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 
 interface Props {}
 function Copyright(props: any) {
@@ -22,6 +25,8 @@ function Copyright(props: any) {
 }
 
 const Login = (props: Props) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const dispatch = useAppDispatch()
   const router = useRouter()
 
@@ -83,7 +88,12 @@ const Login = (props: Props) => {
             onSubmit={async values => {
               const response = await dispatch(signIn(values))
               if (response.meta.requestStatus === 'rejected') {
-                alert('Login failed')
+                // alert('Login failed')
+                MySwal.fire({
+                  text: 'Login failed',
+                  position: 'top',
+                  confirmButtonColor: theme.palette.primary.main
+                })
               } else {
                 router.push('/')
               }

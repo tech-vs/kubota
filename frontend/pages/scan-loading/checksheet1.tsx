@@ -19,9 +19,14 @@ import { Form, Formik, FormikProps } from 'formik'
 import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const router = useRouter()
   const { internalpalletid } = router.query
 
@@ -266,8 +271,13 @@ const View = ({ checksheets, id }: any) => {
                     }
   
                     setBarcodeContent(template)
-  
-                    alert('Loading successfully')
+
+                    MySwal.fire({
+                      text: 'Loading successfully',
+                      position: 'top',
+                      confirmButtonColor: theme.palette.primary.main
+                    })
+                    // alert('Loading successfully')
                   }
                 }}
                 color='primary'
@@ -285,7 +295,12 @@ const View = ({ checksheets, id }: any) => {
                       pallet_id: internalpalletidInt
                     })
                   }
-                  alert('Last oading successfully and Request Approval')
+                  await MySwal.fire({
+                    text: 'Last oading successfully and Request Approval',
+                    position: 'top',
+                    confirmButtonColor: theme.palette.primary.main,
+                  })
+                  // alert('Last oading successfully and Request Approval')
                   router.push(`/scan-loading`)
                 }}
                 color='primary'
@@ -317,7 +332,12 @@ const View = ({ checksheets, id }: any) => {
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {
-              alert(JSON.stringify(error.response.data.detail))
+              await MySwal.fire({
+                text: JSON.stringify(error.response.data.detail),
+                position: 'top',
+                confirmButtonColor: theme.palette.primary.main,
+              })
+              // alert(JSON.stringify(error.response.data.detail))
             }
           }
         }}
