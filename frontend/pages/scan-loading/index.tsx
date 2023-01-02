@@ -20,7 +20,7 @@ import {
 import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 
 type Props = {}
 // let scanLoadingResponse: any[] = []
@@ -109,6 +109,7 @@ const Scan = ({ genDoc }: any) => {
   const refreshData = () => {
     router.replace(router.asPath)
   }
+
   const [deEx, setDeEx] = useState<string>('')
   const [customer, setCustomer] = useState<string>('SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)')
   const [address, setAddress] = useState<string>(Amatanakhon)
@@ -121,9 +122,22 @@ const Scan = ({ genDoc }: any) => {
     address: genDoc.address,
     question_type: genDoc.question_type
   })
-  // const [scan, setScan] = useState({
-  //   internalPalletNo: ''
-  // })
+
+  useEffect(() => {
+    async function call() {
+      setInput({
+        ...input,
+        address:
+          input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
+            ? Amatanakhon
+            : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
+            ? Navanakorn
+            : ''
+      })
+    }
+    call()
+  }, [input.customerName])
+
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
@@ -329,13 +343,6 @@ const Scan = ({ genDoc }: any) => {
                     e.preventDefault()
                     setInput({ ...input, customerName: e.target.value })
                     setFieldValue('customerName', e.target.value)
-                    // if (input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)') {
-                    //   setInput({ ...input, address: Amatanakhon })
-                    //   setFieldValue('address', Amatanakhon)
-                    // } else {
-                    //   setInput({ ...input, address: Navanakorn })
-                    //   setFieldValue('address', Navanakorn)
-                    // }
                   }}
                 >
                   <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'}>
@@ -427,23 +434,7 @@ const Scan = ({ genDoc }: any) => {
       <Formik
         initialValues={{ deEx: '', refNo: '', qty: '', invoiceNo: '', round: '', customerName: '', address: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          // alert(values.deEx)
           try {
-            // setLoading(true)
-            // setTimeout(() => {
-            //   setSucess(true)
-            //   setLoading(false)
-            // }, 4000)
-
-            // setInput({
-            //   refNo: '',
-            //   qty: '',
-            //   invoiceNo: '',
-            //   round: '',
-            //   customerName: '',
-            //   address: ''
-            // })
-            // setDeEx('')
             console.log({
               ref_do_no: input.refNo,
               question_type: input.question_type,

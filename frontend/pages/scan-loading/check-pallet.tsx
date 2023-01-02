@@ -134,7 +134,6 @@ const View = ({ genDoc }: any) => {
               e.preventDefault()
               setScan({ ...scan, internalPalletNo: e.target.value })
               setFieldValue('scan.internalPalletNo', e.target.value)
-
               scanLoadingResponseResult = scanLoadingResponse.item_list
               refreshData()
             }}
@@ -197,8 +196,6 @@ const View = ({ genDoc }: any) => {
             disableExtendRowFullWidth
             disableIgnoreModificationsIfProcessingProps
             disableColumnSelector
-            // disableColumnFilter
-            // disableColumnMenu
           />
         </Box>
 
