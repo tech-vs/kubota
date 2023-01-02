@@ -28,7 +28,13 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
         router.push(`/login`)
         return null
       } else if (route == '/') {
-        router.push('/packing')
+        if (role == 'Operator') {
+          router.push('/scan-packing')
+        } else if (role == 'Manager') {
+          router.push('/approval')
+        } else if (role == 'Administrator') {
+          router.push('/user')
+        }
         return null
       }
     } else {
@@ -37,8 +43,8 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
           router.push('/scan-packing')
         } else if (role == 'Manager') {
           router.push('/approval')
-        } else {
-          router.push('/packing')
+        } else if (role == 'Administrator') {
+          router.push('/user')
         }
         return null
       }
