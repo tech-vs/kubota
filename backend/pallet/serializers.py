@@ -48,6 +48,8 @@ class PalletListSerializer(serializers.Serializer):
     pallet = serializers.CharField()
     skewer = serializers.CharField()
     internal_pallet_no = serializers.CharField()
+    pallet_string = serializers.CharField()
+    question_type = serializers.ChoiceField(choices=QuestionType.choices)
     status = serializers.ChoiceField(choices=PalletStatus.choices)
     created_at = serializers.DateTimeField()
 
