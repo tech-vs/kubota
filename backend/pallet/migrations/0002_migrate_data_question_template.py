@@ -71,17 +71,45 @@ question section 3 Export
 - รถขนส่งสภาพพร้อมใช้งานหรือไม่
 '''
 
+'''
+question section 1 Domestic
+- รุ่นของเครื่องยนต์ และสถานที่จัดส่ง ถูกต้องหรือไม่ (ตรวจสอบ Barcode ที่ Product Label)
+   Engine Model and Destination correct or not ? (Check at Barcode on Product Label)
+-  Serial No. ที่ Product Label ว่าถูกต้องหรือไม่ (ตรวจสอบ โดยอ่านเปรียบเทียบกับ Serial No. ของเครื่องยนต์) Check the Serial No. of Engine showed in MODEL BOARD correct or not ?
+- พ่นน้ำมันสเปรย์กันสนิมแล้วหรือยัง Already use rust preventive solvent ?
+- โบลท์สําหรับยึดเครื่องยนต์ ได้ถูกขันแน่น แล้วหรือไม่ (ดูจากรอยมาร์ก ที่โบลท์) Have BOLT already been tighten or not ? (Check by Torque Mark at BOLT)
+-  Sequence ของ SKC ถูกต้องและตรงกับ Pallet Number เมือเทียบกับ Check List หรือไม่ ? SKC's Sequence is correct with pallet number of check list sheet ?
+- Part ASSY PIPE OVER FLOW บิดงอ หรือเสียรูปหรือไม่ ? Part ASSY PIPE OVER FLOW got damage or not ?
+- หมุนพัดลมตรวจเช็ค บิดงอ,เสียรูป หรือไม่ ( Model Combine ) [Model Combine] rotate fan, check warped, lose shape or not?
+- มี Tag อื่นๆ ติดอยู่กับเครื่องยนตร์ SKC หรือไม่ Tags attached to the SKC engine or not?
+
+
+question section 1 Export
+- รุ่นของเครื่องยนต์ และสถานทีจัดส่ง ถูกต้องหรือไม่ (ตรวจสอบ Barcode ที่ Product Label) Engine Model and Destination correct or not ? (Check at Barcode on Product Label)
+- Serial No. ที่ Product Label ว่าถูกต้องหรือไม่ (ตรวจสอบ โดยอ่านเปรียบเทียบกับ Serial No. ของเครื่องยนต์) Check the Serial No. of Engine showed in MODEL BOARD correct or not ?
+- พ่นนํ้ามันสเปรย์กันสนิมแล้วหรือยัง Already use rust preventive solvent ?
+- โบลท์สําหรับยึดเครื่องยนต์ ได้ถูกขันแน่น แล้วหรือไม่ (ดูจากรอยมาร์ก ที่โบลท์) Have BOLT already been tighten or not ? (Check by Torque Mark at BOLT)
+- ติดถุงพลาสติกคลุมเครื่อง ได้เรียบร้อยดีหรือไม่ / มีรูฉีกขาดหรือไม่ Pack engine in pastic bag properly or not ? / Any hole at plastic bag ?
+- ติด MODEL BOARD และ PRODUCT LABEL ที่ถุงคลุมเครื่อง ได้เรียบร้อยดีหรือไม่ Is there any problem of MODEL BOARD, PRODUCT LABEL attached on plastic bag?
+- เปรียบเทียบ Serial No. ของเครื่องยนต์ จาก MODEL BOARD ว่าถูกต้องหรือไม่ Check the Serial No. of Engine showed in MODEL BOARD correct or not ? 
+- Part : ASSY PIPE OVER FLOW บิดงอ หรือเสียรูปหรือไม่ ?  Part : ASSY PIPE OVER FLOW got damage or not ?
+- ข้อมูลที่ LABEL (CHN, CERTIFICATION), NAMEPLATE และ PRODUCT CERTIFICATE ถูกต้องหรือไม่ Check LABEL (CHN, CERTIFICATION), NAMEPLATE and PRODUCT CERTIFICATE correct or not ?
+- [EKI Model] ตรวจสอบ Emission Label สูญหาย หรือชํารุด ฉีกขาด พับ บิดงอหรือไม่? [EKI Model] Checking Emission Label are loss or got damage and abnormel or not?
+- ใส่ Packing Part ครบทุกเครื่อง และตรงตาม Model หรือไม่ Put the packing part in all engine and match the model or not?
+- [Model TK] ใส่ Manual inst. ครบทุกเครื่องหรือไม่ [Model TK] put manual Instruction all machine or not?
+'''
+
 def migrate_question_template_data(apps, schema_editor):
     QuestionTemplate = apps.get_model('pallet', 'QuestionTemplate')
     question_template_data_domestic_section_1 = [
-        {'text': 'รุ่นของเครื่องยนต์ และสถานที่จัดส่ง ถูกต้องหรือไม่ (ตรวจสอบ Barcode ที่ Product Label)'},
-        {'text': 'Serial No. ที่ Product Label ว่าถูกต้องหรือไม่ (ตรวจสอบ โดยอ่านเปรียบเทียบกับ Serial No. ของเครื่องยนต์)'},
-        {'text': 'พ่นน้ำมันสเปรย์กันสนิมแล้วหรือยัง'},
-        {'text': 'โบลท์สําหรับยึดเครื่องยนต์ ได้ถูกขันแน่น แล้วหรือไม่ (ดูจากรอยมาร์ก ที่โบลท์)'},
-        {'text': 'Sequence ของ SKC ถูกต้องและตรงกับ Pallet Number เมือเทียบกับ Check List หรือไม่ ?'},
-        {'text': 'Part ASSY PIPE OVER FLOW บิดงอ หรือเสียรูปหรือไม่ ?'},
-        {'text': 'หมุนพัดลมตรวจเช็ค บิดงอ,เสียรูป หรือไม่ ( Model Combine )'},
-        {'text': 'มี Tag อื่นๆ ติดอยู่กับเครื่องยนตร์ SKC หรือไม่'},
+        {'text': 'รุ่นของเครื่องยนต์ และสถานที่จัดส่ง ถูกต้องหรือไม่ (ตรวจสอบ Barcode ที่ Product Label) Engine Model and Destination correct or not ? (Check at Barcode on Product Label)'},
+        {'text': 'Serial No. ที่ Product Label ว่าถูกต้องหรือไม่ (ตรวจสอบ โดยอ่านเปรียบเทียบกับ Serial No. ของเครื่องยนต์) Check the Serial No. of Engine showed in MODEL BOARD correct or not ?'},
+        {'text': 'พ่นน้ำมันสเปรย์กันสนิมแล้วหรือยัง Already use rust preventive solvent ?'},
+        {'text': 'โบลท์สําหรับยึดเครื่องยนต์ ได้ถูกขันแน่น แล้วหรือไม่ (ดูจากรอยมาร์ก ที่โบลท์) Have BOLT already been tighten or not ? (Check by Torque Mark at BOLT)'},
+        {'text': 'Sequence ของ SKC ถูกต้องและตรงกับ Pallet Number เมือเทียบกับ Check List หรือไม่ ? SKC\'s Sequence is correct with pallet number of check list sheet ?'},
+        {'text': 'Part ASSY PIPE OVER FLOW บิดงอ หรือเสียรูปหรือไม่ ? Part ASSY PIPE OVER FLOW got damage or not ?'},
+        {'text': 'หมุนพัดลมตรวจเช็ค บิดงอ,เสียรูป หรือไม่ ( Model Combine ) [Model Combine] rotate fan, check warped, lose shape or not ?'},
+        {'text': 'มี Tag อื่นๆ ติดอยู่กับเครื่องยนตร์ SKC หรือไม่ Tags attached to the SKC engine or not?'},
     ]
     question_template_data_domestic_section_2 = [
         {'text': 'OIL PIPE (TURBOCHARGER)'},
@@ -106,18 +134,18 @@ def migrate_question_template_data(apps, schema_editor):
         {'text': 'มีการ Marking Produc Label หรือไม่'},
     ]
     question_template_data_export_section_1 = [
-        {'text': 'รุ่นของเครื่องยนต์ และสถานทีจัดส่ง ถูกต้องหรือไม่ (ตรวจสอบ Barcode ที่ Product Label)'},
-        {'text': 'Serial No. ที่ Product Label ว่าถูกต้องหรือไม่ (ตรวจสอบ โดยอ่านเปรียบเทียบกับ Serial No. ของเครื่องยนต์)'},
-        {'text': 'พ่นนํ้ามันสเปรย์กันสนิมแล้วหรือยัง'},
-        {'text': 'โบลท์สําหรับยึดเครื่องยนต์ ได้ถูกขันแน่น แล้วหรือไม่ (ดูจากรอยมาร์ก ที่โบลท์)'},
-        {'text': 'ติดถุงพลาสติกคลุมเครื่อง ได้เรียบร้อยดีหรือไม่ / มีรูฉีกขาดหรือไม่'},
-        {'text': 'ติด MODEL BOARD และ PRODUCT LABEL ที่ถุงคลุมเครื่อง ได้เรียบร้อยดีหรือไม่'},
-        {'text': 'เปรียบเทียบ Serial No. ของเครื่องยนต์ จาก MODEL BOARD ว่าถูกต้องหรือไม่'},
-        {'text': 'Part : ASSY PIPE OVER FLOW บิดงอ หรือเสียรูปหรือไม่ ?'},
-        {'text': 'ข้อมูลที่ LABEL (CHN, CERTIFICATION), NAMEPLATE และ PRODUCT CERTIFICATE ถูกต้องหรือไม่'},
-        {'text': '[EKI Model] ตรวจสอบ Emission Label สูญหาย หรือชํารุด ฉีกขาด พับ บิดงอหรือไม่?'},
-        {'text': 'ใส่ Packing Part ครบทุกเครื่อง และตรงตาม Model หรือไม่'},
-        {'text': '[Model TK] ใส่ Manual inst. ครบทุกเครื่องหรือไม่'},
+        {'text': 'รุ่นของเครื่องยนต์ และสถานทีจัดส่ง ถูกต้องหรือไม่ (ตรวจสอบ Barcode ที่ Product Label) Engine Model and Destination correct or not ? (Check at Barcode on Product Label)'},
+        {'text': 'Serial No. ที่ Product Label ว่าถูกต้องหรือไม่ (ตรวจสอบ โดยอ่านเปรียบเทียบกับ Serial No. ของเครื่องยนต์) Check the Serial No. of Engine showed in MODEL BOARD correct or not ?'},
+        {'text': 'พ่นนํ้ามันสเปรย์กันสนิมแล้วหรือยัง Already use rust preventive solvent ?'},
+        {'text': 'โบลท์สําหรับยึดเครื่องยนต์ ได้ถูกขันแน่น แล้วหรือไม่ (ดูจากรอยมาร์ก ที่โบลท์) Have BOLT already been tighten or not ? (Check by Torque Mark at BOLT)'},
+        {'text': 'ติดถุงพลาสติกคลุมเครื่อง ได้เรียบร้อยดีหรือไม่ / มีรูฉีกขาดหรือไม่ Pack engine in pastic bag properly or not ? / Any hole at plastic bag ?'},
+        {'text': 'ติด MODEL BOARD และ PRODUCT LABEL ที่ถุงคลุมเครื่อง ได้เรียบร้อยดีหรือไม่ Is there any problem of MODEL BOARD, PRODUCT LABEL attached on plastic bag ?'},
+        {'text': 'เปรียบเทียบ Serial No. ของเครื่องยนต์ จาก MODEL BOARD ว่าถูกต้องหรือไม่ Check the Serial No. of Engine showed in MODEL BOARD correct or not ? '},
+        {'text': 'Part : ASSY PIPE OVER FLOW บิดงอ หรือเสียรูปหรือไม่ ?  Part : ASSY PIPE OVER FLOW got damage or not ?'},
+        {'text': 'ข้อมูลที่ LABEL (CHN, CERTIFICATION), NAMEPLATE และ PRODUCT CERTIFICATE ถูกต้องหรือไม่ Check LABEL (CHN, CERTIFICATION), NAMEPLATE and PRODUCT CERTIFICATE correct or not ?'},
+        {'text': '[EKI Model] ตรวจสอบ Emission Label สูญหาย หรือชํารุด ฉีกขาด พับ บิดงอหรือไม่? [EKI Model] Checking Emission Label are loss or got damage and abnormel or not ?'},
+        {'text': 'ใส่ Packing Part ครบทุกเครื่อง และตรงตาม Model หรือไม่ Put the packing part in all engine and match the model or not ?'},
+        {'text': '[Model TK] ใส่ Manual inst. ครบทุกเครื่องหรือไม่ [Model TK] put manual Instruction all machine or not ?'},
     ]
     question_template_data_export_section_2 = [
         {'text': 'OIL PIPE (TURBOCHARGER)'},
