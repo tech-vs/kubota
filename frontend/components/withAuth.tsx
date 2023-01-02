@@ -15,6 +15,7 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
     const { route } = router
     const isAuthenticated = useSelector(isAuthenticatedSelector)
     const isAuthenticating = useSelector((state: RootState) => state.user.isAuthenticating)
+    const role = useSelector((state: RootState) => state.user.role)
     console.log(isAuthenticated)
 
     // is fetching session (eg. show spinner)
@@ -32,7 +33,13 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
       }
     } else {
       if (isAuthenticated) {
-        router.push('/packing')
+        if (role == 'Operator') {
+          router.push('/scan-packing')
+        } else if (role == 'Manager') {
+          router.push('/approval')
+        } else {
+          router.push('/packing')
+        }
         return null
       }
     }
