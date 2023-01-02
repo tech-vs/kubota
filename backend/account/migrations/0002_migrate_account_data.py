@@ -22,7 +22,7 @@ def migrate_account_data(apps, schema_editor):
         {
             'username': 'admin',
             'password': '1234',
-            'role': 'Adminstrator',
+            'role': 'Administrator',
         },
         {
             'username': 'operator',
