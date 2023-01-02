@@ -1,13 +1,16 @@
 import MultipleBarcode from "@/components/Barcode/MultipleBarcode"
 import SingleBarcode from "@/components/Barcode/SingleBarcode"
+import { IContentSingleBarcode } from "@/models/barcode.model"
 import { toPng } from "html-to-image"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 type Props = {}
 
 const Test = ({ }: Props) => {
-  const [barcode] = useState({
-    internal_pallet_no: "22120001"
+  const [barcode] = useState<IContentSingleBarcode>({
+    internal_pallet_no: "22120001",
+    pallet_string: "20312313213",
+    question_type: "Domestic"
   })
   const [barcodes] = useState(
     {
