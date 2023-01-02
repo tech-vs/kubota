@@ -17,9 +17,14 @@ import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const router = useRouter()
   // Call this function whenever you want to
   // refresh props!
@@ -171,7 +176,12 @@ const View = ({ checksheets, id }: any) => {
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {
-              alert(JSON.stringify(error.response.data.detail))
+              await MySwal.fire({
+                text: JSON.stringify(error.response.data.detail),
+                position: 'top',
+                confirmButtonColor: theme.palette.primary.main,
+              })
+              // alert(JSON.stringify(error.response.data.detail))
             }
           }
         }}

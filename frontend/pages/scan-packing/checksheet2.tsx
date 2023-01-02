@@ -20,9 +20,14 @@ import { Form, Formik, FormikProps } from 'formik'
 import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const router = useRouter()
   // Call this function whenever you want to
   // refresh props!
@@ -232,11 +237,21 @@ const View = ({ checksheets, id }: any) => {
               pallet_string,
               question_type
             }))
-            alert('Packing Successfully')
+            // alert('Packing Successfully')
+            await MySwal.fire({
+              text: 'Packing Successfully',
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {
-              alert(JSON.stringify(error.response.data.detail))
+              await MySwal.fire({
+                text: JSON.stringify(error.response.data.detail),
+                position: 'top',
+                confirmButtonColor: theme.palette.primary.main,
+              })
+              // alert(JSON.stringify(error.response.data.detail))
             }
           }
 

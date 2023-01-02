@@ -3,6 +3,9 @@ import SingleBarcode from "@/components/Barcode/SingleBarcode"
 import { IContentSingleBarcode } from "@/models/barcode.model"
 import { toPng } from "html-to-image"
 import { useCallback, useEffect, useRef, useState } from "react"
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 
 type Props = {}
 
@@ -89,6 +92,17 @@ const Test = ({ }: Props) => {
     setupPrinter()
     console.dir(siggleBarcodeRef.current)
   }, [siggleBarcodeRef?.current])
+
+  const theme = useTheme()
+
+  useEffect(() => {
+    const MySwal = withReactContent(Swal)
+    MySwal.fire({
+      text: 'Packing Successfully',
+      position: 'top',
+      confirmButtonColor: theme.palette.primary.main
+    })
+  }, [])
 
   return <>
     <button onClick={() => getDataImage()}>get image 1</button>

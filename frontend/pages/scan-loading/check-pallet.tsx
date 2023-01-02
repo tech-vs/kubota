@@ -7,6 +7,9 @@ import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
 import { ChangeEvent, useEffect, useState } from 'react'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { useTheme } from "@mui/material";
 type Props = {}
 const columns: GridColDef[] = [
   {
@@ -84,6 +87,8 @@ const columns: GridColDef[] = [
 let scanLoadingResponse: any = {}
 let scanLoadingResponseResult: any[] = []
 const View = ({ genDoc }: any) => {
+  const MySwal = withReactContent(Swal)
+  const theme = useTheme()
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
     const router = useRouter()
     // Call this function whenever you want to
@@ -235,7 +240,12 @@ const View = ({ genDoc }: any) => {
           try {
             setSubmitting(false)
           } catch (error) {
-            alert('Error')
+            MySwal.fire({
+              text: 'Error',
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
+            // alert('Error')
           }
         }}
       >
