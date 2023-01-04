@@ -89,7 +89,7 @@ class PalletViewSet(viewsets.GenericViewSet):
         prod_seq_fail_text = ''
         check_duplicate_id_no = []
         ## prepare part_list to compare and set to pallet
-        if Pallet.objects.filter(pallet_string=pallet_string).exists():
+        if question_type == QuestionType.DOMESTIC and Pallet.objects.filter(pallet_string=pallet_string).exists():
             return Response("Pallet No นี้ทำการ pack ไปแล้ว", status=status.HTTP_400_BAD_REQUEST)
         if question_type == QuestionType.DOMESTIC and not PSETSDataUpload.objects.filter(pallet_sharp=data.get('pallet', ''), skewer_sharp=data.get('skewer', ''), delivery_date=date).exists():
             return Response("Pallet ไม่ตรงกับข้อมูลในระบบ", status=status.HTTP_400_BAD_REQUEST)
