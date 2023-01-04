@@ -20,9 +20,9 @@ RUN apt-get install -y tdsodbc
 RUN apt-get install -y build-essential 
 RUN apt-get install -y libpq-dev
 RUN alien -i oracle-instantclient12.2-basic-12.2.0.1.0-1.x86_64.rpm
-RUN export ORACLE_HOME=/usr/lib/oracle/12.2/client64
-RUN export LD_LIBRARY_PATH=/usr/lib/oracle/12.2/client64/lib
-RUN export ORACLE_SID=asdb
+ENV ORACLE_HOME /usr/lib/oracle/12.2/client64
+ENV LD_LIBRARY_PATH /usr/lib/oracle/12.2/client64/lib
+ENV ORACLE_SID asdb
 # RUN export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 RUN pip install --upgrade pip
