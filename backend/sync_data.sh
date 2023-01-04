@@ -2,6 +2,6 @@
 
 set -ex
  
-python manage.py sync_mssql
-python manage.py sync_oracle
-python manage.py sync_ms_packing_style
+docker exec -it django python manage.py sync_mssql
+docker exec -it django python manage.py sync_oracle
+docker exec -it django python manage.py sync_ms_packing_style
