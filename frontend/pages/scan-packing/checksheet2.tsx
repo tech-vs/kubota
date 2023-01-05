@@ -13,7 +13,8 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
@@ -22,7 +23,6 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -89,7 +89,7 @@ const View = ({ checksheets, id }: any) => {
   useEffect(() => {
     async function call() {
       await printImage()
-      router.push(`/preview/${id}?type=1`)
+      router.push(`/scan-packing`)
     }
     call()
   }, [barcodeContent])
@@ -249,7 +249,7 @@ const View = ({ checksheets, id }: any) => {
               await MySwal.fire({
                 text: JSON.stringify(error.response.data.detail),
                 position: 'top',
-                confirmButtonColor: theme.palette.primary.main,
+                confirmButtonColor: theme.palette.primary.main
               })
               // alert(JSON.stringify(error.response.data.detail))
             }

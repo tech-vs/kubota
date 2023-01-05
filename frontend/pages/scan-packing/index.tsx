@@ -12,14 +12,14 @@ import {
   Select,
   SelectChangeEvent,
   TextField,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 
 type Props = {}
 
@@ -73,7 +73,9 @@ const Scan = ({}: Props) => {
               }}
             >
               <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
-                <InputLabel id='demo-simple-select-required-label'>Select...</InputLabel>
+                <InputLabel id='demo-simple-select-required-label' sx={{ fontSize: 15 }}>
+                  Select...
+                </InputLabel>
                 <Select
                   labelId='demo-simple-select-required-label'
                   id='demo-simple-select-required'
@@ -104,7 +106,7 @@ const Scan = ({}: Props) => {
                 }}
               >
                 <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
-                  <InputLabel id='demo-simple-select-required-label'>Select Unit</InputLabel>
+                  <InputLabel id='demo-simple-select-required-label'>Select...</InputLabel>
                   <Select
                     labelId='demo-simple-select-required-label'
                     id='demo-simple-select-required'
@@ -312,7 +314,6 @@ const Scan = ({}: Props) => {
       <Formik
         initialValues={{ deEx: '', unit: '', palletNo: '', partSeq01: '', partSeq02: '', partSeq03: '', partSeq04: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          // alert(values.deEx)
           try {
             setLoading(true)
             setTimeout(() => {
@@ -373,10 +374,24 @@ const Scan = ({}: Props) => {
             })
             setDeEx('')
             setUnit('')
-            const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export)
-            console.log(response)
+            if (
+              scan.partSeq01 == scan.partSeq02 ||
+              scan.partSeq01 == scan.partSeq03 ||
+              scan.partSeq01 == scan.partSeq04 ||
+              scan.partSeq02 == scan.partSeq03 ||
+              scan.partSeq02 == scan.partSeq04 ||
+              scan.partSeq03 == scan.partSeq04
+            ) {
+              MySwal.fire({
+                text: 'ID No. ซ้ำกันใน Pallet',
+                position: 'top',
+                confirmButtonColor: theme.palette.primary.main
+              })
+            } else {
+              const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export)
+              router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
+            }
 
-            router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {

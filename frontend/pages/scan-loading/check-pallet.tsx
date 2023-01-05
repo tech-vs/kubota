@@ -2,14 +2,13 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { scanLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import { Box, Button, TextField, Typography } from '@mui/material'
+import { Box, Button, TextField, Typography, useTheme } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
 import { ChangeEvent, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 type Props = {}
 const columns: GridColDef[] = [
   {
@@ -103,6 +102,8 @@ const View = ({ genDoc }: any) => {
     useEffect(() => {
       async function call() {
         scanLoadingResponse = await scanLoading(scan.internalPalletNo)
+        scanLoadingResponseResult = scanLoadingResponse.item_list
+        console.log(scanLoadingResponseResult)
       }
       call()
     }, [scan])
@@ -139,8 +140,8 @@ const View = ({ genDoc }: any) => {
               e.preventDefault()
               setScan({ ...scan, internalPalletNo: e.target.value })
               setFieldValue('scan.internalPalletNo', e.target.value)
-              scanLoadingResponseResult = scanLoadingResponse.item_list
-              refreshData()
+
+              // refreshData()
             }}
           />
           <Box sx={{ flexGrow: 1 }} />
@@ -242,7 +243,6 @@ const View = ({ genDoc }: any) => {
               position: 'top',
               confirmButtonColor: theme.palette.primary.main
             })
-            // alert('Error')
           }
         }}
       >

@@ -111,7 +111,11 @@ const Overall = ({ loadingList }: any) => {
       width: 150,
       renderCell: ({ row }: GridRenderCellParams<string>) => {
         return (
-          <Button variant='contained' onClick={() => router.push(`/preview/${row.id}?type=2`)} sx={{ borderRadius: 25 }}>
+          <Button
+            variant='contained'
+            onClick={() => router.push(`/preview/${row.id}?type=2`)}
+            sx={{ borderRadius: 25 }}
+          >
             View
           </Button>
         )
@@ -134,7 +138,7 @@ const Overall = ({ loadingList }: any) => {
 
       <Box
         sx={{
-          height: 360,
+          height: 800,
           width: '100%',
           '& .cold': {
             color: 'success.main'
@@ -179,15 +183,18 @@ const Overall = ({ loadingList }: any) => {
             }
             return ''
           }}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          pageSize={15}
+          rowsPerPageOptions={[15]}
           disableSelectionOnClick
           disableVirtualization
           disableExtendRowFullWidth
           disableIgnoreModificationsIfProcessingProps
           disableColumnSelector
-          // disableColumnFilter
-          // disableColumnMenu
+          initialState={{
+            pagination: {
+              pageSize: 15
+            }
+          }}
         />
       </Box>
     </Layout>

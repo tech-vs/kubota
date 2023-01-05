@@ -328,71 +328,133 @@ const Scan = ({ genDoc }: any) => {
               />
               <Box sx={{ flexGrow: 1 }} />
             </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 5,
-                position: 'relative',
-                height: '55px'
-              }}
-            >
-              <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
-                <InputLabel id='demo-simple-select-required-label'>Customer</InputLabel>
-                <Select
-                  labelId='demo-simple-select-required-label'
-                  id='demo-simple-select-required'
-                  label='Customer *'
+            {input.question_type == 'Domestic' ? (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 5,
+                  position: 'relative',
+                  height: '55px'
+                }}
+              >
+                <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
+                  <InputLabel id='demo-simple-select-required-label'>Customer</InputLabel>
+                  <Select
+                    labelId='demo-simple-select-required-label'
+                    id='demo-simple-select-required'
+                    label='Customer *'
+                    value={input.customerName}
+                    onChange={(e: SelectChangeEvent<string>) => {
+                      e.preventDefault()
+                      setInput({ ...input, customerName: e.target.value })
+                      setFieldValue('customerName', e.target.value)
+                    }}
+                  >
+                    <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'}>
+                      SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)
+                    </MenuItem>
+                    <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'}>
+                      SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            ) : (
+              ''
+            )}
+            {input.question_type == 'Domestic' ? (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 3,
+                  position: 'relative'
+                }}
+              >
+                <TextField
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Address'
+                  variant='filled'
+                  value={
+                    input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
+                      ? Amatanakhon
+                      : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
+                      ? Navanakorn
+                      : ''
+                  }
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    if (input.address == null) {
+                      setInput({ ...input, address: Amatanakhon })
+                    } else {
+                      setInput({ ...input, address: e.target.value })
+                      setFieldValue('address', e.target.value)
+                    }
+                  }}
+                />
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            ) : (
+              ''
+            )}
+            {input.question_type == 'Export' ? (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 3,
+                  position: 'relative'
+                }}
+              >
+                <TextField
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Customer'
+                  variant='filled'
                   value={input.customerName}
-                  onChange={(e: SelectChangeEvent<string>) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
                     setInput({ ...input, customerName: e.target.value })
                     setFieldValue('customerName', e.target.value)
                   }}
-                >
-                  <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'}>
-                    SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)
-                  </MenuItem>
-                  <MenuItem value={'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'}>
-                    SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)
-                  </MenuItem>
-                </Select>
-              </FormControl>
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Address'
-                variant='filled'
-                value={
-                  input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
-                    ? Amatanakhon
-                    : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-                    ? Navanakorn
-                    : ''
-                }
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  if (input.address == null) {
-                    setInput({ ...input, address: Amatanakhon })
-                  } else {
+                />
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            ) : (
+              ''
+            )}
+            {input.question_type == 'Export' ? (
+              <Box
+                component='main'
+                sx={{
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  my: 3,
+                  position: 'relative'
+                }}
+              >
+                <TextField
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Address'
+                  variant='filled'
+                  value={input.address}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
                     setInput({ ...input, address: e.target.value })
                     setFieldValue('address', e.target.value)
-                  }
-                }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
+                  }}
+                />
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            ) : (
+              ''
+            )}
             <Box
               component='main'
               sx={{
@@ -440,16 +502,16 @@ const Scan = ({ genDoc }: any) => {
         initialValues={{ deEx: '', refNo: '', qty: '', invoiceNo: '', round: '', customerName: '', address: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           try {
-            console.log({
-              ref_do_no: input.refNo,
-              question_type: input.question_type,
-              status: 'loading',
-              total_qty: input.qty,
-              invoice_no: input.invoiceNo,
-              round: input.round,
-              customer_name: input.customerName,
-              address: input.address
-            })
+            // console.log({
+            //   ref_do_no: input.refNo,
+            //   question_type: input.question_type,
+            //   status: 'loading',
+            //   total_qty: input.qty,
+            //   invoice_no: input.invoiceNo,
+            //   round: input.round,
+            //   customer_name: input.customerName,
+            //   address: input.address
+            // })
             await inputLoadingDoc(
               {
                 ref_do_no: input.refNo,
@@ -473,7 +535,6 @@ const Scan = ({ genDoc }: any) => {
               position: 'top',
               confirmButtonColor: theme.palette.primary.main
             })
-            // alert(error)
           }
         }}
       >
@@ -489,7 +550,6 @@ export async function getServerSideProps() {
       Accept: 'application/json'
     }
   })
-  console.log(response)
 
   return {
     props: {

@@ -20,7 +20,8 @@ import {
   Select,
   SelectChangeEvent,
   TextField,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { Formik } from 'formik'
@@ -28,7 +29,6 @@ import { useRouter } from 'next/router'
 import { ChangeEvent, Fragment, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 import * as Yup from 'yup'
 {
   /* <Avatar sx={{ mr: 2 }}>test</Avatar> */
@@ -188,7 +188,7 @@ const User = ({ user }: any) => {
 
       <Box
         sx={{
-          height: 360,
+          height: 800,
           width: '100%',
           '& .headerField': {
             fontSize: 16,
@@ -230,7 +230,6 @@ const User = ({ user }: any) => {
           }}
           rows={user}
           columns={columns}
-          pageSize={5}
           getCellClassName={(params: GridCellParams<string>) => {
             if (params.value == 'ADMIN') {
               return 'cold'
@@ -240,10 +239,16 @@ const User = ({ user }: any) => {
             }
             return ''
           }}
-          rowsPerPageOptions={[5]}
+          pageSize={15}
+          rowsPerPageOptions={[15]}
           disableSelectionOnClick
           disableColumnFilter
           disableColumnMenu
+          initialState={{
+            pagination: {
+              pageSize: 15
+            }
+          }}
         />
       </Box>
       <Formik
@@ -266,7 +271,6 @@ const User = ({ user }: any) => {
               position: 'top',
               confirmButtonColor: theme.palette.primary.main
             })
-            // alert('Error')
           }
         }}
       >
@@ -393,7 +397,6 @@ export async function getServerSideProps() {
       Accept: 'application/json'
     }
   })
-  console.log(response.data.results)
 
   return {
     props: {
