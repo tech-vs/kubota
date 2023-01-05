@@ -213,19 +213,31 @@ const View = ({ genDoc }: any) => {
             position: 'relative'
           }}
         >
-          <Box sx={{ flexGrow: 1 }} />
-          <Button
-            variant='contained'
-            onClick={() => {
-              router.push(`/scan-loading/checksheet1?id=${genDoc.id}&internalpalletid=${scanLoadingResponse.pallet_id}`)
-              refreshData()
-            }}
-            color='primary'
-            sx={{ marginRight: 1 }}
-          >
-            OK
-          </Button>
-          <Box sx={{ flexGrow: 1 }} />
+          {/* <Box sx={{ flexGrow: 1 }} /> */}
+          <Box sx={{
+            display: { xs: 'flex' },
+            position: { xs: 'fixed', md: 'relative' },
+            bottom: { xs: '0' },
+            left: { xs: '0' },
+            width: { xs: '100%' },
+            zIndex: { xs: '1201' },
+            padding: { xs: '4px' },
+            gap: { xs: '4px' },
+            height: { xs: '80px', md: 'auto' }
+          }}>
+            <Button
+              variant='contained'
+              onClick={() => {
+                router.push(`/scan-loading/checksheet1?id=${genDoc.id}&internalpalletid=${scanLoadingResponse.pallet_id}`)
+                refreshData()
+              }}
+              color='primary'
+              sx={{ marginRight: 1, width: '100%', height: '100%' }}
+            >
+              OK
+            </Button>
+          </Box>
+          {/* <Box sx={{ flexGrow: 1 }} /> */}
         </Box>
       </Form>
     )

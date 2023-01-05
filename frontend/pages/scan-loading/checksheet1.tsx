@@ -244,71 +244,85 @@ const View = ({ checksheets, id }: any) => {
                 position: 'relative'
               }}
             >
-              <Box sx={{ flexGrow: 1 }} />
-              <Button
-                variant='contained'
-                onClick={async () => {
-                  if (typeof internalpalletid === 'string') {
-                    const internalpalletidInt = parseInt(internalpalletid)
-                    const res: ILoadingSubmit[] = await submitLoading({
-                      is_send_approve: false,
-                      pallet_id: internalpalletidInt
-                    })
-                    console.log(res);
-                    let template: IMultipleBarcode = {
-                      barcodes: [],
-                      country_name: '',
-                      net_weight: '',
-                      gross_weight: ''
-                    }
-  
-                    template = {
-                      ...template,
-                      barcodes: res,
-                      country_name: res[0]?.country_name,
-                      net_weight: res[0]?.net_weight,
-                      gross_weight: res[0]?.gross_weight,
-                    }
-  
-                    setBarcodeContent(template)
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
+              <Box sx={{
+                display: { xs: 'flex' },
+                position: { xs: 'fixed', md: 'relative' },
+                bottom: { xs: '0' },
+                left: { xs: '0' },
+                width: { xs: '100%' },
+                zIndex: { xs: '1201' },
+                padding: { xs: '4px' },
+                gap: { xs: '4px' },
+                height: { xs: '80px', md: 'auto' }
+              }}>
+                <Button
+                  variant='contained'
+                  onClick={async () => {
+                    if (typeof internalpalletid === 'string') {
+                      const internalpalletidInt = parseInt(internalpalletid)
+                      const res: ILoadingSubmit[] = await submitLoading({
+                        is_send_approve: false,
+                        pallet_id: internalpalletidInt
+                      })
+                      console.log(res);
+                      let template: IMultipleBarcode = {
+                        barcodes: [],
+                        country_name: '',
+                        net_weight: '',
+                        gross_weight: ''
+                      }
 
-                    MySwal.fire({
-                      text: 'Loading successfully',
+                      template = {
+                        ...template,
+                        barcodes: res,
+                        country_name: res[0]?.country_name,
+                        net_weight: res[0]?.net_weight,
+                        gross_weight: res[0]?.gross_weight,
+                      }
+
+                      setBarcodeContent(template)
+
+                      MySwal.fire({
+                        text: 'Loading successfully',
+                        position: 'top',
+                        confirmButtonColor: theme.palette.primary.main
+                      })
+                      // alert('Loading successfully')
+                    }
+                  }}
+                  color='primary'
+                  size="large"
+                  sx={{ marginRight: 1, width: '30%', height: '100%' }}
+                >
+                  Submit
+                </Button>
+                <Button
+                  variant='contained'
+                  onClick={async () => {
+                    if (typeof internalpalletid === 'string') {
+                      const internalpalletidInt = parseInt(internalpalletid)
+                      await submitLoading({
+                        is_send_approve: true,
+                        pallet_id: internalpalletidInt
+                      })
+                    }
+                    await MySwal.fire({
+                      text: 'Last oading successfully and Request Approval',
                       position: 'top',
-                      confirmButtonColor: theme.palette.primary.main
+                      confirmButtonColor: theme.palette.primary.main,
                     })
-                    // alert('Loading successfully')
-                  }
-                }}
-                color='primary'
-                sx={{ marginRight: 1 }}
-              >
-                Submit
-              </Button>
-              <Button
-                variant='contained'
-                onClick={async () => {
-                  if (typeof internalpalletid === 'string') {
-                    const internalpalletidInt = parseInt(internalpalletid)
-                    await submitLoading({
-                      is_send_approve: true,
-                      pallet_id: internalpalletidInt
-                    })
-                  }
-                  await MySwal.fire({
-                    text: 'Last oading successfully and Request Approval',
-                    position: 'top',
-                    confirmButtonColor: theme.palette.primary.main,
-                  })
-                  // alert('Last oading successfully and Request Approval')
-                  router.push(`/scan-loading`)
-                }}
-                color='primary'
-                sx={{ marginRight: 1 }}
-              >
-                Submit & Request Approval
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
+                    // alert('Last oading successfully and Request Approval')
+                    router.push(`/scan-loading`)
+                  }}
+                  color='primary'
+                  size="large"
+                  sx={{ marginRight: 1, width: '70%', height: '100%' }}
+                >
+                  Submit & Request Approval
+                </Button>
+              </Box>
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
           </CardContent>
         </Card>

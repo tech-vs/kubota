@@ -209,10 +209,23 @@ const View = ({ checksheets, id }: any) => {
                 height: '55px'
               }}
             >
-              <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
-                Submit Packing
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
+              <Box sx={{
+                display: { xs: 'flex' },
+                position: { xs: 'fixed', md: 'relative' },
+                bottom: { xs: '0' },
+                left: { xs: '0' },
+                width: { xs: '100%' },
+                zIndex: { xs: '1201' },
+                padding: { xs: '4px' },
+                gap: { xs: '4px' },
+                height: { xs: '80px', md: 'auto' }
+              }}>
+                <Button variant='contained' size="large" color='primary' type='submit'
+                  sx={{ marginRight: 1, width: '100%', height: '100%' }}>
+                  Submit Packing
+                </Button>
+              </Box>
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
           </CardContent>
         </Card>

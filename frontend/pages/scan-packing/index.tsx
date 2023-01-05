@@ -31,7 +31,7 @@ type scanProps = {
   partSeq04: string
 }
 
-const Scan = ({}: Props) => {
+const Scan = ({ }: Props) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const router = useRouter()
@@ -268,29 +268,43 @@ const Scan = ({}: Props) => {
                 position: 'relative'
               }}
             >
-              <Box sx={{ flexGrow: 1 }} />
-              <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
-                Ok
-              </Button>
-              <Button
-                variant='contained'
-                onClick={() => {
-                  // window.location.reload()
-                  setDeEx('')
-                  setScan({
-                    palletNo: '',
-                    partSeq01: '',
-                    partSeq02: '',
-                    partSeq03: '',
-                    partSeq04: ''
-                  })
-                }}
-                color='secondary'
-                sx={{ marginRight: 1 }}
-              >
-                Clear
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
+              <Box sx={{
+                display: { xs: 'flex' },
+                position: { xs: 'fixed', md: 'relative' },
+                bottom: { xs: '0' },
+                left: { xs: '0' },
+                width: { xs: '100%' },
+                zIndex: { xs: '1201' },
+                padding: { xs: '4px' },
+                gap: { xs: '4px' },
+                height: { xs: '80px', md: 'auto' }
+              }}>
+                <Button variant='contained' size="large" color='primary' type='submit'
+                  sx={{ marginRight: 1, width: '50%', height: '100%' }}>
+                  Ok
+                </Button>
+                <Button
+                  variant='contained'
+                  size="large"
+                  onClick={() => {
+                    // window.location.reload()
+                    setDeEx('')
+                    setScan({
+                      palletNo: '',
+                      partSeq01: '',
+                      partSeq02: '',
+                      partSeq03: '',
+                      partSeq04: ''
+                    })
+                  }}
+                  color='secondary'
+                  sx={{ marginRight: 1, width: '50%', height: '100%' }}
+                >
+                  Clear
+                </Button>
+              </Box>
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
             {/* <Box sx={{ width: '100%', my: 5 }}>
               {loading ? <LinearProgress /> : <></>}
