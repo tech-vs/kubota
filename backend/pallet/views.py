@@ -28,7 +28,7 @@ from pallet.filters import PalletPartListFilter
 
 class PalletViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all().prefetch_related('part_list', 'question_list')
-    permission_classes = (AllowAny,)
+    # permission_classes = (AllowAny,)
     lookup_field = 'id'
 
     action_serializers = {
@@ -36,10 +36,10 @@ class PalletViewSet(viewsets.GenericViewSet):
         'repack': PalletRepackSerializer,
     }
 
-    permission_classes_action = {
-        'create': [AllowAny],
-        'repack': [AllowAny],
-    }
+    # permission_classes_action = {
+    #     'create': [AllowAny],
+    #     'repack': [AllowAny],
+    # }
 
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
@@ -47,11 +47,11 @@ class PalletViewSet(viewsets.GenericViewSet):
                 return self.action_serializers[self.action]
         return super().get_serializer_class()
     
-    def get_permissions(self):
-        try:
-            return [permission() for permission in self.permission_classes_action[self.action]]
-        except KeyError:
-            return [permission() for permission in self.permission_classes]
+    # def get_permissions(self):
+    #     try:
+    #         return [permission() for permission in self.permission_classes_action[self.action]]
+    #     except KeyError:
+    #         return [permission() for permission in self.permission_classes]
 
     @action(detail=True, methods=['PATCH'], url_path='repack')
     def repack(self, request, *args, **kwargs):
@@ -128,7 +128,8 @@ class PalletViewSet(viewsets.GenericViewSet):
                 pallet_string=pallet_string,
                 nw_gw=nw_gw,
                 question_type=question_type,
-                internal_pallet_no=Pallet.generate_internal_pallet_no()
+                internal_pallet_no=Pallet.generate_internal_pallet_no(),
+                packing_by=request.user
             )
             PalletPart.objects.bulk_create([PalletPart(pallet=pallet, part=part_item[1]) for part_item in part_to_set_list])
             pallet.generate_question(question_type)
@@ -139,16 +140,16 @@ class PalletViewSet(viewsets.GenericViewSet):
 class PalletListQuestionViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all().prefetch_related('palletquestion_set')
     lookup_field = None
-    permission_classes = (AllowAny,)
+    # permission_classes = (AllowAny,)
     action_serializers = {
         'list': QuestionListSerializer,
         'retrieve': NoneSerializer,
     }
 
-    permission_classes_action = {
-        'list': [AllowAny],
-        'retrieve': [AllowAny],
-    }
+    # permission_classes_action = {
+    #     'list': [AllowAny],
+    #     'retrieve': [AllowAny],
+    # }
 
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
@@ -156,11 +157,11 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
                 return self.action_serializers[self.action]
         return super().get_serializer_class()
     
-    def get_permissions(self):
-        try:
-            return [permission() for permission in self.permission_classes_action[self.action]]
-        except KeyError:
-            return [permission() for permission in self.permission_classes]
+    # def get_permissions(self):
+    #     try:
+    #         return [permission() for permission in self.permission_classes_action[self.action]]
+    #     except KeyError:
+    #         return [permission() for permission in self.permission_classes]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -193,15 +194,15 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
 
 class QuestionViewSet(viewsets.GenericViewSet):
     queryset = PalletQuestion.objects.all()
-    permission_classes = (AllowAny,)
+    # permission_classes = (AllowAny,)
     lookup_field = 'id'
     action_serializers = {
         'partial_update': QuestionCheckSerializer,
     }
 
-    permission_classes_action = {
-        'partial_update': [AllowAny],
-    }
+    # permission_classes_action = {
+    #     'partial_update': [AllowAny],
+    # }
 
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
@@ -209,11 +210,11 @@ class QuestionViewSet(viewsets.GenericViewSet):
                 return self.action_serializers[self.action]
         return super().get_serializer_class()
     
-    def get_permissions(self):
-        try:
-            return [permission() for permission in self.permission_classes_action[self.action]]
-        except KeyError:
-            return [permission() for permission in self.permission_classes]
+    # def get_permissions(self):
+    #     try:
+    #         return [permission() for permission in self.permission_classes_action[self.action]]
+    #     except KeyError:
+    #         return [permission() for permission in self.permission_classes]
 
     def partial_update(self, request, *args, **kwargs):
         question = self.get_object()
@@ -234,17 +235,17 @@ class PalletPartViewSet(viewsets.GenericViewSet):
     lookup_url_kwarg = 'pallet_id'
     filter_backends = [DjangoFilterBackend]
     filterset_class = PalletPartListFilter
-    permission_classes = (AllowAny,)
+    # permission_classes = (AllowAny,)
 
     action_serializers = {
         'list': PalletPartListSerializer,
         'retrieve': PalletListSerializer,
     }
 
-    permission_classes_action = {
-        'list': [AllowAny],
-        'retrieve': [AllowAny],
-    }
+    # permission_classes_action = {
+    #     'list': [AllowAny],
+    #     'retrieve': [AllowAny],
+    # }
 
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
@@ -252,11 +253,11 @@ class PalletPartViewSet(viewsets.GenericViewSet):
                 return self.action_serializers[self.action]
         return super().get_serializer_class()
     
-    def get_permissions(self):
-        try:
-            return [permission() for permission in self.permission_classes_action[self.action]]
-        except KeyError:
-            return [permission() for permission in self.permission_classes]
+    # def get_permissions(self):
+    #     try:
+    #         return [permission() for permission in self.permission_classes_action[self.action]]
+    #     except KeyError:
+    #         return [permission() for permission in self.permission_classes]
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

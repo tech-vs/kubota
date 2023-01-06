@@ -16,26 +16,28 @@ from pallet.serializers_loading import (
     PartItemSerializer,
     DocDetailSerializer,
     PalletPartLoadingSerializer,
+    DocRejectSerialier,
 )
 from pallet.filters import PalletLoadingFilter, DocumentListFilter
 from syncdata.models import MasterLoading, MSPackingStyle
+from account.models import Role
 
 
 class LoadingViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all().prefetch_related('palletpart_set', 'part_list')
     filter_backends = [DjangoFilterBackend]
     filterset_class = PalletLoadingFilter
-    permission_classes = (AllowAny,)
+    # permission_classes = (AllowAny,)
 
     action_serializers = {
         'list':  PartItemSerializer,
         'submit':  LoadingPalletSerializer,
     }
 
-    permission_classes_action = {
-        'list': [AllowAny],
-        'submit': [AllowAny],
-    }
+    # permission_classes_action = {
+    #     'list': [AllowAny],
+    #     'submit': [AllowAny],
+    # }
 
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
@@ -43,11 +45,11 @@ class LoadingViewSet(viewsets.GenericViewSet):
                 return self.action_serializers[self.action]
         return super().get_serializer_class()
     
-    def get_permissions(self):
-        try:
-            return [permission() for permission in self.permission_classes_action[self.action]]
-        except KeyError:
-            return [permission() for permission in self.permission_classes]
+    # def get_permissions(self):
+    #     try:
+    #         return [permission() for permission in self.permission_classes_action[self.action]]
+    #     except KeyError:
+    #         return [permission() for permission in self.permission_classes]
 
     @action(detail=False, methods=['POST'], url_path='submit')
     def submit(self, request, *args, **kwargs):
@@ -72,6 +74,7 @@ class LoadingViewSet(viewsets.GenericViewSet):
         pallet.save()
 
         if is_send_approve and doc:
+            doc.last_approve_by = request.user
             doc.status = DocStatus.WAIT_APRROVE
             doc.save()
 
@@ -112,20 +115,22 @@ class DocumentViewSet(viewsets.GenericViewSet):
     lookup_field = 'id'
     filter_backends = [DjangoFilterBackend]
     filterset_class = DocumentListFilter
-    permission_classes = (AllowAny,)
+    # permission_classes = (AllowAny,)
     action_serializers = {
         'partial_update': DocUpdateSerializer,
         'gen_doc': DocNoGenSerializer,
         'list': DocNoGenSerializer,
         'retrieve': DocDetailSerializer,
+        'approve': DocNoGenSerializer,
+        'reject': DocRejectSerialier,
     }
 
-    permission_classes_action = {
-        'partial_update': [AllowAny],
-        'gen_doc': [AllowAny],
-        'list': [AllowAny],
-        'retrieve': [AllowAny],
-    }
+    # permission_classes_action = {
+    #     'partial_update': [AllowAny],
+    #     'gen_doc': [AllowAny],
+    #     'list': [AllowAny],
+    #     'retrieve': [AllowAny],
+    # }
 
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
@@ -133,11 +138,11 @@ class DocumentViewSet(viewsets.GenericViewSet):
                 return self.action_serializers[self.action]
         return super().get_serializer_class()
     
-    def get_permissions(self):
-        try:
-            return [permission() for permission in self.permission_classes_action[self.action]]
-        except KeyError:
-            return [permission() for permission in self.permission_classes]
+    # def get_permissions(self):
+    #     try:
+    #         return [permission() for permission in self.permission_classes_action[self.action]]
+    #     except KeyError:
+    #         return [permission() for permission in self.permission_classes]
 
     def partial_update(self, request, *args, **kwargs):
         question = self.get_object()
@@ -154,7 +159,7 @@ class DocumentViewSet(viewsets.GenericViewSet):
 
     @action(detail=False, methods=['GET'], url_path='gen-doc')
     def gen_doc(self, request, *args, **kwargs):
-        doc = Document.generate_doc_object()
+        doc = Document.generate_doc_object(request.user)
         response = self.get_serializer(doc).data
         return Response(response, status=status.HTTP_200_OK)
 
@@ -168,5 +173,37 @@ class DocumentViewSet(viewsets.GenericViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         doc = self.get_object()
+        response = self.get_serializer(doc).data
+        return Response(response, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['GET'], url_path='approve')
+    def approve(self, request, *args, **kwargs):
+        doc = self.get_object()
+        if doc:
+            if request.user.role == Role.LEADER and doc.status == DocStatus.WAIT_APRROVE:
+                doc.status = DocStatus.LEADER_APPROVED
+            elif request.user.role == Role.CLERK and doc.status == DocStatus.LEADER_APPROVED:
+                doc.status = DocStatus.CLERK_APPROVED
+            elif request.user.role == Role.ENGINEER and doc.status == DocStatus.CLERK_APPROVED:
+                doc.status = DocStatus.ENGINEER_APPROVED
+            elif request.user.role == Role.MANAGER and doc.status == DocStatus.ENGINEER_APPROVED:
+                doc.status = DocStatus.MANAGER_APPROVED
+            doc.last_approve_by = request.user
+            doc.save()
+        response = self.get_serializer(doc).data
+        return Response(response, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['PATCH'], url_path='reject')
+    def reject(self, request, *args, **kwargs):
+        doc = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        if doc:
+            doc.status = DocStatus.REJECT
+            doc.last_approve_by = request.user
+            doc.remark_reject = data.pop('remark_reject', '')
+            doc.save()
         response = self.get_serializer(doc).data
         return Response(response, status=status.HTTP_200_OK)

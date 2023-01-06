@@ -25,14 +25,14 @@ def run_insert_data(df: pd.DataFrame):
 
 class MasterLoadingViewSet(viewsets.GenericViewSet):
     queryset = MasterLoading.objects.all()
-    permission_classes = (AllowAny,)
+    # permission_classes = (AllowAny,)
     action_serializers = {
         'upload': FileSerializer,
     }
 
-    permission_classes_action = {
-        'upload': [AllowAny],
-    }
+    # permission_classes_action = {
+    #     'upload': [AllowAny],
+    # }
 
     def get_serializer_class(self):
         if hasattr(self, 'action_serializers'):
@@ -40,11 +40,11 @@ class MasterLoadingViewSet(viewsets.GenericViewSet):
                 return self.action_serializers[self.action]
         return super().get_serializer_class()
     
-    def get_permissions(self):
-        try:
-            return [permission() for permission in self.permission_classes_action[self.action]]
-        except KeyError:
-            return [permission() for permission in self.permission_classes]
+    # def get_permissions(self):
+    #     try:
+    #         return [permission() for permission in self.permission_classes_action[self.action]]
+    #     except KeyError:
+    #         return [permission() for permission in self.permission_classes]
 
     @action(detail=False, methods=['POST'], url_path='upload')
     def upload(self, request, *args, **kwargs):

@@ -25,6 +25,7 @@ class UserCreateSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=120)
     # first_name = serializers.CharField(max_length=150, allow_blank=True, required=False)
     # last_name = serializers.CharField(max_length=150, allow_blank=True, required=False)
+    email = serializers.EmailField(max_length=120, required=False)
     role = serializers.ChoiceField(choices=Role.choices, required=False)
 
     def validate_username(self, username):
@@ -35,6 +36,7 @@ class UserCreateSerializer(serializers.Serializer):
 
 class UserChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=120)
+    email = serializers.EmailField(max_length=120, required=False)
 
 
 class UserSerializer(serializers.Serializer):

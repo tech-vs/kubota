@@ -34,6 +34,10 @@ class DocNoGenSerializer(serializers.Serializer):
         return []
 
 
+class DocRejectSerialier(serializers.Serializer):
+    remark_reject = serializers.CharField()
+
+
 class DocUpdateSerializer(serializers.Serializer):
     ref_do_no = serializers.CharField(required=False)
     total_qty = serializers.CharField(required=False)

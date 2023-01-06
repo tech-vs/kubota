@@ -112,6 +112,8 @@ class UserViewSet(viewsets.GenericViewSet):
         data = serializer.validated_data
         
         password = data.pop('password', None)
+        email = data.pop('email', '')
+        user.email = email
         user.set_password(password)
         user.save()
         response = UserSerializer(user).data

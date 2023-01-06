@@ -6,6 +6,9 @@ from utils.models import CommonInfoModel
 
 class Role(models.TextChoices):
     OPERATOR = 'Operator'
+    LEADER = 'Leader'
+    CLERK = 'Clerk'
+    ENGINEER = 'Engineer'
     MANAGER = 'Manager'
     SAP_OPERATOR = 'SAP_Operator'
     ADMINISTRATOR = 'Administrator'

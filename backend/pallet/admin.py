@@ -21,7 +21,9 @@ class QuestionInline(admin.TabularInline):
 @admin.register(Pallet)
 class PalletAdmin(admin.ModelAdmin):
     list_per_page = 50
-    list_display = ('id', 'pallet', 'skewer', 'pallet_string', 'internal_pallet_no', 'packing_status', 'packing_datetime', 'created_at', 'updated_at',)
+    list_display = ('id', 'pallet', 'skewer', 'pallet_string', 'internal_pallet_no',
+                    'packing_status', 'packing_datetime', 'created_at', 'updated_at',
+                    'packing_by',)
     inlines = [PartInline, QuestionInline,]
 
     def get_queryset(self, request):
@@ -54,5 +56,5 @@ class DocumentInline(admin.TabularInline):
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'doc_no', 'delivery_date', 'status',)
+    list_display = ('id', 'doc_no', 'delivery_date', 'status', 'loading_by', 'last_approve_by', 'remark_reject',)
     inlines = [DocumentInline]

@@ -90,6 +90,11 @@ class Pallet(CommonInfoModel):
         through='pallet.PalletPart',
         blank=True,
     )
+    packing_by = models.ForeignKey(
+        'account.User',
+        on_delete=models.SET_NULL,
+        null=True,
+    )
     
     class Meta:
         ordering = ['created_at']
@@ -161,6 +166,11 @@ class QuestionTemplate(CommonInfoModel):
 class DocStatus(models.TextChoices):
     LOADING = 'loading'
     WAIT_APRROVE = 'wait_approve'
+    LEADER_APPROVED = 'leader_approved'
+    CLERK_APPROVED = 'clerk_approved'
+    ENGINEER_APPROVED = 'engineer_approved'
+    MANAGER_APPROVED = 'manager_approved'
+    REJECT = 'reject'
     APPROVED = 'approved'
 
 
@@ -180,6 +190,19 @@ class Document(CommonInfoModel):
     customer_name = models.CharField(max_length=255, null=True)
     address = models.CharField(max_length=255, null=True)
     question_type = models.CharField(max_length=100, choices=QuestionType.choices, default=QuestionType.DOMESTIC)
+    remark_reject = models.TextField(default='', blank=True)
+    loading_by = models.ForeignKey(
+        'account.User',
+        on_delete=models.SET_NULL,
+        related_name='loading_doc',
+        null=True,
+    )
+    last_approve_by = models.ForeignKey(
+        'account.User',
+        on_delete=models.SET_NULL,
+        related_name='approve_doc',
+        null=True,
+    )
 
     class Meta:
         ordering = ['created_at']
@@ -188,7 +211,7 @@ class Document(CommonInfoModel):
         return self.doc_no
 
     @staticmethod
-    def generate_doc_object():
+    def generate_doc_object(user):
         last_doc = Document.objects.last()
         if last_doc and last_doc.status == DocStatus.LOADING:
             return last_doc
@@ -209,6 +232,7 @@ class Document(CommonInfoModel):
         new_doc = Document.objects.create(
             doc_no=doc_no_text,
             delivery_date=delivery_date_text,
+            loading_by=user,
         )
         
         return new_doc
