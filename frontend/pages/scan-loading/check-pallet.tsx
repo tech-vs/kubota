@@ -83,8 +83,6 @@ const columns: GridColDef[] = [
     flex: 1
   }
 ]
-let scanLoadingResponse: any = {}
-let scanLoadingResponseResult: any[] = []
 const View = ({ genDoc }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
@@ -99,11 +97,14 @@ const View = ({ genDoc }: any) => {
       internalPalletNo: ''
     })
 
+    const [scanLoadingResponse, setScanLoadingResponse] = useState<any>({})
+    const [scanLoadingResponseResult, setScanLoadingResponseResult] = useState<any>({})
+
     useEffect(() => {
       async function call() {
-        scanLoadingResponse = await scanLoading(scan.internalPalletNo)
-        scanLoadingResponseResult = scanLoadingResponse.item_list
-        console.log(scanLoadingResponseResult)
+        const res = await scanLoading(scan.internalPalletNo)
+        setScanLoadingResponse(res)
+        setScanLoadingResponseResult(res.item_list)
       }
       call()
     }, [scan])
