@@ -12,7 +12,8 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
@@ -21,7 +22,6 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -42,47 +42,45 @@ const View = ({ checksheets, id }: any) => {
   const [success, setSucess] = useState<boolean>(false)
 
   const [selectedDevice, setSelectedDevice] = useState<any>()
-  const [barcodeContent, setBarcodeContent] = useState<IMultipleBarcode>(
-    {
-      barcodes: [
-        {
-          serial_no: 'test',
-          model_code: 'test',
-          model_name: 'test',
-          gross_weight: 'test',
-          net_weight: 'test',
-          country_name: 'test',
-        },
-        {
-          serial_no: 'test',
-          model_code: 'test',
-          model_name: 'test',
-          gross_weight: 'test',
-          net_weight: 'test',
-          country_name: 'test',
-        },
-        {
-          serial_no: 'test',
-          model_code: 'test',
-          model_name: 'test',
-          gross_weight: 'test',
-          net_weight: 'test',
-          country_name: 'test',
-        },
-        {
-          serial_no: 'test',
-          model_code: 'test',
-          model_name: 'test',
-          gross_weight: 'test',
-          net_weight: 'test',
-          country_name: 'test',
-        },
-      ],
-      country_name: 'test',
-      net_weight: 'test',
-      gross_weight: 'tes',
-    }
-  )
+  const [barcodeContent, setBarcodeContent] = useState<IMultipleBarcode>({
+    barcodes: [
+      {
+        serial_no: 'test',
+        model_code: 'test',
+        model_name: 'test',
+        gross_weight: 'test',
+        net_weight: 'test',
+        country_name: 'test'
+      },
+      {
+        serial_no: 'test',
+        model_code: 'test',
+        model_name: 'test',
+        gross_weight: 'test',
+        net_weight: 'test',
+        country_name: 'test'
+      },
+      {
+        serial_no: 'test',
+        model_code: 'test',
+        model_name: 'test',
+        gross_weight: 'test',
+        net_weight: 'test',
+        country_name: 'test'
+      },
+      {
+        serial_no: 'test',
+        model_code: 'test',
+        model_name: 'test',
+        gross_weight: 'test',
+        net_weight: 'test',
+        country_name: 'test'
+      }
+    ],
+    country_name: 'test',
+    net_weight: 'test',
+    gross_weight: 'tes'
+  })
   const multipleBarcodeRef = useRef<HTMLDivElement>(null)
 
   function printImage() {
@@ -100,7 +98,7 @@ const View = ({ checksheets, id }: any) => {
             resolve()
           },
           {
-            resize: { width: 600, height: 200 }
+            resize: { width: 900, height: 600 }
           }
         )
       }
@@ -146,7 +144,7 @@ const View = ({ checksheets, id }: any) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Check Sheet 1</Typography>
+          <Typography variant='h5'>Loading Check Sheet</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
@@ -254,22 +252,22 @@ const View = ({ checksheets, id }: any) => {
                       is_send_approve: false,
                       pallet_id: internalpalletidInt
                     })
-                    console.log(res);
+                    console.log(res)
                     let template: IMultipleBarcode = {
                       barcodes: [],
                       country_name: '',
                       net_weight: '',
                       gross_weight: ''
                     }
-  
+
                     template = {
                       ...template,
                       barcodes: res,
                       country_name: res[0]?.country_name,
                       net_weight: res[0]?.net_weight,
-                      gross_weight: res[0]?.gross_weight,
+                      gross_weight: res[0]?.gross_weight
                     }
-  
+
                     setBarcodeContent(template)
 
                     MySwal.fire({
@@ -298,7 +296,7 @@ const View = ({ checksheets, id }: any) => {
                   await MySwal.fire({
                     text: 'Last oading successfully and Request Approval',
                     position: 'top',
-                    confirmButtonColor: theme.palette.primary.main,
+                    confirmButtonColor: theme.palette.primary.main
                   })
                   // alert('Last oading successfully and Request Approval')
                   router.push(`/scan-loading`)
@@ -335,7 +333,7 @@ const View = ({ checksheets, id }: any) => {
               await MySwal.fire({
                 text: JSON.stringify(error.response.data.detail),
                 position: 'top',
-                confirmButtonColor: theme.palette.primary.main,
+                confirmButtonColor: theme.palette.primary.main
               })
               // alert(JSON.stringify(error.response.data.detail))
             }

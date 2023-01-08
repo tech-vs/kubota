@@ -61,6 +61,11 @@ const View = ({ checksheets, id }: any) => {
           },
           (err: any) => {
             console.error(err)
+            MySwal.fire({
+              text: 'No Printer found. Please recheck Printer',
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
             resolve()
           },
           {
@@ -82,20 +87,41 @@ const View = ({ checksheets, id }: any) => {
       },
       function (error: any) {
         console.log(error)
+        MySwal.fire({
+          text: 'Printer is Not Ready',
+          position: 'top',
+          confirmButtonColor: theme.palette.primary.main
+        })
       }
     )
   }
 
   useEffect(() => {
     async function call() {
-      await printImage()
-      router.push(`/scan-packing`)
+      try {
+        await printImage()
+        router.push(`/scan-packing`)
+      } catch (error) {
+        MySwal.fire({
+          text: 'No Printer found. Please recheck Printer',
+          position: 'top',
+          confirmButtonColor: theme.palette.primary.main
+        })
+      }
     }
     call()
   }, [barcodeContent])
 
   useEffect(() => {
-    setupPrinter()
+    try {
+      setupPrinter()
+    } catch (error) {
+      MySwal.fire({
+        text: 'No Printer found. Please recheck Printer',
+        position: 'top',
+        confirmButtonColor: theme.palette.primary.main
+      })
+    }
   }, [])
 
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
@@ -110,7 +136,7 @@ const View = ({ checksheets, id }: any) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Check Sheet 2</Typography>
+          <Typography variant='h5'>Packing Check Sheet 2</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
