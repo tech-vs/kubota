@@ -1,13 +1,12 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { importExcel } from '@/services/serverServices'
-import { Alert, Box, Button, Card, CardContent, Snackbar, Typography } from '@mui/material'
+import { Alert, Box, Button, Card, CardContent, Snackbar, Typography, useTheme } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
 import { ChangeEvent, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 type Props = {}
 
 const Import = ({}: Props) => {
@@ -30,7 +29,7 @@ const Import = ({}: Props) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Import Master plan file</Typography>
+          <Typography variant='h5'>Import Stop Shipment files</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: 6 }}>
@@ -121,13 +120,6 @@ const Import = ({}: Props) => {
               data.append('file', values.file)
 
               await importExcel(data)
-
-              // setLoading(true)
-              // setTimeout(() => {
-              //   setSucess(true)
-              //   setLoading(false)
-              // }, 1000)
-
               resetForm({
                 values: {
                   file: null
@@ -145,9 +137,6 @@ const Import = ({}: Props) => {
               confirmButtonColor: theme.palette.primary.main
             })
           }
-
-          // resetForm()
-          // window.confirm('test')
         }}
       >
         {props => showForm(props)}

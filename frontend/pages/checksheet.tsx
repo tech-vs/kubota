@@ -10,14 +10,14 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 type Props = {}
 
 const View = ({ checksheets }: any) => {
@@ -182,9 +182,6 @@ const View = ({ checksheets }: any) => {
               confirmButtonColor: theme.palette.primary.main
             })
           }
-
-          // resetForm()
-          // window.confirm('test')
         }}
       >
         {props => showForm(props)}

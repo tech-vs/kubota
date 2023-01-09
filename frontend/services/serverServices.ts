@@ -119,8 +119,8 @@ export const scanLoading = async (internalPalletNo: String): Promise<any> => {
   const response = await httpClient.get(`/pallet/loading/?internal_pallet_no=${internalPalletNo}&status=finish_pack`)
   return response.data
 }
-export const scanRepack = async (palletID: String): Promise<any> => {
-  const response = await httpClient.patch(`/pallet/${palletID}/repack`)
+export const scanRepack = async (internalPalletNo: String): Promise<any> => {
+  const response = await httpClient.get(`/pallet/loading/?internal_pallet_no=${internalPalletNo}&status=repack`)
   return response.data
 }
 
@@ -152,6 +152,19 @@ export const importExcel = async (data: FormData): Promise<any> => {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
+    })
+    return response.data
+  } catch (error) {
+    alert(error)
+
+    return error
+  }
+}
+
+export const repack = async (id: string): Promise<any> => {
+  try {
+    const response = await httpClient.patch(`/pallet/${id}/repack/`, {
+      status: 'repack'
     })
     return response.data
   } catch (error) {

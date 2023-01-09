@@ -1,15 +1,14 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import { scanLoading, scanRepack } from '@/services/serverServices'
+import { repack, scanRepack } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import { Box, Button, TextField, Typography } from '@mui/material'
-import { GridColDef } from '@mui/x-data-grid'
+import { Box, Button, TextField, Typography, useTheme } from '@mui/material'
+import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 type Props = {}
 const columns: GridColDef[] = [
   {
@@ -84,9 +83,7 @@ const columns: GridColDef[] = [
     flex: 1
   }
 ]
-let scanLoadingResponse: any = {}
-let scanLoadingResponseResult: any[] = []
-const View = ({ genDoc }: any) => {
+const Repack = ({ genDoc }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
@@ -100,10 +97,14 @@ const View = ({ genDoc }: any) => {
       internalPalletNo: ''
     })
 
+    const [scanLoadingResponse, setScanLoadingResponse] = useState<any>({})
+    const [scanLoadingResponseResult, setScanLoadingResponseResult] = useState<any>({})
+
     useEffect(() => {
       async function call() {
-        scanLoadingResponse = await scanLoading(scan.internalPalletNo)
-        await scanRepack(scanLoadingResponse.pallet_id)
+        const res = await scanRepack(scan.internalPalletNo)
+        setScanLoadingResponse(res)
+        setScanLoadingResponseResult(res.item_list)
       }
       call()
     }, [scan])
@@ -118,7 +119,7 @@ const View = ({ genDoc }: any) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Repack</Typography>
+          <Typography variant='h5'>Scan Repack</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Box
@@ -136,8 +137,73 @@ const View = ({ genDoc }: any) => {
             label='Pallet No.'
             variant='filled'
             value={scan.internalPalletNo}
+            onChange={async (e: ChangeEvent<HTMLInputElement>) => {
+              e.preventDefault()
+              setScan({ ...scan, internalPalletNo: e.target.value })
+              setFieldValue('scan.internalPalletNo', e.target.value)
+
+              // refreshData()
+            }}
           />
           <Box sx={{ flexGrow: 1 }} />
+        </Box>
+
+        <Box
+          sx={{
+            height: 360,
+            width: '100%',
+            '& .cold': {
+              color: 'success.main'
+            },
+            '& .hot': {
+              color: 'error.main'
+            },
+            '& .headerField': {
+              fontSize: 16,
+              backgroundColor: '#55AAFF'
+            },
+            '& .customerField': {
+              backgroundColor: '#c7ddb5'
+            },
+            '& .cellField': {
+              fontSize: 20,
+              fontWeight: '700'
+            }
+          }}
+        >
+          <DataGrid
+            getRowId={scanLoadingResponseResult => scanLoadingResponseResult.serial_no}
+            sx={{
+              boxShadow: 2,
+              '& .MuiDataGrid-cell:hover': {
+                color: 'primary.main'
+              },
+              '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
+                outline: 'none'
+              }
+            }}
+            rows={scanLoadingResponseResult}
+            columns={columns}
+            getCellClassName={(params: GridCellParams<string>) => {
+              if (params.field === 'customer') {
+                return 'customerField'
+              }
+              if (params.value == 'OK') {
+                return 'cold'
+              }
+              if (params.value == 'Waiting') {
+                return 'hot'
+              }
+              return ''
+            }}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            disableSelectionOnClick
+            disableVirtualization
+            disableExtendRowFullWidth
+            disableIgnoreModificationsIfProcessingProps
+            disableColumnSelector
+          />
         </Box>
 
         <Box
@@ -148,25 +214,47 @@ const View = ({ genDoc }: any) => {
             position: 'relative'
           }}
         >
-          <Box sx={{
-            display: { xs: 'flex' },
-            position: { xs: 'fixed', md: 'relative' },
-            bottom: { xs: '0' },
-            left: { xs: '0' },
-            width: { xs: '100%' },
-            zIndex: { xs: '1201' },
-            padding: { xs: '4px' },
-            gap: { xs: '4px' },
-            height: { xs: '80px', md: 'auto' }
-          }}>
+          {/* <Box sx={{ flexGrow: 1 }} /> */}
+          <Box
+            sx={{
+              display: { xs: 'flex' },
+              position: { xs: 'fixed', md: 'relative' },
+              bottom: { xs: '0' },
+              left: { xs: '0' },
+              width: { xs: '100%' },
+              zIndex: { xs: '1201' },
+              padding: { xs: '4px' },
+              gap: { xs: '4px' },
+              height: { xs: '80px', md: 'auto' }
+            }}
+          >
             <Button
               variant='contained'
-              onClick={async (e: any) => {
-                e.preventDefault()
-                setScan({ ...scan, internalPalletNo: e.target.value })
-                setFieldValue('scan.internalPalletNo', e.target.value)
-
-                refreshData()
+              onClick={async () => {
+                try {
+                  if (scanLoadingResponse.pallet_id) {
+                    await repack(genDoc.id)
+                    MySwal.fire({
+                      text: 'Repack สำเร็จ',
+                      position: 'top',
+                      confirmButtonColor: theme.palette.primary.main
+                    })
+                  } else {
+                    MySwal.fire({
+                      text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
+                      position: 'top',
+                      confirmButtonColor: theme.palette.primary.main
+                    })
+                  }
+                  setScan({ internalPalletNo: '' })
+                  refreshData()
+                } catch (error) {
+                  MySwal.fire({
+                    text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
+                    position: 'top',
+                    confirmButtonColor: theme.palette.primary.main
+                  })
+                }
               }}
               color='primary'
               sx={{ marginRight: 1, width: '100%', height: '100%' }}
@@ -174,8 +262,7 @@ const View = ({ genDoc }: any) => {
               OK
             </Button>
           </Box>
-          {/* <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ flexGrow: 1 }} /> */}
+          {/* <Box sx={{ flexGrow: 1 }} /> */}
         </Box>
       </Form>
     )
@@ -193,7 +280,6 @@ const View = ({ genDoc }: any) => {
               position: 'top',
               confirmButtonColor: theme.palette.primary.main
             })
-            // alert('Error')
           }
         }}
       >
@@ -218,4 +304,4 @@ export async function getServerSideProps() {
   }
 }
 
-export default withRouter(withAuth(View))
+export default withRouter(withAuth(Repack))
