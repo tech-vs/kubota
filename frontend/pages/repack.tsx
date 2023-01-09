@@ -1,6 +1,6 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
-import { repack, scanRepack } from '@/services/serverServices'
+import { repack, scanLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import { Box, Button, TextField, Typography, useTheme } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
@@ -102,7 +102,7 @@ const Repack = ({ genDoc }: any) => {
 
     useEffect(() => {
       async function call() {
-        const res = await scanRepack(scan.internalPalletNo)
+        const res = await scanLoading(scan.internalPalletNo)
         setScanLoadingResponse(res)
         setScanLoadingResponseResult(res.item_list)
       }

@@ -95,6 +95,11 @@ const View = ({ checksheets, id }: any) => {
           },
           (err: any) => {
             console.error(err)
+            MySwal.fire({
+              text: 'No Printer found. Please recheck Printer',
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
             resolve()
           },
           {
@@ -129,7 +134,15 @@ const View = ({ checksheets, id }: any) => {
   }, [barcodeContent])
 
   useEffect(() => {
-    setupPrinter()
+    try {
+      setupPrinter()
+    } catch (error) {
+      MySwal.fire({
+        text: 'No Printer found. Please recheck Printer',
+        position: 'top',
+        confirmButtonColor: theme.palette.primary.main
+      })
+    }
   }, [])
 
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
@@ -323,18 +336,36 @@ const View = ({ checksheets, id }: any) => {
                   onClick={async () => {
                     if (typeof internalpalletid === 'string') {
                       const internalpalletidInt = parseInt(internalpalletid)
-                      await submitLoading({
-                        is_send_approve: true,
+                      const res: ILoadingSubmit[] = await submitLoading({
+                        is_send_approve: false,
                         pallet_id: internalpalletidInt
                       })
+                      console.log(res)
+                      let template: IMultipleBarcode = {
+                        barcodes: [],
+                        country_name: '',
+                        net_weight: '',
+                        gross_weight: ''
+                      }
+
+                      template = {
+                        ...template,
+                        barcodes: res,
+                        country_name: res[0]?.country_name,
+                        net_weight: res[0]?.net_weight,
+                        gross_weight: res[0]?.gross_weight
+                      }
+
+                      setBarcodeContent(template)
+
+                      await MySwal.fire({
+                        text: 'Last loading successfully and Request Approval',
+                        position: 'top',
+                        confirmButtonColor: theme.palette.primary.main
+                      })
+                      // alert('Last oading successfully and Request Approval')
+                      router.push(`/scan-loading`)
                     }
-                    await MySwal.fire({
-                      text: 'Last oading successfully and Request Approval',
-                      position: 'top',
-                      confirmButtonColor: theme.palette.primary.main
-                    })
-                    // alert('Last oading successfully and Request Approval')
-                    router.push(`/scan-loading`)
                   }}
                   color='primary'
                   size='large'
@@ -356,12 +387,6 @@ const View = ({ checksheets, id }: any) => {
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           try {
-            // setLoading(true)
-            // setTimeout(() => {
-            //   setSucess(true)
-            //   setLoading(false)
-            // }, 4000)
-
             await confirmCheckSheet1(id)
             router.push(`scan-loading/check-pallet/`)
             setSubmitting(false)
