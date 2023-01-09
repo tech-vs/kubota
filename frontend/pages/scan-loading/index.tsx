@@ -134,8 +134,8 @@ const Scan = ({ genDoc }: any) => {
           input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
             ? Amatanakhon
             : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-            ? Navanakorn
-            : ''
+              ? Navanakorn
+              : ''
       })
     }
     call()
@@ -383,8 +383,8 @@ const Scan = ({ genDoc }: any) => {
                     input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
                       ? Amatanakhon
                       : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-                      ? Navanakorn
-                      : ''
+                        ? Navanakorn
+                        : ''
                   }
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -463,21 +463,34 @@ const Scan = ({ genDoc }: any) => {
                 position: 'relative'
               }}
             >
-              <Box sx={{ flexGrow: 1 }} />
-              <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
-                OK
-              </Button>
-              <Button
-                variant='contained'
-                onClick={() => {
-                  router.push('scan-loading/check-pallet')
-                }}
-                color='secondary'
-                sx={{ marginRight: 1 }}
-              >
-                Clear
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
+              <Box sx={{
+                display: { xs: 'flex' },
+                position: { xs: 'fixed', md: 'relative' },
+                bottom: { xs: '0' },
+                left: { xs: '0' },
+                width: { xs: '100%' },
+                zIndex: { xs: '1201' },
+                padding: { xs: '4px' },
+                gap: { xs: '4px' },
+                height: { xs: '80px', md: 'auto' }
+              }}>
+                <Button variant='contained' color='primary' size="large" type='submit' sx={{ marginRight: 1, width: '50%', height: '100%' }}>
+                  OK
+                </Button>
+                <Button
+                  variant='contained'
+                  size="large"
+                  onClick={() => {
+                    router.push('scan-loading/check-pallet')
+                  }}
+                  color='secondary'
+                  sx={{ marginRight: 1, width: '50%', height: '100%' }}
+                >
+                  Clear
+                </Button>
+              </Box>
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
             <Box sx={{ width: '100%', my: 5 }}>
               {loading ? <LinearProgress /> : <></>}

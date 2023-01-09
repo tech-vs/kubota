@@ -59,23 +59,36 @@ const View = ({ checksheets, id }: any) => {
                 key={checksheet.id}
                 component='main'
                 sx={{
-                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'column' },
                   my: 2,
                   position: 'relative',
                   minHeight: '55px'
                 }}
               >
-                <FormControl sx={{ minWidth: { xs: '140px' }, flexBasis: { xs: '140px' } }}>
+                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
+                <FormControl>
                   {/* <FormLabel id='demo-row-radio-buttons-group-label'>Gender</FormLabel> */}
                   <RadioGroup
-                    sx={{ width: { xs: '140px' } }}
                     row
                     aria-labelledby='demo-row-radio-buttons-group-label'
                     name='row-radio-buttons-group'
                     value={checksheet.status}
+                    sx={{
+                      gap: '1rem'
+                    }}
                   >
                     <FormControlLabel
                       value='true'
+                      sx={{
+                        padding: '1rem',
+                        margin: '1rem 0',
+                        border: 'solid 1px',
+                        borderRadius: '1rem',
+                        '&:has(.Mui-checked)': {
+                          background: 'greenyellow'
+                        },
+                        minWidth: '140px'
+                      }}
                       control={
                         <Radio
                           onChange={async () => {
@@ -104,6 +117,16 @@ const View = ({ checksheets, id }: any) => {
                     />
                     <FormControlLabel
                       value='false'
+                      sx={{
+                        padding: '1rem',
+                        margin: '1rem 0',
+                        border: 'solid 1px',
+                        borderRadius: '1rem',
+                        '&:has(.Mui-checked)': {
+                          background: '#ff6e6e'
+                        },
+                        minWidth: '140px'
+                      }}
                       control={
                         <Radio
                           onChange={async () => {
@@ -133,8 +156,6 @@ const View = ({ checksheets, id }: any) => {
                   </RadioGroup>
                 </FormControl>
 
-                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
-
                 <Box sx={{ flexGrow: 1 }} />
               </Box>
             ))}
@@ -148,10 +169,26 @@ const View = ({ checksheets, id }: any) => {
                 height: '55px'
               }}
             >
-              <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
+              <Box sx={{
+                display: { xs: 'flex' },
+                position: { xs: 'fixed', md: 'relative' },
+                bottom: { xs: '0' },
+                left: { xs: '0' },
+                width: { xs: '100%', md: '100%' },
+                zIndex: { xs: '1201' },
+                padding: { xs: '4px' },
+                gap: { xs: '4px' },
+                height: { xs: '80px', md: 'auto' }
+              }}>
+                <Button variant='contained' size="large" color='primary' type='submit'
+                  sx={{ marginRight: 1, width: '100%', height: '100%' }}>
+                  Ok
+                </Button>
+              </Box>
+              {/* <Button variant='contained' color='primary' type='submit' sx={{ marginRight: 1 }}>
                 Ok
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
+              </Button> */}
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
           </CardContent>
         </Card>

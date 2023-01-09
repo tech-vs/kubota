@@ -154,23 +154,36 @@ const View = ({ checksheets, id }: any) => {
                 key={checksheet.id}
                 component='main'
                 sx={{
-                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'column' },
                   my: 2,
                   position: 'relative',
                   minHeight: '55px'
                 }}
               >
-                <FormControl sx={{ minWidth: { xs: '140px' }, flexBasis: { xs: '140px' } }}>
+                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
+                <FormControl>
                   {/* <FormLabel id='demo-row-radio-buttons-group-label'>Gender</FormLabel> */}
                   <RadioGroup
-                    sx={{ width: { xs: '140px' } }}
                     row
                     aria-labelledby='demo-row-radio-buttons-group-label'
                     name='row-radio-buttons-group'
                     value={checksheet.status}
+                    sx={{
+                      gap: '1rem'
+                    }}
                   >
                     <FormControlLabel
                       value='true'
+                      sx={{
+                        padding: '1rem',
+                        margin: '1rem 0',
+                        border: 'solid 1px',
+                        borderRadius: '1rem',
+                        '&:has(.Mui-checked)': {
+                          background: 'greenyellow'
+                        },
+                        minWidth: '140px'
+                      }}
                       control={
                         <Radio
                           onChange={async () => {
@@ -199,6 +212,16 @@ const View = ({ checksheets, id }: any) => {
                     />
                     <FormControlLabel
                       value='false'
+                      sx={{
+                        padding: '1rem',
+                        margin: '1rem 0',
+                        border: 'solid 1px',
+                        borderRadius: '1rem',
+                        '&:has(.Mui-checked)': {
+                          background: '#ff6e6e'
+                        },
+                        minWidth: '140px'
+                      }}
                       control={
                         <Radio
                           onChange={async () => {
@@ -228,8 +251,6 @@ const View = ({ checksheets, id }: any) => {
                   </RadioGroup>
                 </FormControl>
 
-                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
-
                 <Box sx={{ flexGrow: 1 }} />
               </Box>
             ))}
@@ -242,71 +263,87 @@ const View = ({ checksheets, id }: any) => {
                 position: 'relative'
               }}
             >
-              <Box sx={{ flexGrow: 1 }} />
-              <Button
-                variant='contained'
-                onClick={async () => {
-                  if (typeof internalpalletid === 'string') {
-                    const internalpalletidInt = parseInt(internalpalletid)
-                    const res: ILoadingSubmit[] = await submitLoading({
-                      is_send_approve: false,
-                      pallet_id: internalpalletidInt
-                    })
-                    console.log(res)
-                    let template: IMultipleBarcode = {
-                      barcodes: [],
-                      country_name: '',
-                      net_weight: '',
-                      gross_weight: ''
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
+              <Box
+                sx={{
+                  display: { xs: 'flex' },
+                  position: { xs: 'fixed', md: 'relative' },
+                  bottom: { xs: '0' },
+                  left: { xs: '0' },
+                  width: { xs: '100%' },
+                  zIndex: { xs: '1201' },
+                  padding: { xs: '4px' },
+                  gap: { xs: '4px' },
+                  height: { xs: '80px', md: 'auto' }
+                }}
+              >
+                <Button
+                  variant='contained'
+                  onClick={async () => {
+                    if (typeof internalpalletid === 'string') {
+                      const internalpalletidInt = parseInt(internalpalletid)
+                      const res: ILoadingSubmit[] = await submitLoading({
+                        is_send_approve: false,
+                        pallet_id: internalpalletidInt
+                      })
+                      console.log(res)
+                      let template: IMultipleBarcode = {
+                        barcodes: [],
+                        country_name: '',
+                        net_weight: '',
+                        gross_weight: ''
+                      }
+
+                      template = {
+                        ...template,
+                        barcodes: res,
+                        country_name: res[0]?.country_name,
+                        net_weight: res[0]?.net_weight,
+                        gross_weight: res[0]?.gross_weight
+                      }
+
+                      setBarcodeContent(template)
+
+                      MySwal.fire({
+                        text: 'Loading successfully',
+                        position: 'top',
+                        confirmButtonColor: theme.palette.primary.main
+                      })
+                      // alert('Loading successfully')
                     }
-
-                    template = {
-                      ...template,
-                      barcodes: res,
-                      country_name: res[0]?.country_name,
-                      net_weight: res[0]?.net_weight,
-                      gross_weight: res[0]?.gross_weight
+                  }}
+                  color='primary'
+                  size='large'
+                  sx={{ marginRight: 1, width: '30%', height: '100%' }}
+                >
+                  Submit
+                </Button>
+                <Button
+                  variant='contained'
+                  onClick={async () => {
+                    if (typeof internalpalletid === 'string') {
+                      const internalpalletidInt = parseInt(internalpalletid)
+                      await submitLoading({
+                        is_send_approve: true,
+                        pallet_id: internalpalletidInt
+                      })
                     }
-
-                    setBarcodeContent(template)
-
-                    MySwal.fire({
-                      text: 'Loading successfully',
+                    await MySwal.fire({
+                      text: 'Last oading successfully and Request Approval',
                       position: 'top',
                       confirmButtonColor: theme.palette.primary.main
                     })
-                    // alert('Loading successfully')
-                  }
-                }}
-                color='primary'
-                sx={{ marginRight: 1 }}
-              >
-                Submit
-              </Button>
-              <Button
-                variant='contained'
-                onClick={async () => {
-                  if (typeof internalpalletid === 'string') {
-                    const internalpalletidInt = parseInt(internalpalletid)
-                    await submitLoading({
-                      is_send_approve: true,
-                      pallet_id: internalpalletidInt
-                    })
-                  }
-                  await MySwal.fire({
-                    text: 'Last oading successfully and Request Approval',
-                    position: 'top',
-                    confirmButtonColor: theme.palette.primary.main
-                  })
-                  // alert('Last oading successfully and Request Approval')
-                  router.push(`/scan-loading`)
-                }}
-                color='primary'
-                sx={{ marginRight: 1 }}
-              >
-                Submit & Request Approval
-              </Button>
-              <Box sx={{ flexGrow: 1 }} />
+                    // alert('Last oading successfully and Request Approval')
+                    router.push(`/scan-loading`)
+                  }}
+                  color='primary'
+                  size='large'
+                  sx={{ marginRight: 1, width: '70%', height: '100%' }}
+                >
+                  Submit & Request Approval
+                </Button>
+              </Box>
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
           </CardContent>
         </Card>
