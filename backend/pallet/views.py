@@ -101,7 +101,7 @@ class PalletViewSet(viewsets.GenericViewSet):
                 check_duplicate_id_no.append(part_item.id_no)
         if len(part_to_set_list) != 4:
             return Response("Part มีไม่ครบ 4", status=status.HTTP_400_BAD_REQUEST)
-        if PalletPart.objects.filter(part__id_no__in=check_duplicate_id_no).exclude(part__status=PalletStatus.REPACK).exists():
+        if PalletPart.objects.filter(part__id_no__in=check_duplicate_id_no).exclude(pallet__status=PalletStatus.REPACK).exists():
             return Response("ID No ที่ใส่มามีการนำใส่ pallet ไปแล้ว", status=status.HTTP_400_BAD_REQUEST)
         
         if question_type == QuestionType.EXPORT:
