@@ -337,7 +337,7 @@ const View = ({ checksheets, id }: any) => {
                     if (typeof internalpalletid === 'string') {
                       const internalpalletidInt = parseInt(internalpalletid)
                       const res: ILoadingSubmit[] = await submitLoading({
-                        is_send_approve: false,
+                        is_send_approve: true,
                         pallet_id: internalpalletidInt
                       })
                       console.log(res)
