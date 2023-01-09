@@ -77,6 +77,7 @@ class LoadingViewSet(viewsets.GenericViewSet):
         if is_send_approve and doc:
             doc.last_approve_by = request.user
             doc.status = DocStatus.WAIT_APRROVE
+            send_email(list(User.objects.filter(role=Role.LEADER).exclude(email__exact='').values_list('email', flat=True)), 'Approve from Operator', f'doc no: {doc.doc_no}')
             doc.save()
 
         nw_gw = {}
@@ -183,13 +184,13 @@ class DocumentViewSet(viewsets.GenericViewSet):
         if doc:
             if request.user.role == Role.LEADER and doc.status == DocStatus.WAIT_APRROVE:
                 doc.status = DocStatus.LEADER_APPROVED
-                send_email(list(User.objects.filter(role=Role.CLERK).values_list('email')), 'Approve from Leader', f'doc no: {self.get_serializer(doc).data}')
+                send_email(list(User.objects.filter(role=Role.CLERK).exclude(email__exact='').values_list('email', flat=True)), 'Approve from Leader', f'doc no: {doc.doc_no}')
             elif request.user.role == Role.CLERK and doc.status == DocStatus.LEADER_APPROVED:
                 doc.status = DocStatus.CLERK_APPROVED
-                send_email(list(User.objects.filter(role=Role.ENGINEER).values_list('email')), 'Approve from Clerk', f'doc no: {self.get_serializer(doc).data}')
+                send_email(list(User.objects.filter(role=Role.ENGINEER).exclude(email__exact='').values_list('email', flat=True)), 'Approve from Clerk', f'doc no: {doc.doc_no}')
             elif request.user.role == Role.ENGINEER and doc.status == DocStatus.CLERK_APPROVED:
                 doc.status = DocStatus.ENGINEER_APPROVED
-                send_email(list(User.objects.filter(role=Role.MANAGER).values_list('email')), 'Approve from Engineer', f'doc no: {self.get_serializer(doc).data}')
+                send_email(list(User.objects.filter(role=Role.MANAGER).exclude(email__exact='').values_list('email', flat=True)), 'Approve from Engineer', f'doc no: {doc.doc_no}')
             elif request.user.role == Role.MANAGER and doc.status == DocStatus.ENGINEER_APPROVED:
                 doc.status = DocStatus.MANAGER_APPROVED
             doc.last_approve_by = request.user
@@ -209,7 +210,7 @@ class DocumentViewSet(viewsets.GenericViewSet):
             doc.status = DocStatus.REJECT
             doc.last_approve_by = request.user
             doc.remark_reject = remark
-            send_email(list(User.objects.all().values_list('email')), f'Reject from {request.user.username}', f'Because {remark}')
+            send_email(list(User.objects.all().exclude(email__exact='').values_list('email', flat=True)), f'Reject from {request.user.username}', f'Because {remark}')
             doc.save()
         response = self.get_serializer(doc).data
         return Response(response, status=status.HTTP_200_OK)
