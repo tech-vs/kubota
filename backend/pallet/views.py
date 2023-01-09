@@ -89,7 +89,7 @@ class PalletViewSet(viewsets.GenericViewSet):
         prod_seq_fail_text = ''
         check_duplicate_id_no = []
         ## prepare part_list to compare and set to pallet
-        if question_type == QuestionType.DOMESTIC and Pallet.objects.filter(pallet_string=pallet_string).exists():
+        if question_type == QuestionType.DOMESTIC and Pallet.objects.filter(pallet_string=pallet_string).exclude(status=PalletStatus.REPACK).exists():
             return Response("Pallet No นี้ทำการ pack ไปแล้ว", status=status.HTTP_400_BAD_REQUEST)
         if question_type == QuestionType.DOMESTIC and not PSETSDataUpload.objects.filter(pallet_sharp=data.get('pallet', ''), skewer_sharp=data.get('skewer', ''), delivery_date=date).exists():
             return Response("Pallet ไม่ตรงกับข้อมูลในระบบ", status=status.HTTP_400_BAD_REQUEST)
@@ -101,7 +101,7 @@ class PalletViewSet(viewsets.GenericViewSet):
                 check_duplicate_id_no.append(part_item.id_no)
         if len(part_to_set_list) != 4:
             return Response("Part มีไม่ครบ 4", status=status.HTTP_400_BAD_REQUEST)
-        if PalletPart.objects.filter(part__id_no__in=check_duplicate_id_no).exists():
+        if PalletPart.objects.filter(part__id_no__in=check_duplicate_id_no).exclude(part__status=PalletStatus.REPACK).exists():
             return Response("ID No ที่ใส่มามีการนำใส่ pallet ไปแล้ว", status=status.HTTP_400_BAD_REQUEST)
         
         if question_type == QuestionType.EXPORT:
