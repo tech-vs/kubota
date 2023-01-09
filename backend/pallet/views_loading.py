@@ -20,7 +20,8 @@ from pallet.serializers_loading import (
 )
 from pallet.filters import PalletLoadingFilter, DocumentListFilter
 from syncdata.models import MasterLoading, MSPackingStyle
-from account.models import Role
+from account.models import Role, User
+from utils.email import send_email
 
 
 class LoadingViewSet(viewsets.GenericViewSet):
@@ -182,6 +183,7 @@ class DocumentViewSet(viewsets.GenericViewSet):
         if doc:
             if request.user.role == Role.LEADER and doc.status == DocStatus.WAIT_APRROVE:
                 doc.status = DocStatus.LEADER_APPROVED
+                send_email(list(User.objects.filter(role=Role.CLERK).values_list('email')), )
             elif request.user.role == Role.CLERK and doc.status == DocStatus.LEADER_APPROVED:
                 doc.status = DocStatus.CLERK_APPROVED
             elif request.user.role == Role.ENGINEER and doc.status == DocStatus.CLERK_APPROVED:
