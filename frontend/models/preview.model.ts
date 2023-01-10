@@ -29,7 +29,7 @@ export interface IPreviewDataFormat1 {
 
   doc_id: string
   doc_date: string
-  packing_date: string
+  created_at: string
   distributor: string
   engine_models: {
     model_code: string

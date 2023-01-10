@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Barcode, { Options } from 'react-barcode'
 import { IPreviewDataFormat1 } from '@/models/preview.model'
+import Moment from 'react-moment';
 
 interface Props {
   content: IPreviewDataFormat1
@@ -27,8 +28,8 @@ const PDFFormat1 = ({ content }: Props) => {
 
   const [question2, setQuestion2] = useState<IPreviewDataFormat1["question_list"][]>([])
   const [changes, setChanges] = useState<IPreviewDataFormat1["changes"]>([])
-  
-  function mockChanges () {
+
+  function mockChanges() {
     const template = {
       edition: '',
       date: '',
@@ -39,13 +40,13 @@ const PDFFormat1 = ({ content }: Props) => {
       created_by: ''
     }
     let arr: IPreviewDataFormat1["changes"] = []
-    for(let i = 0 ; i < 3 ; i++) {
+    for (let i = 0; i < 3; i++) {
       arr = [
         ...arr,
         template
       ]
     }
-    setChanges(arr) 
+    setChanges(arr)
   }
 
   useEffect(() => {
@@ -72,7 +73,9 @@ const PDFFormat1 = ({ content }: Props) => {
                   Engine Packing Check Sheet
                 </td>
                 <td style={{ width: '30%' }}>
-                  Packing Date : {content.packing_date || '-'}
+                  Packing Date : <Moment format="YYYY/MM/DD HH:mm">
+                    {content.created_at || '-'}
+                  </Moment>
                 </td>
                 <td style={{ width: '30%' }}>
                   Distributor : THAILAND
@@ -99,7 +102,7 @@ const PDFFormat1 = ({ content }: Props) => {
                     <td>{m.model_name || ''}</td>
                     <td>{m.id_no || ''}</td>
                     <td>{m.serial_no || ''}</td>
-                    <td><div className="flex justify-center items-center "><Barcode value={ m.serial_no || ''} {...barcodeOption} /></div></td>
+                    <td><div className="flex justify-center items-center "><Barcode value={m.serial_no || ''} {...barcodeOption} /></div></td>
                     <td></td>
                   </tr>,
                 )
@@ -203,10 +206,10 @@ const PDFFormat1 = ({ content }: Props) => {
           <div className="flex fs-9 bold">
             <div className="flex items-center" style={{ width: '70%', gap: '10pt' }}>
               <div className="flex items-center" style={{ paddingLeft: '16pt', gap: '6pt' }}>
-                <div style={{width: '20px', height: '20px', border: 'solid 1pt'}}></div> Bolt
+                <div style={{ width: '20px', height: '20px', border: 'solid 1pt' }}></div> Bolt
               </div>
               <div className="flex items-center" style={{ paddingLeft: '16pt', gap: '6pt' }}>
-                <div  style={{width: '20px', height: '20px', border: 'solid 1pt'}}></div> Cover Turbo
+                <div style={{ width: '20px', height: '20px', border: 'solid 1pt' }}></div> Cover Turbo
               </div>
             </div>
             <div style={{ width: '30%' }}>
@@ -252,27 +255,27 @@ const PDFFormat1 = ({ content }: Props) => {
             <tbody className="fs-9">
               {
                 changes.map((c, i) =>
-                  <tr key={c.edition + i} style={{ height: '17px'}}>
+                  <tr key={c.edition + i} style={{ height: '17px' }}>
                     <td>
-                      {c.edition || '' }
+                      {c.edition || ''}
                     </td>
                     <td>
-                      {c.date || '' }
+                      {c.date || ''}
                     </td>
                     <td>
-                      {c.detail || '' }
+                      {c.detail || ''}
                     </td>
                     <td>
-                      {c.approve_by || '' }
+                      {c.approve_by || ''}
                     </td>
                     <td>
-                      {c.approve_date || '' }
+                      {c.approve_date || ''}
                     </td>
                     <td>
-                      {c.authorized_by || '' }
+                      {c.authorized_by || ''}
                     </td>
                     <td>
-                      {c.created_by || '' }
+                      {c.created_by || ''}
                     </td>
                   </tr>,
                 )
