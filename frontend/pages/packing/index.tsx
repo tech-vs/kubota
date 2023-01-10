@@ -48,7 +48,7 @@ const Overall = ({ packingList }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 250
     },
     {
       field: 'serial_no',
@@ -160,7 +160,7 @@ const Overall = ({ packingList }: any) => {
         }}
       >
         <DataGrid
-          getRowId={packingList => packingList.pallet_id}
+          getRowId={packingList => packingList.serial_no}
           sx={{
             boxShadow: 2,
             '& .MuiDataGrid-cell:hover': {
