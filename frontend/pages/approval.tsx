@@ -201,8 +201,6 @@ const Approval = ({ list }: any) => {
           disableExtendRowFullWidth
           disableIgnoreModificationsIfProcessingProps
           disableColumnSelector
-          // disableColumnFilter
-          // disableColumnMenu
         />
       </Box>
     </Layout>

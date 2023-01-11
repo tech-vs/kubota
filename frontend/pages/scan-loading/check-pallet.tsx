@@ -83,8 +83,6 @@ const columns: GridColDef[] = [
     flex: 1
   }
 ]
-let scanLoadingResponse: any = {}
-let scanLoadingResponseResult: any[] = []
 const View = ({ genDoc }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
@@ -99,11 +97,14 @@ const View = ({ genDoc }: any) => {
       internalPalletNo: ''
     })
 
+    const [scanLoadingResponse, setScanLoadingResponse] = useState<any>({})
+    const [scanLoadingResponseResult, setScanLoadingResponseResult] = useState<any>({})
+
     useEffect(() => {
       async function call() {
-        scanLoadingResponse = await scanLoading(scan.internalPalletNo)
-        scanLoadingResponseResult = scanLoadingResponse.item_list
-        console.log(scanLoadingResponseResult)
+        const res = await scanLoading(scan.internalPalletNo)
+        setScanLoadingResponse(res)
+        setScanLoadingResponseResult(res.item_list)
       }
       call()
     }, [scan])
@@ -214,22 +215,33 @@ const View = ({ genDoc }: any) => {
           }}
         >
           {/* <Box sx={{ flexGrow: 1 }} /> */}
-          <Box sx={{
-            display: { xs: 'flex' },
-            position: { xs: 'fixed', md: 'relative' },
-            bottom: { xs: '0' },
-            left: { xs: '0' },
-            width: { xs: '100%' },
-            zIndex: { xs: '1201' },
-            padding: { xs: '4px' },
-            gap: { xs: '4px' },
-            height: { xs: '80px', md: 'auto' }
-          }}>
+          <Box
+            sx={{
+              display: { xs: 'flex' },
+              position: { xs: 'fixed', md: 'relative' },
+              bottom: { xs: '0' },
+              left: { xs: '0' },
+              width: { xs: '100%' },
+              zIndex: { xs: '1201' },
+              padding: { xs: '4px' },
+              gap: { xs: '4px' },
+              height: { xs: '80px', md: 'auto' }
+            }}
+          >
             <Button
               variant='contained'
               onClick={() => {
-                router.push(`/scan-loading/checksheet1?id=${genDoc.id}&internalpalletid=${scanLoadingResponse.pallet_id}`)
-                refreshData()
+                if (scanLoadingResponse.pallet_id) {
+                  router.push(
+                    `/scan-loading/checksheet1?id=${genDoc.id}&internalpalletid=${scanLoadingResponse.pallet_id}`
+                  )
+                } else {
+                  MySwal.fire({
+                    text: 'ไม่พบ Pallet',
+                    position: 'top',
+                    confirmButtonColor: theme.palette.primary.main
+                  })
+                }
               }}
               color='primary'
               sx={{ marginRight: 1, width: '100%', height: '100%' }}
@@ -237,7 +249,6 @@ const View = ({ genDoc }: any) => {
               OK
             </Button>
           </Box>
-          {/* <Box sx={{ flexGrow: 1 }} /> */}
         </Box>
       </Form>
     )

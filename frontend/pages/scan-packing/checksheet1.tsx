@@ -11,7 +11,8 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
@@ -19,7 +20,6 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -49,7 +49,7 @@ const View = ({ checksheets, id }: any) => {
             height: '30px'
           }}
         >
-          <Typography variant='h5'>Check Sheet 1</Typography>
+          <Typography variant='h5'>Packing Check Sheet 1</Typography>
           <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
@@ -59,23 +59,36 @@ const View = ({ checksheets, id }: any) => {
                 key={checksheet.id}
                 component='main'
                 sx={{
-                  display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                  display: { xs: 'flex', md: 'flex', flexDirection: 'column' },
                   my: 2,
                   position: 'relative',
                   minHeight: '55px'
                 }}
               >
-                <FormControl sx={{ minWidth: { xs: '140px' }, flexBasis: { xs: '140px' } }}>
+                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
+                <FormControl>
                   {/* <FormLabel id='demo-row-radio-buttons-group-label'>Gender</FormLabel> */}
                   <RadioGroup
-                    sx={{ width: { xs: '140px' } }}
                     row
                     aria-labelledby='demo-row-radio-buttons-group-label'
                     name='row-radio-buttons-group'
                     value={checksheet.status}
+                    sx={{
+                      gap: '1rem'
+                    }}
                   >
                     <FormControlLabel
                       value='true'
+                      sx={{
+                        padding: '1rem',
+                        margin: '1rem 0',
+                        border: 'solid 1px',
+                        borderRadius: '1rem',
+                        '&:has(.Mui-checked)': {
+                          background: 'greenyellow'
+                        },
+                        minWidth: '140px'
+                      }}
                       control={
                         <Radio
                           onChange={async () => {
@@ -104,6 +117,16 @@ const View = ({ checksheets, id }: any) => {
                     />
                     <FormControlLabel
                       value='false'
+                      sx={{
+                        padding: '1rem',
+                        margin: '1rem 0',
+                        border: 'solid 1px',
+                        borderRadius: '1rem',
+                        '&:has(.Mui-checked)': {
+                          background: '#ff6e6e'
+                        },
+                        minWidth: '140px'
+                      }}
                       control={
                         <Radio
                           onChange={async () => {
@@ -132,8 +155,6 @@ const View = ({ checksheets, id }: any) => {
                     />
                   </RadioGroup>
                 </FormControl>
-
-                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
 
                 <Box sx={{ flexGrow: 1 }} />
               </Box>
@@ -195,7 +216,7 @@ const View = ({ checksheets, id }: any) => {
               await MySwal.fire({
                 text: JSON.stringify(error.response.data.detail),
                 position: 'top',
-                confirmButtonColor: theme.palette.primary.main,
+                confirmButtonColor: theme.palette.primary.main
               })
               // alert(JSON.stringify(error.response.data.detail))
             }
