@@ -129,6 +129,11 @@ const View = ({ checksheets, id }: any) => {
     async function call() {
       try {
         await printImage()
+        MySwal.fire({
+          text: 'Loading successfully',
+          position: 'top',
+          confirmButtonColor: theme.palette.primary.main
+        })
         router.push(`/scan-loading/check-pallet`)
       } catch (error) {
         MySwal.fire({
@@ -324,13 +329,6 @@ const View = ({ checksheets, id }: any) => {
                       }
 
                       setBarcodeContent(template)
-
-                      MySwal.fire({
-                        text: 'Loading successfully',
-                        position: 'top',
-                        confirmButtonColor: theme.palette.primary.main
-                      })
-                      // alert('Loading successfully')
                     }
                   }}
                   color='primary'

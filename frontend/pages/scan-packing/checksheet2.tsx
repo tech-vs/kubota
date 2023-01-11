@@ -100,6 +100,11 @@ const View = ({ checksheets, id }: any) => {
     async function call() {
       try {
         await printImage()
+        await MySwal.fire({
+          text: 'Packing Successfully',
+          position: 'top',
+          confirmButtonColor: theme.palette.primary.main
+        })
         router.push(`/scan-packing`)
       } catch (error) {
         MySwal.fire({
@@ -304,11 +309,7 @@ const View = ({ checksheets, id }: any) => {
               pallet_string,
               question_type
             }))
-            await MySwal.fire({
-              text: 'Packing Successfully',
-              position: 'top',
-              confirmButtonColor: theme.palette.primary.main
-            })
+
             setSubmitting(false)
           } catch (error: any) {
             if (error.response) {
