@@ -243,8 +243,6 @@ const View = ({ checksheets, id }: any) => {
                   </RadioGroup>
                 </FormControl>
 
-
-
                 <Box sx={{ flexGrow: 1 }} />
               </Box>
             ))}
@@ -258,19 +256,26 @@ const View = ({ checksheets, id }: any) => {
                 height: '55px'
               }}
             >
-              <Box sx={{
-                display: { xs: 'flex' },
-                position: { xs: 'fixed', md: 'relative' },
-                bottom: { xs: '0' },
-                left: { xs: '0' },
-                width: { xs: '100%' },
-                zIndex: { xs: '1201' },
-                padding: { xs: '4px' },
-                gap: { xs: '4px' },
-                height: { xs: '80px', md: 'auto' }
-              }}>
-                <Button variant='contained' size="large" color='primary' type='submit'
-                  sx={{ marginRight: 1, width: '100%', height: '100%' }}>
+              <Box
+                sx={{
+                  display: { xs: 'flex' },
+                  position: { xs: 'fixed', md: 'relative' },
+                  bottom: { xs: '0' },
+                  left: { xs: '0' },
+                  width: { xs: '100%' },
+                  zIndex: { xs: '1201' },
+                  padding: { xs: '4px' },
+                  gap: { xs: '4px' },
+                  height: { xs: '80px', md: 'auto' }
+                }}
+              >
+                <Button
+                  variant='contained'
+                  size='large'
+                  color='primary'
+                  type='submit'
+                  sx={{ marginRight: 1, width: '100%', height: '100%' }}
+                >
                   Submit Packing
                 </Button>
               </Box>
@@ -299,7 +304,6 @@ const View = ({ checksheets, id }: any) => {
               pallet_string,
               question_type
             }))
-            // alert('Packing Successfully')
             await MySwal.fire({
               text: 'Packing Successfully',
               position: 'top',

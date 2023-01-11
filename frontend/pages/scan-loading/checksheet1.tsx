@@ -127,8 +127,16 @@ const View = ({ checksheets, id }: any) => {
 
   useEffect(() => {
     async function call() {
-      await printImage()
-      router.push(`/scan-loading/check-pallet`)
+      try {
+        await printImage()
+        router.push(`/scan-loading/check-pallet`)
+      } catch (error) {
+        MySwal.fire({
+          text: 'No Printer found. Please recheck Printer',
+          position: 'top',
+          confirmButtonColor: theme.palette.primary.main
+        })
+      }
     }
     call()
   }, [barcodeContent])
