@@ -412,7 +412,9 @@ const View = ({ checksheets, id }: any) => {
       </Formik>
       <div style={{ position: 'relative' }}>
         <MultipleBarcode ref={multipleBarcodeRef} content={barcodeContent}></MultipleBarcode>
-        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}></div>
+        <div
+          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
+        ></div>
       </div>
     </Layout>
   )
