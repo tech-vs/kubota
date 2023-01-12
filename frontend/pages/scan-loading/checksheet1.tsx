@@ -364,11 +364,11 @@ const View = ({ checksheets, id }: any) => {
 
                       setBarcodeContent(template)
 
-                      await MySwal.fire({
-                        text: 'Last loading successfully and Request Approval',
-                        position: 'top',
-                        confirmButtonColor: theme.palette.primary.main
-                      })
+                      // await MySwal.fire({
+                      //   text: 'Last loading successfully and Request Approval',
+                      //   position: 'top',
+                      //   confirmButtonColor: theme.palette.primary.main
+                      // })
                       // alert('Last oading successfully and Request Approval')
                       router.push(`/scan-loading`)
                     }
@@ -412,9 +412,7 @@ const View = ({ checksheets, id }: any) => {
       </Formik>
       <div style={{ position: 'relative' }}>
         <MultipleBarcode ref={multipleBarcodeRef} content={barcodeContent}></MultipleBarcode>
-        <div
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
-        ></div>
+        <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}></div>
       </div>
     </Layout>
   )

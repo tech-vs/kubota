@@ -109,7 +109,25 @@ const Approval = ({ list }: any) => {
       headerClassName: 'headerField',
       flex: 1
     },
-
+    {
+      field: 'view',
+      headerName: 'View',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      width: 150,
+      renderCell: ({ row }: GridRenderCellParams<string>) => {
+        return (
+          <Button
+            variant='contained'
+            onClick={() => router.push(`/preview/${row.id}?type=2`)}
+            sx={{ borderRadius: 25 }}
+          >
+            View
+          </Button>
+        )
+      }
+    },
     {
       field: 'approve',
       headerName: 'Approval',

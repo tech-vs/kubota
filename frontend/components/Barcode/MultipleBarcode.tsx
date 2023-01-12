@@ -39,7 +39,11 @@ const MultipleBarcode = forwardRef<HTMLDivElement, Props>(({ content }, ref) => 
         <div className='text-center'>{content.country_name}</div>
         <div className='barcode-wrapper flex flex-wrap' style={{ rowGap: '0.5cm' }}>
           {content.barcodes.map((m: any) => (
-            <div className='flex flex-col items-center justify-center w-50 ' style={{ gap: '0.4cm' }} key={m.internal_pallet_no}>
+            <div
+              className='flex flex-col items-center justify-center w-50 '
+              style={{ gap: '0.4cm' }}
+              key={m.internal_pallet_no}
+            >
               <Barcode value={m.serial_no || '-'} {...barcodeOption} />
               <div className='no-line-height'>{m.serial_no || '-'}</div>
               <div className='no-line-height'>{m.model_code || '-'}</div>
@@ -47,9 +51,9 @@ const MultipleBarcode = forwardRef<HTMLDivElement, Props>(({ content }, ref) => 
             </div>
           ))}
         </div>
-        <div className='flex justify-center' style={{ gap: '0.3cm', marginTop: '0.2cm' }}>
-          <div>NW:{content.net_weight}</div>
-          <div>GW:{content.gross_weight}-</div>
+        <div className='flex justify-center' style={{ gap: '0.5cm', marginTop: '0.1cm' }}>
+          <div>NW:{content.net_weight || '-'}</div>
+          <div>GW:{content.gross_weight || '-'}</div>
         </div>
       </div>
     </>

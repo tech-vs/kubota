@@ -134,8 +134,8 @@ const Scan = ({ genDoc }: any) => {
           input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
             ? Amatanakhon
             : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-              ? Navanakorn
-              : ''
+            ? Navanakorn
+            : ''
       })
     }
     call()
@@ -383,8 +383,8 @@ const Scan = ({ genDoc }: any) => {
                     input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
                       ? Amatanakhon
                       : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-                        ? Navanakorn
-                        : ''
+                      ? Navanakorn
+                      : ''
                   }
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -464,23 +464,31 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               {/* <Box sx={{ flexGrow: 1 }} /> */}
-              <Box sx={{
-                display: { xs: 'flex' },
-                position: { xs: 'fixed', md: 'relative' },
-                bottom: { xs: '0' },
-                left: { xs: '0' },
-                width: { xs: '100%' },
-                zIndex: { xs: '1201' },
-                padding: { xs: '4px' },
-                gap: { xs: '4px' },
-                height: { xs: '80px', md: 'auto' }
-              }}>
-                <Button variant='contained' color='primary' size="large" type='submit' sx={{ marginRight: 1, width: '50%', height: '100%' }}>
+              <Box
+                sx={{
+                  display: { xs: 'flex' },
+                  position: { xs: 'fixed', md: 'relative' },
+                  bottom: { xs: '0' },
+                  left: { xs: '0' },
+                  width: { xs: '100%' },
+                  zIndex: { xs: '1201' },
+                  padding: { xs: '4px' },
+                  gap: { xs: '4px' },
+                  height: { xs: '80px', md: 'auto' }
+                }}
+              >
+                <Button
+                  variant='contained'
+                  color='primary'
+                  size='large'
+                  type='submit'
+                  sx={{ marginRight: 1, width: '50%', height: '100%' }}
+                >
                   OK
                 </Button>
                 <Button
                   variant='contained'
-                  size="large"
+                  size='large'
                   onClick={() => {
                     router.push('scan-loading/check-pallet')
                   }}
@@ -515,16 +523,6 @@ const Scan = ({ genDoc }: any) => {
         initialValues={{ deEx: '', refNo: '', qty: '', invoiceNo: '', round: '', customerName: '', address: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           try {
-            // console.log({
-            //   ref_do_no: input.refNo,
-            //   question_type: input.question_type,
-            //   status: 'loading',
-            //   total_qty: input.qty,
-            //   invoice_no: input.invoiceNo,
-            //   round: input.round,
-            //   customer_name: input.customerName,
-            //   address: input.address
-            // })
             await inputLoadingDoc(
               {
                 ref_do_no: input.refNo,
@@ -540,7 +538,6 @@ const Scan = ({ genDoc }: any) => {
             )
 
             router.push(`/scan-loading/check-pallet`)
-            // router.push(`/scan-loading/checksheet1?id=${genDoc.id}`)
             setSubmitting(false)
           } catch (error) {
             await MySwal.fire({

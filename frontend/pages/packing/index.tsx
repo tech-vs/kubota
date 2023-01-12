@@ -204,7 +204,7 @@ const Overall = ({ packingList }: any) => {
 
 // This gets called on every request
 export async function getServerSideProps() {
-  const response = await httpClient.get(`/pallet/part-list/?status=finish_pack`)
+  const response = await httpClient.get(`/pallet/part-list/?packing_status=TRUE`)
   console.log(response)
 
   return {
