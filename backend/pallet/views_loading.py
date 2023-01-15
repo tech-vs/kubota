@@ -207,6 +207,8 @@ class DocumentViewSet(viewsets.GenericViewSet):
         remark = data.pop('remark_reject', '')
 
         if doc:
+            for pallet_id in doc.documentpallet_set.all().values_list('pallet_id', flat=True):
+                Pallet.objects.filter(id=pallet_id).update(status=PalletStatus.FINISH_PACK)
             doc.status = DocStatus.REJECT
             doc.last_approve_by = request.user
             doc.remark_reject = remark
