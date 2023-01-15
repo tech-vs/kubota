@@ -260,10 +260,10 @@ class PalletPartViewSet(viewsets.GenericViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        serializer = self.get_serializer(page, many=True).data
-        response = self.get_paginated_response(serializer).data
-        response['total'] = int(len(self.get_queryset()))
+        # page = self.paginate_queryset(queryset)
+        response = self.get_serializer(queryset, many=True).data
+        # response = self.get_paginated_response(serializer).data
+        # response['total'] = int(len(self.get_queryset()))
         return Response(response, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
