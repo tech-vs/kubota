@@ -184,18 +184,18 @@ const Overall = ({ packingList }: any) => {
             }
             return ''
           }}
-          pageSize={15}
-          rowsPerPageOptions={[15]}
+          // pageSize={1}
+          rowsPerPageOptions={[5, 10, 20]}
           disableSelectionOnClick
           disableVirtualization
           disableExtendRowFullWidth
           disableIgnoreModificationsIfProcessingProps
           disableColumnSelector
-          initialState={{
-            pagination: {
-              pageSize: 15
-            }
-          }}
+          // initialState={{
+          //   pagination: {
+          //     page: 2
+          //   }
+          // }}
         />
       </Box>
     </Layout>
@@ -205,7 +205,6 @@ const Overall = ({ packingList }: any) => {
 // This gets called on every request
 export async function getServerSideProps() {
   const response = await httpClient.get(`/pallet/part-list/?packing_status=TRUE`)
-  console.log(response)
 
   return {
     props: {
