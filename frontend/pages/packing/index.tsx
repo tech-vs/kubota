@@ -208,7 +208,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      packingList: response.data.results
+      packingList: response.data
     }
   }
 }
