@@ -138,7 +138,7 @@ const Overall = ({ loadingList }: any) => {
 
       <Box
         sx={{
-          height: 800,
+          height: 720,
           width: '100%',
           '& .cold': {
             color: 'success.main'
@@ -183,18 +183,13 @@ const Overall = ({ loadingList }: any) => {
             }
             return ''
           }}
-          pageSize={15}
-          rowsPerPageOptions={[15]}
+          pageSize={12}
+          rowsPerPageOptions={[12]}
           disableSelectionOnClick
           disableVirtualization
           disableExtendRowFullWidth
           disableIgnoreModificationsIfProcessingProps
           disableColumnSelector
-          initialState={{
-            pagination: {
-              pageSize: 15
-            }
-          }}
         />
       </Box>
     </Layout>
