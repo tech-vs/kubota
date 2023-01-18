@@ -39,7 +39,7 @@ const Overall = ({ packingList }: any) => {
       align: 'center',
       type: 'string',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'model_name',
@@ -48,7 +48,7 @@ const Overall = ({ packingList }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 250
+      width: 150
     },
     {
       field: 'serial_no',
@@ -57,7 +57,7 @@ const Overall = ({ packingList }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'country_code',
@@ -154,7 +154,7 @@ const Overall = ({ packingList }: any) => {
             backgroundColor: '#c7ddb5'
           },
           '& .cellField': {
-            fontSize: 20,
+            fontSize: 12,
             fontWeight: '700'
           }
         }}

@@ -39,7 +39,7 @@ const Overall = ({ loadingList }: any) => {
       align: 'center',
       type: 'string',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'ref_do_no',
@@ -57,7 +57,7 @@ const Overall = ({ loadingList }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'invoice_no',
@@ -75,7 +75,7 @@ const Overall = ({ loadingList }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'customer_name',
@@ -154,7 +154,7 @@ const Overall = ({ loadingList }: any) => {
             backgroundColor: '#c7ddb5'
           },
           '& .cellField': {
-            fontSize: 20,
+            fontSize: 12,
             fontWeight: '700'
           }
         }}

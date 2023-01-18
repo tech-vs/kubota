@@ -28,7 +28,7 @@ const columns: GridColDef[] = [
     align: 'center',
     type: 'string',
     cellClassName: 'cellField',
-    width: 250
+    width: 150
   },
   {
     field: 'serial_no',
@@ -37,7 +37,7 @@ const columns: GridColDef[] = [
     headerClassName: 'headerField',
     align: 'center',
     cellClassName: 'cellField',
-    width: 150
+    width: 100
   },
   {
     field: 'country_code',
@@ -151,7 +151,7 @@ const View = ({ genDoc }: any) => {
         <Box
           sx={{
             height: 360,
-            width: '100%',
+            width: 700,
             '& .cold': {
               color: 'success.main'
             },
@@ -166,7 +166,7 @@ const View = ({ genDoc }: any) => {
               backgroundColor: '#c7ddb5'
             },
             '& .cellField': {
-              fontSize: 20,
+              fontSize: 12,
               fontWeight: '700'
             }
           }}
@@ -196,8 +196,8 @@ const View = ({ genDoc }: any) => {
               }
               return ''
             }}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
+            pageSize={4}
+            rowsPerPageOptions={[4]}
             disableSelectionOnClick
             disableVirtualization
             disableExtendRowFullWidth
