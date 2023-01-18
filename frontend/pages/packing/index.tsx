@@ -184,8 +184,8 @@ const Overall = ({ packingList }: any) => {
             }
             return ''
           }}
-          // pageSize={1}
-          rowsPerPageOptions={[5, 10, 20]}
+          pageSize={10}
+          rowsPerPageOptions={[20]}
           disableSelectionOnClick
           disableVirtualization
           disableExtendRowFullWidth
