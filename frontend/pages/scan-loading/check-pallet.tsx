@@ -2,14 +2,40 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { scanLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import { Box, Button, TextField, Typography, useTheme } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import { alpha, Box, Button, styled, TextField, Typography, useTheme } from '@mui/material'
+import { DataGrid, GridCellParams, gridClasses, GridColDef } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
 import { ChangeEvent, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 type Props = {}
+const ODD_OPACITY = 0.2
+
+const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+  [`& .${gridClasses.row}.even`]: {
+    backgroundColor: theme.palette.grey[200],
+    '&:hover, &.Mui-hovered': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+      '@media (hover: none)': {
+        backgroundColor: 'transparent'
+      }
+    },
+    '&.Mui-selected': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
+      '&:hover, &.Mui-hovered': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
+        ),
+        // Reset on touch devices, it doesn't add specificity
+        '@media (hover: none)': {
+          backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity)
+        }
+      }
+    }
+  }
+}))
 const columns: GridColDef[] = [
   {
     field: 'model_code',
@@ -74,13 +100,6 @@ const columns: GridColDef[] = [
     align: 'center',
     cellClassName: 'cellField',
     width: 150
-  },
-
-  {
-    field: 'blank',
-    headerName: '',
-    headerClassName: 'headerField',
-    flex: 1
   }
 ]
 const View = ({ genDoc }: any) => {
@@ -159,20 +178,19 @@ const View = ({ genDoc }: any) => {
               color: 'error.main'
             },
             '& .headerField': {
-              fontSize: 16,
-              backgroundColor: '#55AAFF'
+              fontSize: 12
             },
             '& .customerField': {
               backgroundColor: '#c7ddb5'
             },
             '& .cellField': {
-              fontSize: 12,
-              fontWeight: '700'
+              fontSize: 12
             }
           }}
         >
-          <DataGrid
+          <StripedDataGrid
             getRowId={scanLoadingResponseResult => scanLoadingResponseResult.serial_no}
+            getRowClassName={params => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
             sx={{
               boxShadow: 2,
               '& .MuiDataGrid-cell:hover': {

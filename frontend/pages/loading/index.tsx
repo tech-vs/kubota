@@ -1,24 +1,37 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
-import { Box, Button, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { alpha, Box, Button, styled, Typography } from '@mui/material'
+import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
 type Props = {}
 
-const VISIBLE_FIELDS = ['modelCode']
+const ODD_OPACITY = 0.2
 
-const rows = [
-  { id: 1, customer: 'Toyota', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 2, customer: 'AAT', shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 3, customer: 'Ford', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 4, customer: 'Isuzu', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 5, customer: 'Honda', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 6, customer: 1, shopping: 'OK', qGate: 'Waiting', loading: 'Waiting' },
-  { id: 7, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 8, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 9, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' }
-]
+const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+  [`& .${gridClasses.row}.even`]: {
+    backgroundColor: theme.palette.grey[200],
+    '&:hover, &.Mui-hovered': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+      '@media (hover: none)': {
+        backgroundColor: 'transparent'
+      }
+    },
+    '&.Mui-selected': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
+      '&:hover, &.Mui-hovered': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
+        ),
+        // Reset on touch devices, it doesn't add specificity
+        '@media (hover: none)': {
+          backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity)
+        }
+      }
+    }
+  }
+}))
 const Overall = ({ loadingList }: any) => {
   const router = useRouter()
   const columns: GridColDef[] = [
@@ -95,13 +108,6 @@ const Overall = ({ loadingList }: any) => {
       cellClassName: 'cellField',
       width: 150
     },
-
-    {
-      field: 'blank',
-      headerName: '',
-      headerClassName: 'headerField',
-      flex: 1
-    },
     {
       field: 'view',
       headerName: 'View',
@@ -139,7 +145,7 @@ const Overall = ({ loadingList }: any) => {
       <Box
         sx={{
           height: 720,
-          width: '100%',
+          width: 1200,
           '& .cold': {
             color: 'success.main'
           },
@@ -147,19 +153,17 @@ const Overall = ({ loadingList }: any) => {
             color: 'error.main'
           },
           '& .headerField': {
-            fontSize: 16,
-            backgroundColor: '#55AAFF'
+            fontSize: 12
           },
           '& .customerField': {
             backgroundColor: '#c7ddb5'
           },
           '& .cellField': {
-            fontSize: 12,
-            fontWeight: '700'
+            fontSize: 12
           }
         }}
       >
-        <DataGrid
+        <StripedDataGrid
           sx={{
             boxShadow: 2,
             '& .MuiDataGrid-cell:hover': {
@@ -169,6 +173,7 @@ const Overall = ({ loadingList }: any) => {
               outline: 'none'
             }
           }}
+          getRowClassName={params => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
           rows={loadingList.results}
           columns={columns}
           getCellClassName={(params: GridCellParams<string>) => {
