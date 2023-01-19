@@ -58,7 +58,7 @@ const PDFFormat1 = ({ content }: Props) => {
         <div className='flex justify-between items-center '>
           <div className='fs-17 bold'>Checksheet Issuing</div>
           <div className='fs-9 bold'>
-            Doc : {content.doc_id || 'KET-FM-PC-LG-003'} Eff.: {content.doc_date || '10.08.2017'}
+            Doc : {content.doc_id || 'KET-FM-PC-LG-003'} Eff.: {content.doc_date || '06/12/2022'}
           </div>
         </div>
         <div className='section fs-11 bold'>
@@ -114,12 +114,16 @@ const PDFFormat1 = ({ content }: Props) => {
         <div className='flex items-center fs-9 bold' style={{ gap: '32pt', marginTop: '12pt' }}>
           <div style={{ width: '120pt' }}>Pallet Code: {content.pallet}</div>
           <div>
-            <div>ผ่าน: 0</div>
+            <div>ผ่าน: O</div>
             <div>Pass</div>
           </div>
           <div>
-            <div>ไม่ผ่าน: x</div>
+            <div>ไม่ผ่าน: X</div>
             <div>Reject</div>
+          </div>
+          <div>
+            <div className='flex items-center' style={{ gap: '3pt' }}>ผ่าน: <img src="/img/ocross.svg" alt="ocross" /></div>
+            <div>Repaired</div>
           </div>
         </div>
         <div className='section'>
@@ -146,7 +150,7 @@ const PDFFormat1 = ({ content }: Props) => {
                   <tr style={{ fontSize: '8.5pt' }} key={m.id}>
                     <td>{i + 1}</td>
                     <td style={{ textAlign: 'left' }}>{m.text || ''}</td>
-                    <td>{m.status !== undefined ? (m.status ? '0' : 'X') : ''} </td>
+                    <td>{m.status !== undefined ? (m.status ? 'O' : 'X') : ''} </td>
                   </tr>
                 ))}
             </tbody>
@@ -158,9 +162,8 @@ const PDFFormat1 = ({ content }: Props) => {
           </div>
           {question2.map((table, itable) => (
             <div
-              className={`inline-flex ${
-                content.question_list.filter(f => f.section === 2).length <= 5 ? 'w-full' : 'w-50'
-              }`}
+              className={`inline-flex ${content.question_list.filter(f => f.section === 2).length <= 5 ? 'w-full' : 'w-50'
+                }`}
               key={itable}
             >
               <table>
