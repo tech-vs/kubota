@@ -2,13 +2,17 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { repack, scanLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import { Box, Button, TextField, Typography, useTheme } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import {
+  Box, Button, TextField, Typography, useTheme, Card,
+  CardContent, styled, alpha
+} from '@mui/material'
+import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
 import { ChangeEvent, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import type { ReactElement } from 'react'
 type Props = {}
 const columns: GridColDef[] = [
   {
@@ -83,6 +87,34 @@ const columns: GridColDef[] = [
     flex: 1
   }
 ]
+
+const ODD_OPACITY = 0.2
+
+const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+  [`& .${gridClasses.row}.even`]: {
+    backgroundColor: theme.palette.grey[200],
+    '&:hover, &.Mui-hovered': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+      '@media (hover: none)': {
+        backgroundColor: 'transparent'
+      }
+    },
+    '&.Mui-selected': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
+      '&:hover, &.Mui-hovered': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
+        ),
+        // Reset on touch devices, it doesn't add specificity
+        '@media (hover: none)': {
+          backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity)
+        }
+      }
+    }
+  }
+}))
+
 const Repack = ({ genDoc }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
@@ -109,6 +141,7 @@ const Repack = ({ genDoc }: any) => {
       call()
     }, [scan])
     return (
+
       <Form>
         <Box
           component='main'
@@ -116,159 +149,196 @@ const Repack = ({ genDoc }: any) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Scan Repack</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
-        <Box
-          component='main'
-          sx={{
-            display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-            my: 3,
-            position: 'relative'
-          }}
-        >
-          <TextField
-            required
-            fullWidth
-            id='filled-basic'
-            label='Pallet No.'
-            variant='filled'
-            value={scan.internalPalletNo}
-            onChange={async (e: ChangeEvent<HTMLInputElement>) => {
-              e.preventDefault()
-              setScan({ ...scan, internalPalletNo: e.target.value })
-              setFieldValue('scan.internalPalletNo', e.target.value)
+        <Card sx={{ mx: { xs: 0, md: 6 } }}>
+          <CardContent sx={{ pb: 4, px: 4 }}>
+            <Box
+              component='main'
+              sx={{
+                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                my: 3,
+                position: 'relative'
+              }}
+            >
+              <TextField
+                required
+                fullWidth
+                size='small'
+                id='filled-basic'
+                label='Pallet No.'
+                variant='outlined'
+                value={scan.internalPalletNo}
+                onChange={async (e: ChangeEvent<HTMLInputElement>) => {
+                  e.preventDefault()
+                  setScan({ ...scan, internalPalletNo: e.target.value })
+                  setFieldValue('scan.internalPalletNo', e.target.value)
 
-              // refreshData()
-            }}
-          />
-          <Box sx={{ flexGrow: 1 }} />
-        </Box>
+                  // refreshData()
+                }}
+              />
+              <Box sx={{ flexGrow: 1 }} />
+            </Box>
 
-        <Box
-          sx={{
-            height: 360,
-            width: '100%',
-            '& .cold': {
-              color: 'success.main'
-            },
-            '& .hot': {
-              color: 'error.main'
-            },
-            '& .headerField': {
-              fontSize: 16,
-              backgroundColor: '#55AAFF'
-            },
-            '& .customerField': {
-              backgroundColor: '#c7ddb5'
-            },
-            '& .cellField': {
-              fontSize: 20,
-              fontWeight: '700'
-            }
-          }}
-        >
-          <DataGrid
-            getRowId={scanLoadingResponseResult => scanLoadingResponseResult.serial_no}
-            sx={{
-              boxShadow: 2,
-              '& .MuiDataGrid-cell:hover': {
-                color: 'primary.main'
-              },
-              '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
-                outline: 'none'
-              }
-            }}
-            rows={scanLoadingResponseResult}
-            columns={columns}
-            getCellClassName={(params: GridCellParams<string>) => {
-              if (params.field === 'customer') {
-                return 'customerField'
-              }
-              if (params.value == 'OK') {
-                return 'cold'
-              }
-              if (params.value == 'Waiting') {
-                return 'hot'
-              }
-              return ''
-            }}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            disableSelectionOnClick
-            disableVirtualization
-            disableExtendRowFullWidth
-            disableIgnoreModificationsIfProcessingProps
-            disableColumnSelector
-          />
-        </Box>
-
-        <Box
-          component='main'
-          sx={{
-            display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-            my: 5,
-            position: 'relative'
-          }}
-        >
-          {/* <Box sx={{ flexGrow: 1 }} /> */}
-          <Box
-            sx={{
-              display: { xs: 'flex' },
-              position: { xs: 'fixed', md: 'relative' },
-              bottom: { xs: '0' },
-              left: { xs: '0' },
-              width: { xs: '100%' },
-              zIndex: { xs: '1201' },
-              padding: { xs: '4px' },
-              gap: { xs: '4px' },
-              height: { xs: '80px', md: 'auto' }
-            }}
-          >
-            <Button
-              variant='contained'
-              onClick={async () => {
-                try {
-                  if (scanLoadingResponse.pallet_id) {
-                    await repack(genDoc.id)
-                    MySwal.fire({
-                      text: 'Repack สำเร็จ',
-                      position: 'top',
-                      confirmButtonColor: theme.palette.primary.main
-                    })
-                  } else {
-                    MySwal.fire({
-                      text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
-                      position: 'top',
-                      confirmButtonColor: theme.palette.primary.main
-                    })
-                  }
-                  setScan({ internalPalletNo: '' })
-                  refreshData()
-                } catch (error) {
-                  MySwal.fire({
-                    text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
-                    position: 'top',
-                    confirmButtonColor: theme.palette.primary.main
-                  })
+            <Box
+              sx={{
+                height: 360,
+                width: '100%',
+                '& .cold': {
+                  color: 'success.main'
+                },
+                '& .hot': {
+                  color: 'error.main'
+                },
+                '& .headerField': {
+                  fontSize: 12,
+                },
+                '& .customerField': {
+                  backgroundColor: '#c7ddb5'
+                },
+                '& .cellField': {
+                  fontSize: 12,
                 }
               }}
-              color='primary'
-              sx={{ marginRight: 1, width: '100%', height: '100%' }}
             >
-              OK
-            </Button>
-          </Box>
-          {/* <Box sx={{ flexGrow: 1 }} /> */}
-        </Box>
+              {/* <DataGrid
+                getRowId={scanLoadingResponseResult => scanLoadingResponseResult.serial_no}
+                sx={{
+                  boxShadow: 0,
+                  '& .MuiDataGrid-cell:hover': {
+                    color: 'primary.main'
+                  },
+                  '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
+                    outline: 'none'
+                  }
+                }}
+                rows={scanLoadingResponseResult}
+                columns={columns}
+                getCellClassName={(params: GridCellParams<string>) => {
+                  if (params.field === 'customer') {
+                    return 'customerField'
+                  }
+                  if (params.value == 'OK') {
+                    return 'cold'
+                  }
+                  if (params.value == 'Waiting') {
+                    return 'hot'
+                  }
+                  return ''
+                }}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                disableSelectionOnClick
+                disableVirtualization
+                disableExtendRowFullWidth
+                disableIgnoreModificationsIfProcessingProps
+                disableColumnSelector
+              /> */}
+              <StripedDataGrid
+                getRowId={scanLoadingResponseResult => scanLoadingResponseResult.serial_no}
+                sx={{
+                  boxShadow: 0,
+                  '& .MuiDataGrid-cell:hover': {
+                    color: 'primary.main'
+                  },
+                  '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
+                    outline: 'none'
+                  }
+                }}
+                getRowClassName={params => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
+                rows={scanLoadingResponseResult}
+                columns={columns}
+                getCellClassName={(params: GridCellParams<string>) => {
+                  if (params.field === 'customer') {
+                    return 'customerField'
+                  }
+                  if (params.value == 'OK') {
+                    return 'cold'
+                  }
+                  if (params.value == 'Waiting') {
+                    return 'hot'
+                  }
+                  return ''
+                }}
+                pageSize={12}
+                rowsPerPageOptions={[12]}
+                disableSelectionOnClick
+                disableVirtualization
+                disableExtendRowFullWidth
+                disableIgnoreModificationsIfProcessingProps
+                disableColumnSelector
+              />
+            </Box>
+
+            <Box
+              component='main'
+              sx={{
+                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                my: 5,
+                position: 'relative'
+              }}
+            >
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
+              <Box
+                sx={{
+                  display: { xs: 'flex' },
+                  position: { xs: 'fixed', md: 'relative' },
+                  bottom: { xs: '0' },
+                  left: { xs: '0' },
+                  width: { xs: '100%' },
+                  zIndex: { xs: '1201' },
+                  padding: { xs: '4px' },
+                  gap: { xs: '4px' },
+                  height: { xs: '80px', md: 'auto' }
+                }}
+              >
+                <Button
+                  variant='contained'
+                  onClick={async () => {
+                    try {
+                      if (scanLoadingResponse.pallet_id) {
+                        await repack(genDoc.id)
+                        MySwal.fire({
+                          text: 'Repack สำเร็จ',
+                          position: 'top',
+                          confirmButtonColor: theme.palette.primary.main
+                        })
+                      } else {
+                        MySwal.fire({
+                          text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
+                          position: 'top',
+                          confirmButtonColor: theme.palette.primary.main
+                        })
+                      }
+                      setScan({ internalPalletNo: '' })
+                      refreshData()
+                    } catch (error) {
+                      MySwal.fire({
+                        text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
+                        position: 'top',
+                        confirmButtonColor: theme.palette.primary.main
+                      })
+                    }
+                  }}
+                  color='primary'
+                  sx={{ marginRight: 1, width: '100%', height: '100%' }}
+                >
+                  OK
+                </Button>
+              </Box>
+              {/* <Box sx={{ flexGrow: 1 }} /> */}
+            </Box>
+          </CardContent>
+        </Card>
       </Form>
     )
   }
   return (
-    <Layout>
+    <>
       <Formik
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -285,7 +355,7 @@ const Repack = ({ genDoc }: any) => {
       >
         {props => showForm(props)}
       </Formik>
-    </Layout>
+    </>
   )
 }
 
@@ -304,4 +374,13 @@ export async function getServerSideProps() {
   }
 }
 
-export default withRouter(withAuth(Repack))
+
+const warpper: any = withRouter(Repack)
+
+export default warpper
+
+warpper.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}

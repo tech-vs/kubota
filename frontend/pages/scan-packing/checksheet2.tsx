@@ -23,6 +23,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import type { ReactElement } from 'react'
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -138,11 +139,11 @@ const View = ({ checksheets, id }: any) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Packing Check Sheet 2</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
           <CardContent sx={{ pb: 4, px: { xs: 2, md: 4 } }}>
@@ -292,7 +293,7 @@ const View = ({ checksheets, id }: any) => {
     )
   }
   return (
-    <Layout>
+    <>
       <Formik
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -334,7 +335,7 @@ const View = ({ checksheets, id }: any) => {
           style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
         ></div>
       </div>
-    </Layout>
+    </>
   )
 }
 
@@ -355,4 +356,10 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-export default withAuth(View)
+View.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default View

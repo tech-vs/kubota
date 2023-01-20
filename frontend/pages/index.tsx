@@ -2,7 +2,7 @@ import withAuth from '@/components/withAuth'
 
 type Props = {}
 
-const Home = ({}: Props) => {
+const Home = ({ }: Props) => {
   return <></>
 }
 

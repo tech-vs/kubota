@@ -8,7 +8,7 @@ import { RootState } from '@/store/store'
 import { isClient } from '@/utils/commonUtil'
 
 // eslint-disable-next-line react/display-name
-const withAuth = (WrappedComponent: FC) => (props: any) => {
+const withAuth = (WrappedComponent: any) => (props: any) => {
   // this hoc only supports client side rendering.
   if (isClient()) {
     const router = useRouter()
@@ -20,13 +20,13 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
 
     // is fetching session (eg. show spinner)
     if (isAuthenticating) {
-      return null
+      return <></>
     }
     // // If user is not logged in, return signin component
     if (route !== '/login') {
       if (!isAuthenticated) {
         router.push(`/login`)
-        return null
+        return <></>
       } else if (route == '/') {
         if (role == 'Operator') {
           router.push('/scan-packing')
@@ -35,7 +35,7 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
         } else if (role == 'Administrator') {
           router.push('/user')
         }
-        return null
+        return <></>
       }
     } else {
       if (isAuthenticated) {
@@ -47,14 +47,14 @@ const withAuth = (WrappedComponent: FC) => (props: any) => {
           router.push('/user')
         }
 
-        return null
+        return <></>
       }
     }
     // If user is logged in, return original component
     return <WrappedComponent {...props} />
   }
 
-  return null
+  return <></>
 }
 
 export default withAuth

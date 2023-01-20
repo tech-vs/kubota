@@ -7,9 +7,10 @@ import { Form, Formik, FormikProps } from 'formik'
 import { ChangeEvent, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import type { ReactElement } from 'react'
 type Props = {}
 
-const Import = ({}: Props) => {
+const Import = ({ }: Props) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const [file, setFile] = useState<File>()
@@ -26,11 +27,11 @@ const Import = ({}: Props) => {
             display: { xs: 'none', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Import Stop Shipment files</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: 6 }}>
           <CardContent sx={{ pb: 4, px: 4 }}>
@@ -109,7 +110,7 @@ const Import = ({}: Props) => {
     )
   }
   return (
-    <Layout>
+    <>
       <Formik
         initialValues={{ file: null }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -141,8 +142,14 @@ const Import = ({}: Props) => {
       >
         {props => showForm(props)}
       </Formik>
-    </Layout>
+    </>
   )
 }
 
-export default withAuth(Import)
+Import.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default Import

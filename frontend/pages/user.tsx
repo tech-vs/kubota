@@ -30,6 +30,7 @@ import { ChangeEvent, Fragment, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import * as Yup from 'yup'
+import type { ReactElement } from 'react'
 {
   /* <Avatar sx={{ mr: 2 }}>test</Avatar> */
 }
@@ -164,7 +165,7 @@ const User = ({ user }: any) => {
     }
   ]
   return (
-    <Layout>
+    <>
       <Box
         component='main'
         sx={{
@@ -188,17 +189,16 @@ const User = ({ user }: any) => {
 
       <Box
         sx={{
-          height: 800,
+          height: 600,
           width: '100%',
           '& .headerField': {
-            fontSize: 16,
-            backgroundColor: '#55AAFF'
+            fontSize: 12,
           },
           '& .customerField': {
             backgroundColor: '#c7ddb5'
           },
           '& .cellField': {
-            fontSize: 16
+            fontSize: 12
           }
         }}
       >
@@ -386,7 +386,7 @@ const User = ({ user }: any) => {
           <Button onClick={handleEditPopUpClose}>Update</Button>
         </DialogActions>
       </Dialog>
-    </Layout>
+    </>
   )
 }
 
@@ -405,4 +405,10 @@ export async function getServerSideProps() {
   }
 }
 
-export default withAuth(User)
+User.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default User

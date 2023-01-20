@@ -5,6 +5,7 @@ import httpClient from '@/utils/httpClient'
 import { alpha, Box, Button, styled, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
+import type { ReactElement } from 'react'
 type Props = {}
 
 const ODD_OPACITY = 0.2
@@ -150,6 +151,7 @@ const Approval = ({ list }: any) => {
               refreshData()
             }}
             sx={{ borderRadius: 50 }}
+            color='success'
           >
             Approve
           </Button>
@@ -158,14 +160,15 @@ const Approval = ({ list }: any) => {
     }
   ]
   return (
-    <Layout>
+    <>
       <Box
         component='main'
         sx={{
           display: { xs: 'none', md: 'flex', flexDirection: 'row' },
           mb: 3,
           position: 'relative',
-          height: '30px'
+          height: '30px',
+          justifyContent: 'center'
         }}
       >
         <Typography variant='h5'>Management Approval</Typography>
@@ -226,7 +229,7 @@ const Approval = ({ list }: any) => {
           disableColumnSelector
         />
       </Box>
-    </Layout>
+    </>
   )
 }
 
@@ -245,4 +248,10 @@ export async function getServerSideProps() {
   }
 }
 
-export default withAuth(Approval)
+Approval.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default Approval

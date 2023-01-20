@@ -18,6 +18,7 @@ import {
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import { ChangeEvent, useState } from 'react'
+import type { ReactElement } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
@@ -55,11 +56,11 @@ const Scan = ({ }: Props) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Scan Packing</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
           <CardContent sx={{ pb: 4, px: 4 }}>
@@ -137,11 +138,12 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Pallet No.'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.palletNo}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -164,11 +166,12 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Part Seq01'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.partSeq01}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -191,11 +194,12 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Part Seq02'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.partSeq02}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -218,11 +222,12 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Part Seq03'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.partSeq03}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -245,11 +250,12 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Part Seq04'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.partSeq04}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -324,106 +330,110 @@ const Scan = ({ }: Props) => {
     )
   }
   return (
-    <Layout>
-      <Formik
-        initialValues={{ deEx: '', unit: '', palletNo: '', partSeq01: '', partSeq02: '', partSeq03: '', partSeq04: '' }}
-        onSubmit={async (values, { setSubmitting, resetForm }) => {
-          try {
-            setLoading(true)
-            setTimeout(() => {
-              setSucess(true)
-              setLoading(false)
-            }, 4000)
+    <Formik
+      initialValues={{ deEx: '', unit: '', palletNo: '', partSeq01: '', partSeq02: '', partSeq03: '', partSeq04: '' }}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        try {
+          setLoading(true)
+          setTimeout(() => {
+            setSucess(true)
+            setLoading(false)
+          }, 4000)
 
-            let data_domestic = {
-              pallet_skewer: scan.palletNo,
-              part_list: [
-                {
-                  prod_seq: '1',
-                  id_no: scan.partSeq01
-                },
-                {
-                  prod_seq: '2',
-                  id_no: scan.partSeq02
-                },
-                {
-                  prod_seq: '3',
-                  id_no: scan.partSeq03
-                },
-                {
-                  prod_seq: '4',
-                  id_no: scan.partSeq04
-                }
-              ],
-              question_type: values.deEx
-            }
-            let data_export = {
-              part_list: [
-                {
-                  prod_seq: '1',
-                  id_no: scan.partSeq01
-                },
-                {
-                  prod_seq: '2',
-                  id_no: scan.partSeq02
-                },
-                {
-                  prod_seq: '3',
-                  id_no: scan.partSeq03
-                },
-                {
-                  prod_seq: '4',
-                  id_no: scan.partSeq04
-                }
-              ],
-              question_type: values.deEx,
-              nw_gw: values.unit
-            }
-            setScan({
-              palletNo: '',
-              partSeq01: '',
-              partSeq02: '',
-              partSeq03: '',
-              partSeq04: ''
-            })
-            setDeEx('')
-            setUnit('')
-            if (
-              scan.partSeq01 == scan.partSeq02 ||
-              scan.partSeq01 == scan.partSeq03 ||
-              scan.partSeq01 == scan.partSeq04 ||
-              scan.partSeq02 == scan.partSeq03 ||
-              scan.partSeq02 == scan.partSeq04 ||
-              scan.partSeq03 == scan.partSeq04
-            ) {
-              MySwal.fire({
-                text: 'ID No. ซ้ำกันใน Pallet',
-                position: 'top',
-                confirmButtonColor: theme.palette.primary.main
-              })
-            } else {
-              const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export)
-              router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
-            }
-
-            setSubmitting(false)
-          } catch (error: any) {
-            if (error.response) {
-              MySwal.fire({
-                text: JSON.stringify(error.response.data),
-                position: 'top',
-                confirmButtonColor: theme.palette.primary.main
-              })
-              console.error(error)
-              // alert(JSON.stringify(error.response.data))
-            }
+          let data_domestic = {
+            pallet_skewer: scan.palletNo,
+            part_list: [
+              {
+                prod_seq: '1',
+                id_no: scan.partSeq01
+              },
+              {
+                prod_seq: '2',
+                id_no: scan.partSeq02
+              },
+              {
+                prod_seq: '3',
+                id_no: scan.partSeq03
+              },
+              {
+                prod_seq: '4',
+                id_no: scan.partSeq04
+              }
+            ],
+            question_type: values.deEx
           }
-        }}
-      >
-        {props => showForm(props)}
-      </Formik>
-    </Layout>
+          let data_export = {
+            part_list: [
+              {
+                prod_seq: '1',
+                id_no: scan.partSeq01
+              },
+              {
+                prod_seq: '2',
+                id_no: scan.partSeq02
+              },
+              {
+                prod_seq: '3',
+                id_no: scan.partSeq03
+              },
+              {
+                prod_seq: '4',
+                id_no: scan.partSeq04
+              }
+            ],
+            question_type: values.deEx,
+            nw_gw: values.unit
+          }
+          setScan({
+            palletNo: '',
+            partSeq01: '',
+            partSeq02: '',
+            partSeq03: '',
+            partSeq04: ''
+          })
+          setDeEx('')
+          setUnit('')
+          if (
+            scan.partSeq01 == scan.partSeq02 ||
+            scan.partSeq01 == scan.partSeq03 ||
+            scan.partSeq01 == scan.partSeq04 ||
+            scan.partSeq02 == scan.partSeq03 ||
+            scan.partSeq02 == scan.partSeq04 ||
+            scan.partSeq03 == scan.partSeq04
+          ) {
+            MySwal.fire({
+              text: 'ID No. ซ้ำกันใน Pallet',
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
+          } else {
+            const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export)
+            router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
+          }
+
+          setSubmitting(false)
+        } catch (error: any) {
+          if (error.response) {
+            MySwal.fire({
+              text: JSON.stringify(error.response.data),
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
+            console.error(error)
+            // alert(JSON.stringify(error.response.data))
+          }
+        }
+      }}
+    >
+      {props => showForm(props)}
+    </Formik>
   )
 }
 
-export default withAuth(Scan)
+Scan.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default Scan

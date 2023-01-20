@@ -9,6 +9,7 @@ import { useRouter, withRouter } from 'next/router'
 import { ChangeEvent, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import type { ReactElement } from 'react'
 type Props = {}
 const ODD_OPACITY = 0.2
 
@@ -135,11 +136,11 @@ const View = ({ genDoc }: any) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Scan Internal Pallet</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Box
           component='main'
@@ -154,7 +155,7 @@ const View = ({ genDoc }: any) => {
             fullWidth
             id='filled-basic'
             label='Pallet No.'
-            variant='filled'
+            variant='outlined'
             value={scan.internalPalletNo}
             onChange={async (e: ChangeEvent<HTMLInputElement>) => {
               e.preventDefault()
@@ -272,7 +273,7 @@ const View = ({ genDoc }: any) => {
     )
   }
   return (
-    <Layout>
+    <>
       <Formik
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -289,7 +290,7 @@ const View = ({ genDoc }: any) => {
       >
         {props => showForm(props)}
       </Formik>
-    </Layout>
+    </>
   )
 }
 
@@ -308,4 +309,13 @@ export async function getServerSideProps() {
   }
 }
 
-export default withRouter(withAuth(View))
+const warpper: any = withRouter(View)
+
+export default warpper
+
+
+warpper.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}

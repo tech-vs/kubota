@@ -4,33 +4,57 @@ import { createTheme, ThemeProvider } from '@mui/material'
 import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import { env } from 'process'
+import type { ReactElement, ReactNode } from 'react'
 import { useEffect } from 'react'
+import type { NextPage } from 'next'
 import { Provider } from 'react-redux'
 import '../global.css';
-function MyApp({ Component, pageProps }: AppProps) {
+
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const theme = createTheme({
     palette: {
       primary: {
-        main: env.NEXT_PUBLIC_APP_ENV == 'production' ? '#3f51b5' : '#36454F'
+        main: '#009ef7',
+        contrastText: '#fff'
       },
       secondary: {
-        main: '#f50057'
-      }
-
-      // success: {
-      //   main: '#658354'
-      // },
-      // warning: {
-      //   main: '#FF0000'
-      // }
+        main: '#f50057',
+        contrastText: '#fff'
+      },
+      background: {
+        default: "#F9F9F9"
+      },
+      success: {
+        main: '#50cd89',
+        contrastText: '#fff'
+      },
+      error: {
+        main: '#f1416c'
+      },
     },
     typography: {
       fontFamily: 'Ubuntu'
     },
     shape: {
       borderRadius: 10
+    },
+    components: {
+      MuiButton: {
+        defaultProps: {
+          disableElevation: true
+        }
+      }
     }
   })
+  const getLayout = Component.getLayout ?? ((page) => page)
   // update session & set token
   useEffect(() => {
     store.dispatch(getSession())
@@ -41,7 +65,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <Head>
           <title>Kubota</title>
         </Head>
-        <Component {...pageProps} />
+        {getLayout(<Component {...pageProps} />)}
       </Provider>
     </ThemeProvider>
   )

@@ -18,6 +18,7 @@ import { Form, Formik, FormikProps } from 'formik'
 import { useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import type { ReactElement } from 'react'
 type Props = {}
 
 const View = ({ checksheets }: any) => {
@@ -153,7 +154,7 @@ const View = ({ checksheets }: any) => {
     )
   }
   return (
-    <Layout>
+    <>
       <Formik
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -186,7 +187,7 @@ const View = ({ checksheets }: any) => {
       >
         {props => showForm(props)}
       </Formik>
-    </Layout>
+    </>
   )
 }
 
@@ -205,4 +206,10 @@ export async function getServerSideProps() {
   }
 }
 
-export default withAuth(View)
+View.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default View

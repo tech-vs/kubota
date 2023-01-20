@@ -46,11 +46,11 @@ const View = ({ checksheets, id }: any) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Packing Check Sheet 1</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
           <CardContent sx={{ pb: 4, px: { xs: 2, md: 4 } }}>
@@ -246,4 +246,4 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-export default withAuth(View)
+export default View

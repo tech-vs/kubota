@@ -4,6 +4,7 @@ import httpClient from '@/utils/httpClient'
 import { alpha, Box, Button, styled, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
+import type { ReactElement } from 'react'
 type Props = {}
 
 const ODD_OPACITY = 0.2
@@ -129,14 +130,15 @@ const Overall = ({ loadingList }: any) => {
     }
   ]
   return (
-    <Layout>
+    <>
       <Box
         component='main'
         sx={{
           display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
           mb: 3,
           position: 'relative',
-          height: '30px'
+          height: '30px',
+          justifyContent: 'center'
         }}
       >
         <Typography variant='h5'>View Loading List</Typography>
@@ -197,7 +199,7 @@ const Overall = ({ loadingList }: any) => {
           disableColumnSelector
         />
       </Box>
-    </Layout>
+    </>
   )
 }
 
@@ -214,4 +216,10 @@ export async function getServerSideProps() {
     }
   }
 }
-export default withAuth(Overall)
+
+Overall.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+export default Overall
