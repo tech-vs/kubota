@@ -24,7 +24,9 @@ from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           QuestionListSerializer, PalletPackingDoneSerializer,
                           PalletPartListSerializer, PalletRepackSerializer)
 from pallet.filters import PalletPartListFilter
-
+'''
+test rebase ei
+'''
 
 class PalletViewSet(viewsets.GenericViewSet):
     queryset = Pallet.objects.all().prefetch_related('part_list', 'question_list')
