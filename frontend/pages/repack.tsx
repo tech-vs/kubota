@@ -293,7 +293,8 @@ const Repack = ({ genDoc }: any) => {
                   zIndex: { xs: '1201' },
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
-                  height: { xs: '80px', md: 'auto' }
+                  height: { xs: '60px', md: 'auto' },
+                  justifyContent: 'center'
                 }}
               >
                 <Button
@@ -325,7 +326,7 @@ const Repack = ({ genDoc }: any) => {
                     }
                   }}
                   color='primary'
-                  sx={{ marginRight: 1, width: '100%', height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px', }, height: '100%' }}
                 >
                   OK
                 </Button>

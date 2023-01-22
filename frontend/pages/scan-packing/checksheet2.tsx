@@ -146,7 +146,7 @@ const View = ({ checksheets, id }: any) => {
           <Typography variant='h5'>Packing Check Sheet 2</Typography>
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
-          <CardContent sx={{ pb: 4, px: { xs: 2, md: 4 } }}>
+          <CardContent sx={{ pb: 4, px: { xs: 4, md: 8 } }}>
             {checksheets.map((checksheet: any) => (
               <Box
                 key={checksheet.id}
@@ -158,7 +158,7 @@ const View = ({ checksheets, id }: any) => {
                   minHeight: '55px'
                 }}
               >
-                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
+                <Typography sx={{ mt: 1, mr: 3, fontSize: '13px' }}> {checksheet.text}</Typography>
                 <FormControl>
                   {/* <FormLabel id='demo-row-radio-buttons-group-label'>Gender</FormLabel> */}
                   <RadioGroup
@@ -167,7 +167,8 @@ const View = ({ checksheets, id }: any) => {
                     name='row-radio-buttons-group'
                     value={checksheet.status}
                     sx={{
-                      gap: '1rem'
+                      gap: '1rem',
+                      justifyContent: 'center'
                     }}
                   >
                     <FormControlLabel
@@ -176,14 +177,18 @@ const View = ({ checksheets, id }: any) => {
                         padding: '1rem',
                         margin: '1rem 0',
                         border: 'solid 1px',
+                        borderColor: 'success.main',
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
-                          background: 'greenyellow'
+                          boxShadow: 2,
+                          color: 'success.main',
                         },
-                        minWidth: '140px'
+                        minWidth: '140px',
+                        height: '1rem'
                       }}
                       control={
                         <Radio
+                          size='small'
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -214,14 +219,18 @@ const View = ({ checksheets, id }: any) => {
                         padding: '1rem',
                         margin: '1rem 0',
                         border: 'solid 1px',
+                        borderColor: 'secondary.main',
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
-                          background: '#ff6e6e'
+                          boxShadow: 2,
+                          color: 'secondary.main',
                         },
-                        minWidth: '140px'
+                        minWidth: '140px',
+                        height: '1rem'
                       }}
                       control={
                         <Radio
+                          size='small'
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -272,7 +281,8 @@ const View = ({ checksheets, id }: any) => {
                   zIndex: { xs: '1201' },
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
-                  height: { xs: '80px', md: 'auto' }
+                  height: { xs: '60px', md: 'auto' },
+                  justifyContent: 'center'
                 }}
               >
                 <Button
@@ -280,7 +290,7 @@ const View = ({ checksheets, id }: any) => {
                   size='large'
                   color='primary'
                   type='submit'
-                  sx={{ marginRight: 1, width: '100%', height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px', }, height: '100%' }}
                 >
                   Submit Packing
                 </Button>

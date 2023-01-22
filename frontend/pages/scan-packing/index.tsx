@@ -284,14 +284,15 @@ const Scan = ({ }: Props) => {
                 zIndex: { xs: '1201' },
                 padding: { xs: '4px' },
                 gap: { xs: '4px' },
-                height: { xs: '80px', md: 'auto' }
+                height: { xs: '60px', md: 'auto' },
+                justifyContent: 'center'
               }}>
                 <Button variant='contained' size="large" color='primary' type='submit'
-                  sx={{ marginRight: 1, width: '50%', height: '100%' }}>
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}>
                   Ok
                 </Button>
                 <Button
-                  variant='contained'
+                  variant='outlined'
                   size="large"
                   onClick={() => {
                     // window.location.reload()
@@ -305,7 +306,7 @@ const Scan = ({ }: Props) => {
                     })
                   }}
                   color='secondary'
-                  sx={{ marginRight: 1, width: '50%', height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}
                 >
                   Clear
                 </Button>

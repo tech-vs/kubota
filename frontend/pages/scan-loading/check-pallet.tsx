@@ -171,7 +171,7 @@ const View = ({ genDoc }: any) => {
         <Box
           sx={{
             height: 360,
-            width: 700,
+            width: '100%',
             '& .cold': {
               color: 'success.main'
             },

@@ -196,7 +196,8 @@ const View = ({ checksheets, id }: any) => {
                     name='row-radio-buttons-group'
                     value={checksheet.status}
                     sx={{
-                      gap: '1rem'
+                      gap: '1rem',
+                      justifyContent: 'center'
                     }}
                   >
                     <FormControlLabel
@@ -205,14 +206,19 @@ const View = ({ checksheets, id }: any) => {
                         padding: '1rem',
                         margin: '1rem 0',
                         border: 'solid 1px',
+                        borderColor: 'success.main',
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
-                          background: 'greenyellow'
+                          // background: 'greenyellow'
+                          boxShadow: 2,
+                          color: 'success.main',
                         },
-                        minWidth: '140px'
+                        minWidth: '140px',
+                        height: '1rem'
                       }}
                       control={
                         <Radio
+                          size="small"
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -235,7 +241,7 @@ const View = ({ checksheets, id }: any) => {
                           }}
                         />
                       }
-                      label='Ok'
+                      label='OK'
                     />
                     <FormControlLabel
                       value='false'
@@ -243,14 +249,18 @@ const View = ({ checksheets, id }: any) => {
                         padding: '1rem',
                         margin: '1rem 0',
                         border: 'solid 1px',
+                        borderColor: 'secondary.main',
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
-                          background: '#ff6e6e'
+                          shadow: 2,
+                          color: 'secondary.main',
                         },
-                        minWidth: '140px'
+                        minWidth: '140px',
+                        height: '1rem'
                       }}
                       control={
                         <Radio
+                          size="small"
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -301,7 +311,7 @@ const View = ({ checksheets, id }: any) => {
                   zIndex: { xs: '1201' },
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
-                  height: { xs: '80px', md: 'auto' }
+                  height: { xs: '60px', md: 'auto' }
                 }}
               >
                 <Button
@@ -374,7 +384,7 @@ const View = ({ checksheets, id }: any) => {
                       router.push(`/scan-loading`)
                     }
                   }}
-                  color='primary'
+                  color='success'
                   size='large'
                   sx={{ marginRight: 1, width: '70%', height: '100%' }}
                 >

@@ -111,7 +111,9 @@ const Scan = ({ genDoc }: any) => {
   // Call this function whenever you want to
   // refresh props!
   const refreshData = () => {
-    router.replace(router.asPath)
+    router.replace(router.asPath, undefined, {
+      scroll: false
+    })
   }
 
   const [deEx, setDeEx] = useState<string>('')
@@ -162,7 +164,7 @@ const Scan = ({ genDoc }: any) => {
           <Typography variant='h5'>Scan Loading</Typography>
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
-          <CardContent sx={{ pb: 4, px: 4 }}>
+          <CardContent sx={{ py: 4, px: { xs: 4, md: 8 } }}>
             <Box
               component='main'
               sx={{
@@ -436,6 +438,7 @@ const Scan = ({ genDoc }: any) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
@@ -472,7 +475,8 @@ const Scan = ({ genDoc }: any) => {
                   zIndex: { xs: '1201' },
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
-                  height: { xs: '80px', md: 'auto' }
+                  height: { xs: '60px', md: 'auto' },
+                  justifyContent: 'center'
                 }}
               >
                 <Button
@@ -480,18 +484,28 @@ const Scan = ({ genDoc }: any) => {
                   color='primary'
                   size='large'
                   type='submit'
-                  sx={{ marginRight: 1, width: '50%', height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}
                 >
                   OK
                 </Button>
                 <Button
-                  variant='contained'
+                  variant='outlined'
                   size='large'
                   onClick={() => {
-                    router.push('scan-loading/check-pallet')
+                    // router.push('scan-loading/check-pallet')
+                    setInput({
+                      ...input,
+                      refNo: '',
+                      qty: '',
+                      invoiceNo: '',
+                      round: '',
+                      customerName: '',
+                      address: '',
+                    })
+                    resetForm()
                   }}
                   color='secondary'
-                  sx={{ marginRight: 1, width: '50%', height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}
                 >
                   Clear
                 </Button>

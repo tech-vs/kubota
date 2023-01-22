@@ -80,7 +80,7 @@ const Import = ({ }: Props) => {
                 Submit
               </Button>
               <Button
-                variant='contained'
+                variant='outlined'
                 onClick={() => {
                   setFieldValue('file', null)
                   setFileName('')

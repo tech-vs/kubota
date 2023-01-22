@@ -3,8 +3,15 @@ import { clearCookie, setCookie } from '@/utils/cookiesUtil'
 import httpClient from '@/utils/httpClient'
 import cookie from 'cookie'
 import type { NextApiRequest, NextApiResponse } from 'next'
+import NextCors from 'nextjs-cors';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  await NextCors(req, res, {
+    // Options
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    origin: '*',
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  });
   const { nextAuth } = req.query
   if (req.method === 'POST' && nextAuth === 'signin') {
     return signin(req, res)
