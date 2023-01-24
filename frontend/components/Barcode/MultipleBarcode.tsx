@@ -45,9 +45,9 @@ const MultipleBarcode = forwardRef<HTMLDivElement, Props>(({ content }, ref) => 
               key={m.internal_pallet_no}
             >
               <Barcode value={m.serial_no || '-'} {...barcodeOption} />
-              <div className='no-line-height'>{m.serial_no || '-'}</div>
-              <div className='no-line-height'>{m.model_code || '-'}</div>
-              <div className='no-line-height'>{m.model_name || '-'}</div>
+              <div className='no-line-height'>{m.serial_no.trim() || '-'}</div>
+              <div className='no-line-height'>{m.model_code.trim() || '-'}</div>
+              <div className='no-line-height fs-11'>{m.model_name.trim() || '-'}</div>
             </div>
           ))}
         </div>

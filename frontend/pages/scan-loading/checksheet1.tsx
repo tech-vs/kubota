@@ -421,11 +421,11 @@ const View = ({ checksheets, id }: any) => {
       >
         {props => showForm(props)}
       </Formik>
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', marginTop: '1rem' }}>
         <MultipleBarcode ref={multipleBarcodeRef} content={barcodeContent}></MultipleBarcode>
-        <div
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
-        ></div>
+        <Box
+          sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: (theme) => theme.palette.background.default }}
+        ></Box>
       </div>
     </>
   )

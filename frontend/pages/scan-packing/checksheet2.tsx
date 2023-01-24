@@ -341,9 +341,9 @@ const View = ({ checksheets, id }: any) => {
       </Formik>
       <div style={{ position: 'relative' }}>
         <SingleBarcode ref={singleBarcodeRef} content={barcodeContent}></SingleBarcode>
-        <div
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
-        ></div>
+        <Box
+          sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: (theme) => theme.palette.background.default }}
+        ></Box>
       </div>
     </>
   )
