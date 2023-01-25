@@ -79,6 +79,8 @@ type MenuProp = {
   onDrawerClose: () => void
 }
 
+type ColorMui = "inherit" | "disabled" | "error" | "action" | "primary" | "secondary" | "info" | "success" | "warning" | undefined
+
 export default function Menu({ open, onDrawerClose }: MenuProp) {
   const theme = useTheme()
   const router = useRouter()
@@ -92,19 +94,19 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
   const operatorItems = [
     {
       name: 'Scan (Packing)',
-      icon: (color = 'inherit') => <AddCircleRoundedIcon color={color} />,
+      icon: (color: ColorMui = 'inherit') => <AddCircleRoundedIcon color={color} />,
       pathName: '/scan-packing',
       onClickAction: () => router.push('/scan-packing')
     },
     {
       name: 'Scan (Loading)',
-      icon: (color = 'inherit') => <LocalShippingRoundedIcon color={color} />,
+      icon: (color: ColorMui = 'inherit') => <LocalShippingRoundedIcon color={color} />,
       pathName: '/scan-loading',
       onClickAction: () => router.push('/scan-loading')
     },
     {
       name: 'Repack',
-      icon: (color = 'inherit') => <LoopRoundedIcon color={color} />,
+      icon: (color: ColorMui = 'inherit') => <LoopRoundedIcon color={color} />,
       pathName: '/repack',
       onClickAction: () => router.push('/repack')
     }
@@ -112,19 +114,19 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
   const items = [
     {
       name: 'Check Sheet Issuing (Packing)',
-      icon: (color = 'inherit') => <AssessmentRoundedIcon color={color} />,
+      icon: (color: ColorMui = 'inherit') => <AssessmentRoundedIcon color={color} />,
       pathName: '/packing',
       onClickAction: () => router.push('/packing')
     },
     {
       name: 'Check Sheet (Loading)',
-      icon: (color = 'inherit') => <AssessmentRoundedIcon color={color} />,
+      icon: (color: ColorMui = 'inherit') => <AssessmentRoundedIcon color={color} />,
       pathName: '/loading',
       onClickAction: () => router.push('/loading')
     },
     {
       name: 'Import Stop Shipment',
-      icon: (color = 'inherit') => <FileDownloadRoundedIcon color={color} />,
+      icon: (color: ColorMui = 'inherit') => <FileDownloadRoundedIcon color={color} />,
       pathName: '/import',
       onClickAction: () => router.push('/import')
     }
