@@ -1,4 +1,5 @@
 import SingleBarcode from '@/components/Barcode/SingleBarcode'
+import RollingLoading from '@/components/RollingLoading'
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { IContentSingleBarcode } from '@/models/barcode.model'
@@ -58,16 +59,15 @@ const View = ({ checksheets, id }: any) => {
           await toPng(singleBarcodeRef.current),
           (res: any) => {
             console.log(res)
-            resolve()
+            setTimeout(() => {
+              resolve()
+            }, 2000);
           },
           (err: any) => {
             console.error(err)
-            MySwal.fire({
-              text: 'No Printer found. Please recheck Printer',
-              position: 'top',
-              confirmButtonColor: theme.palette.primary.main
-            })
-            resolve()
+            setTimeout(() => {
+              resolve()
+            }, 2000);
           },
           {
             resize: { width: 600, height: 200 }
@@ -106,6 +106,7 @@ const View = ({ checksheets, id }: any) => {
           position: 'top',
           confirmButtonColor: theme.palette.primary.main
         })
+        setLoading(false)
         router.push(`/scan-packing`)
       } catch (error) {
         MySwal.fire({
@@ -113,6 +114,7 @@ const View = ({ checksheets, id }: any) => {
           position: 'top',
           confirmButtonColor: theme.palette.primary.main
         })
+        setLoading(false)
       }
     }
     call()
@@ -290,9 +292,10 @@ const View = ({ checksheets, id }: any) => {
                   size='large'
                   color='primary'
                   type='submit'
+                  disabled={loading}
                   sx={{ marginRight: 1, width: { xs: '100%', md: '200px', }, height: '100%' }}
                 >
-                  Submit Packing
+                  {loading && <RollingLoading />}  Submit Packing
                 </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
@@ -309,6 +312,7 @@ const View = ({ checksheets, id }: any) => {
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           // alert(values.customer)
           try {
+            setLoading(true)
             // submit check sheet 2
             await confirmCheckSheet2(id)
             // get data for render barcode to printer
@@ -331,15 +335,13 @@ const View = ({ checksheets, id }: any) => {
               })
               // alert(JSON.stringify(error.response.data.detail))
             }
+            setLoading(false)
           }
-
-          // resetForm()
-          // window.confirm('test')
         }}
       >
         {props => showForm(props)}
       </Formik>
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', marginTop: '1rem' }}>
         <SingleBarcode ref={singleBarcodeRef} content={barcodeContent}></SingleBarcode>
         <Box
           sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: (theme) => theme.palette.background.default }}

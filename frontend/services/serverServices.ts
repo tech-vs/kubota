@@ -129,7 +129,7 @@ export const confirmCheckSheet3 = async (palletID: String): Promise<any> => {
 
 export const submitLoading = async (data: submitLoadingProps): Promise<any> => {
   const response = await httpClient.post(`/pallet/loading/submit/`, data)
-  return response.data
+  return response
 }
 
 export const approveDocument = async (id: string): Promise<any> => {
