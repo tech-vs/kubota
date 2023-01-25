@@ -130,7 +130,7 @@ const Repack = ({ genDoc }: any) => {
     })
 
     const [scanLoadingResponse, setScanLoadingResponse] = useState<any>({})
-    const [scanLoadingResponseResult, setScanLoadingResponseResult] = useState<any>({})
+    const [scanLoadingResponseResult, setScanLoadingResponseResult] = useState<any>([])
 
     useEffect(() => {
       async function call() {
