@@ -120,14 +120,28 @@ const Scan = ({ genDoc }: any) => {
   const [customer, setCustomer] = useState<string>('SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)')
   const [address, setAddress] = useState<string>(Amatanakhon)
   const [input, setInput] = useState({
-    refNo: genDoc.ref_do_no,
-    qty: genDoc.total_qty,
-    invoiceNo: genDoc.invoice_no,
-    round: genDoc.round,
-    customerName: genDoc.customer_name,
-    address: genDoc.address,
+    refNo: genDoc.ref_do_no || '',
+    qty: genDoc.total_qty || '',
+    invoiceNo: genDoc.invoice_no || '',
+    round: genDoc.round || '',
+    customerName: genDoc.customer_name || '',
+    address: genDoc.address || '',
     question_type: genDoc.question_type
   })
+
+  function resetStateFormData() {
+    setInput(previousInputs => (
+      {
+        ...previousInputs,
+        refNo: '',
+        qty: '',
+        invoiceNo: '',
+        round: '',
+        customerName: '',
+        address: '',
+      }
+    ))
+  }
 
   useEffect(() => {
     async function call() {
@@ -226,7 +240,11 @@ const Scan = ({ genDoc }: any) => {
                   value={input.question_type}
                   onChange={(e: SelectChangeEvent<string>) => {
                     e.preventDefault()
-                    setInput({ ...input, question_type: e.target.value })
+                    // always reset data before setnew data
+                    resetStateFormData()
+                    resetForm()
+
+                    setInput(previousInputs => ({ ...previousInputs, question_type: e.target.value }))
                     setFieldValue('input.question_type', e.target.value)
                     // setDeEx(e.target.value)
                     // setFieldValue('deEx', e.target.value)
@@ -493,15 +511,7 @@ const Scan = ({ genDoc }: any) => {
                   size='large'
                   onClick={() => {
                     // router.push('scan-loading/check-pallet')
-                    setInput({
-                      ...input,
-                      refNo: '',
-                      qty: '',
-                      invoiceNo: '',
-                      round: '',
-                      customerName: '',
-                      address: '',
-                    })
+                    resetStateFormData()
                     resetForm()
                   }}
                   color='secondary'
