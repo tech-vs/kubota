@@ -1,10 +1,10 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
-import { alpha, Box, Button, styled, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { alpha, Box, Button, styled, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
-import type { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 type Props = {}
 
 const ODD_OPACITY = 0.2
@@ -35,6 +35,8 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }))
 const Overall = ({ loadingList }: any) => {
   const router = useRouter()
+  const theme = useTheme()
+  const isSM = useMediaQuery(theme.breakpoints.down('sm'))
   const columns: GridColDef[] = [
     {
       field: 'doc_no',
@@ -129,6 +131,14 @@ const Overall = ({ loadingList }: any) => {
       }
     }
   ]
+
+  const [sortModel, setSortModel] = useState<GridSortModel>(
+    [{
+      field: 'doc_no',
+      sort: 'desc',
+    }],
+  );
+
   return (
     <>
       <Box
@@ -147,7 +157,7 @@ const Overall = ({ loadingList }: any) => {
       <Box
         sx={{
           height: 720,
-          width: 1200,
+          width: isSM ? '100%' : 1270,
           '& .cold': {
             color: 'success.main'
           },
@@ -190,6 +200,8 @@ const Overall = ({ loadingList }: any) => {
             }
             return ''
           }}
+          sortModel={sortModel}
+          onSortModelChange={(model) => setSortModel(model)}
           pageSize={12}
           rowsPerPageOptions={[12]}
           disableSelectionOnClick

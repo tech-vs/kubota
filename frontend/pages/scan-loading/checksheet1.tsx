@@ -218,7 +218,7 @@ const View = ({ checksheets, id }: any) => {
                           boxShadow: 2,
                           color: 'success.main',
                         },
-                        minWidth: '140px',
+                        minWidth: '110px',
                         height: '1rem'
                       }}
                       control={
@@ -260,7 +260,7 @@ const View = ({ checksheets, id }: any) => {
                           shadow: 2,
                           color: 'secondary.main',
                         },
-                        minWidth: '140px',
+                        minWidth: '110px',
                         height: '1rem'
                       }}
                       control={
@@ -316,7 +316,8 @@ const View = ({ checksheets, id }: any) => {
                   zIndex: { xs: '1201' },
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
-                  height: { xs: '60px', md: 'auto' }
+                  height: { xs: '60px', md: 'auto' },
+                  background: { xs: '#fff' },
                 }}
               >
                 <Button

@@ -247,7 +247,8 @@ const View = ({ genDoc }: any) => {
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
                   height: { xs: '60px', md: 'auto' },
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  background: { xs: '#fff' },
                 }}
               >
                 <Button

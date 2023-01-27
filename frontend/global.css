@@ -1,3 +1,11 @@
+:root {
+    --font-size-base: 16px;
+}
+
+html {
+    font-size: 16px;
+}
+
 .swal2-container {
     z-index: 2200 !important;
 }

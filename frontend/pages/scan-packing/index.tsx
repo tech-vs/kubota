@@ -17,7 +17,7 @@ import {
 } from '@mui/material'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useState, useRef } from 'react'
 import type { ReactElement } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -47,6 +47,11 @@ const Scan = ({ }: Props) => {
   })
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
+
+  const palletNoRef = useRef<HTMLInputElement>(null)
+  const partSeq01Ref = useRef<HTMLInputElement>(null)
+  const [selectUnitIsOpen, setSelectUnitIsOpen] = useState(false)
+
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
     return (
       <Form>
@@ -87,6 +92,20 @@ const Scan = ({ }: Props) => {
                     setDeEx(e.target.value)
                     setFieldValue('deEx', e.target.value)
                   }}
+                  onClose={() => {
+                    setTimeout(() => {
+                      if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                      }
+                    }, 0);
+                  }}
+                  onBlur={(e) => {
+                    if (e.target.value === 'Domestic') {
+                      palletNoRef.current?.focus()
+                    } else if (e.target.value === 'Export') {
+                      setSelectUnitIsOpen(true)
+                    }
+                  }}
                 >
                   <MenuItem value={'Domestic'}>Domestic</MenuItem>
                   <MenuItem value={'Export'}>Export</MenuItem>
@@ -113,10 +132,25 @@ const Scan = ({ }: Props) => {
                     id='demo-simple-select-required'
                     label='Unit *'
                     value={unit}
+                    open={selectUnitIsOpen}
                     onChange={(e: SelectChangeEvent<string>) => {
                       e.preventDefault()
                       setUnit(e.target.value)
                       setFieldValue('unit', e.target.value)
+                    }}
+                    onOpen={() => {
+                      setSelectUnitIsOpen(true)
+                    }}
+                    onClose={() => {
+                      setTimeout(() => {
+                        if (document.activeElement instanceof HTMLElement) {
+                          document.activeElement.blur();
+                        }
+                      }, 0);
+                      setSelectUnitIsOpen(false)
+                    }}
+                    onBlur={(e) => {
+                      partSeq01Ref.current?.focus()
                     }}
                   >
                     <MenuItem value={'0173'}>Unit 1</MenuItem>
@@ -138,6 +172,7 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  inputRef={palletNoRef}
                   size='small'
                   required
                   fullWidth
@@ -166,6 +201,7 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  inputRef={partSeq01Ref}
                   size='small'
                   required
                   fullWidth
@@ -285,7 +321,8 @@ const Scan = ({ }: Props) => {
                 padding: { xs: '4px' },
                 gap: { xs: '4px' },
                 height: { xs: '60px', md: 'auto' },
-                justifyContent: 'center'
+                justifyContent: 'center',
+                background: { xs: '#fff' }
               }}>
                 <Button variant='contained' size="large" color='primary' type='submit'
                   sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}>

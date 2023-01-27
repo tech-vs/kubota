@@ -38,7 +38,7 @@ const Import = ({ }: Props) => {
             <Box
               component='main'
               sx={{
-                display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
                 my: 3,
                 position: 'relative'
               }}
@@ -70,7 +70,7 @@ const Import = ({ }: Props) => {
             <Box
               component='main'
               sx={{
-                display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
                 my: 5,
                 position: 'relative'
               }}

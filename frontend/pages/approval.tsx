@@ -2,7 +2,7 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { approveDocument } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import { alpha, Box, Button, styled, Typography } from '@mui/material'
+import { alpha, Box, Button, styled, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
 import type { ReactElement } from 'react'
@@ -36,6 +36,10 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }))
 const Approval = ({ list }: any) => {
   const router = useRouter()
+
+  const theme = useTheme()
+  const isSM = useMediaQuery(theme.breakpoints.down('sm'))
+
   // Call this function whenever you want to
   // refresh props!
   const refreshData = () => {
@@ -164,7 +168,7 @@ const Approval = ({ list }: any) => {
       <Box
         component='main'
         sx={{
-          display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+          display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
           mb: 3,
           position: 'relative',
           height: '30px',
@@ -177,7 +181,7 @@ const Approval = ({ list }: any) => {
       <Box
         sx={{
           height: 720,
-          width: 1225,
+          width: isSM ? '100%' : 1225,
           '& .cold': {
             color: 'success.main'
           },

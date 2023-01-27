@@ -41,7 +41,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       },
     },
     typography: {
-      fontFamily: 'Ubuntu'
+      fontFamily: 'Ubuntu',
+      htmlFontSize: 16,
     },
     shape: {
       borderRadius: 10
@@ -64,6 +65,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <Provider store={store}>
         <Head>
           <title>Kubota</title>
+          <meta name="viewport" content="width=device-width, initial-scale=0.75, user-scalable=no" />
         </Head>
         {getLayout(<Component {...pageProps} />)}
       </Provider>

@@ -1,10 +1,11 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
-import { alpha, Box, Button, styled, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { alpha, Box, Button, Typography, useMediaQuery } from '@mui/material'
+import { CSSObject, styled, Theme, useTheme } from '@mui/material/styles'
+import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
-import type { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 
 type Props = {}
 
@@ -36,6 +37,8 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }))
 const Overall = ({ packingList }: any) => {
   const router = useRouter()
+  const theme = useTheme()
+  const isSM = useMediaQuery(theme.breakpoints.down('sm'))
 
   const columns: GridColDef[] = [
     {
@@ -138,6 +141,14 @@ const Overall = ({ packingList }: any) => {
       }
     }
   ]
+
+  const [sortModel, setSortModel] = useState<GridSortModel>(
+    [{
+      field: 'internal_pallet_no',
+      sort: 'desc',
+    }],
+  );
+
   return (
     <>
       <Box
@@ -156,7 +167,7 @@ const Overall = ({ packingList }: any) => {
       <Box
         sx={{
           height: 720,
-          width: 1270,
+          width: isSM ? '100%' : 1270,
           '& .cold': {
             color: 'success.main'
           },
@@ -200,6 +211,8 @@ const Overall = ({ packingList }: any) => {
             }
             return ''
           }}
+          sortModel={sortModel}
+          onSortModelChange={(model) => setSortModel(model)}
           pageSize={12}
           rowsPerPageOptions={[12]}
           disableSelectionOnClick

@@ -13,15 +13,17 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  SelectProps,
   Snackbar,
   TextField,
+  TextFieldProps,
   Typography,
   useTheme
 } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState, useRef } from 'react'
 import type { ReactElement } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -143,6 +145,15 @@ const Scan = ({ genDoc }: any) => {
     ))
   }
 
+  const doNoRef = useRef<HTMLInputElement>(null)
+
+  // useEffect(() => {
+  //   if (doNoRef.current) {
+  //     console.log(doNoRef)
+  //     doNoRef.current.focus()
+  //   }
+  // }, [doNoRef.current])
+
   useEffect(() => {
     async function call() {
       setInput({
@@ -239,7 +250,7 @@ const Scan = ({ genDoc }: any) => {
                   label='deEx *'
                   value={input.question_type}
                   onChange={(e: SelectChangeEvent<string>) => {
-                    e.preventDefault()
+                    // e.preventDefault()
                     // always reset data before setnew data
                     resetStateFormData()
                     resetForm()
@@ -248,6 +259,16 @@ const Scan = ({ genDoc }: any) => {
                     setFieldValue('input.question_type', e.target.value)
                     // setDeEx(e.target.value)
                     // setFieldValue('deEx', e.target.value)
+                  }}
+                  onClose={() => {
+                    setTimeout(() => {
+                      if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur();
+                      }
+                    }, 0);
+                  }}
+                  onBlur={() => {
+                    doNoRef.current?.focus()
                   }}
                 >
                   <MenuItem value={'Domestic'}>Domestic</MenuItem>
@@ -264,6 +285,7 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               <TextField
+                inputRef={doNoRef}
                 size='small'
                 required
                 fullWidth
@@ -359,6 +381,7 @@ const Scan = ({ genDoc }: any) => {
                 <FormControl fullWidth required>
                   <InputLabel id='demo-simple-select-required-label'>Customer</InputLabel>
                   <Select
+                    fullWidth
                     labelId='demo-simple-select-required-label'
                     id='demo-simple-select-required'
                     label='Customer *'
@@ -494,7 +517,8 @@ const Scan = ({ genDoc }: any) => {
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
                   height: { xs: '60px', md: 'auto' },
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  background: { xs: '#fff' },
                 }}
               >
                 <Button

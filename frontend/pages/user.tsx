@@ -169,7 +169,7 @@ const User = ({ user }: any) => {
       <Box
         component='main'
         sx={{
-          display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+          display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
           mb: 3,
           position: 'relative',
           height: '30px'

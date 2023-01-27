@@ -91,7 +91,7 @@ const View = ({ checksheets, id }: any) => {
                           boxShadow: 2,
                           color: 'success.main',
                         },
-                        minWidth: '140px',
+                        minWidth: '110px',
                         height: '1rem'
                       }}
                       control={
@@ -133,7 +133,7 @@ const View = ({ checksheets, id }: any) => {
                           boxShadow: 2,
                           color: 'secondary.main',
                         },
-                        minWidth: '140px',
+                        minWidth: '110px',
                         height: '1rem'
                       }}
                       control={
@@ -189,7 +189,8 @@ const View = ({ checksheets, id }: any) => {
                 padding: { xs: '4px' },
                 gap: { xs: '4px' },
                 height: { xs: '60px', md: 'auto' },
-                justifyContent: 'center'
+                justifyContent: 'center',
+                background: { xs: '#fff' }
               }}>
                 <Button variant='contained' size="large" color='primary' type='submit'
                   sx={{ marginRight: 1, width: { xs: '100%', md: '200px', }, height: '100%' }}>

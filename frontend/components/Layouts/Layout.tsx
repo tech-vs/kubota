@@ -50,7 +50,7 @@ const Layout = ({ children }: LayoutProps) => {
       <CssBaseline />
       <Header open={open} onDrawerOpen={() => setOpen((op => !op))} />
       <Menu open={open} onDrawerClose={() => setOpen(false)} />
-      <Box component='main' sx={{ flexGrow: 1, p: { xs: 1, md: 3 } }}>
+      <Box component='main' sx={{ flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0, p: { xs: 1, md: 3 } }}>
         <DrawerHeader />
         <Container sx={{ px: { xs: 0 } }}>
           {children}
