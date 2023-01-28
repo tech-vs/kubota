@@ -7,8 +7,11 @@ import {
   Card,
   CardContent,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
+  Radio,
+  RadioGroup,
   Select,
   SelectChangeEvent,
   TextField,
@@ -17,7 +20,7 @@ import {
 } from '@mui/material'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useState, useRef } from 'react'
+import { ChangeEvent, useState, useRef, useEffect } from 'react'
 import type { ReactElement } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -51,6 +54,26 @@ const Scan = ({ }: Props) => {
   const palletNoRef = useRef<HTMLInputElement>(null)
   const partSeq01Ref = useRef<HTMLInputElement>(null)
   const [selectUnitIsOpen, setSelectUnitIsOpen] = useState(false)
+  const [rerenderUnitBlur, setRerenderUnitBlur] = useState(0)
+
+  useEffect(() => {
+    if (palletNoRef.current && deEx === 'Domestic') {
+      console.log(palletNoRef.current)
+      setTimeout(() => {
+        palletNoRef.current?.click()
+        palletNoRef.current?.focus()
+      }, 500)
+    }
+  }, [deEx])
+
+  useEffect(() => {
+    if (selectUnitIsOpen === false) {
+      setTimeout(() => {
+        partSeq01Ref.current?.click()
+        partSeq01Ref.current?.focus()
+      }, 500)
+    }
+  }, [selectUnitIsOpen])
 
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
     return (
@@ -73,45 +96,94 @@ const Scan = ({ }: Props) => {
               component='main'
               sx={{
                 display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 5,
+                my: 2,
                 position: 'relative',
-                height: '55px'
+                height: '55px',
+                justifyContent: 'center'
               }}
             >
-              <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
-                <InputLabel id='demo-simple-select-required-label' sx={{ fontSize: 15 }}>
-                  Select...
-                </InputLabel>
-                <Select
-                  labelId='demo-simple-select-required-label'
-                  id='demo-simple-select-required'
-                  label='deEx *'
+              <FormControl>
+                <RadioGroup
+                  row
+                  aria-labelledby='demo-row-radio-buttons-group-label'
+                  name='row-radio-buttons-group'
                   value={deEx}
-                  onChange={(e: SelectChangeEvent<string>) => {
-                    e.preventDefault()
-                    setDeEx(e.target.value)
-                    setFieldValue('deEx', e.target.value)
-                  }}
-                  onClose={() => {
-                    setTimeout(() => {
-                      if (document.activeElement instanceof HTMLElement) {
-                        document.activeElement.blur();
-                      }
-                    }, 0);
-                  }}
-                  onBlur={(e) => {
-                    if (e.target.value === 'Domestic') {
-                      palletNoRef.current?.focus()
-                    } else if (e.target.value === 'Export') {
-                      setSelectUnitIsOpen(true)
-                    }
+                  sx={{
+                    gap: '1rem',
+                    justifyContent: 'center'
                   }}
                 >
-                  <MenuItem value={'Domestic'}>Domestic</MenuItem>
-                  <MenuItem value={'Export'}>Export</MenuItem>
-                </Select>
+                  <FormControlLabel
+                    value='Domestic'
+                    sx={{
+                      padding: '1rem',
+                      margin: '1rem 0',
+                      border: 'solid 1px',
+                      borderColor: '#dedede',
+                      borderRadius: '1rem',
+                      color: '#121212',
+                      '&:has(.Mui-checked)': {
+                        boxShadow: 1,
+                        color: 'primary.main',
+                        borderColor: 'primary.main',
+                      },
+                      minWidth: '110px',
+                      height: '1rem'
+                    }}
+                    control={
+                      <Radio
+                        size="small"
+                        onChange={(e) => {
+                          setDeEx(e.target.value)
+                          setFieldValue('deEx', e.target.value)
+                        }}
+                        sx={{
+                          color: '#dedede',
+                          '&.Mui-checked': {
+                            color: 'primary.main'
+                          }
+                        }}
+                      />
+                    }
+                    label='Domestic'
+                  />
+                  <FormControlLabel
+                    value='Export'
+                    sx={{
+                      padding: '1rem',
+                      margin: '1rem 0',
+                      border: 'solid 1px',
+                      borderColor: '#dedede',
+                      borderRadius: '1rem',
+                      color: '#121212',
+                      '&:has(.Mui-checked)': {
+                        boxShadow: 1,
+                        color: 'primary.main',
+                        borderColor: 'primary.main',
+                      },
+                      minWidth: '110px',
+                      height: '1rem'
+                    }}
+                    control={
+                      <Radio
+                        size="small"
+                        onChange={(e) => {
+                          setDeEx(e.target.value)
+                          setFieldValue('deEx', e.target.value)
+                          setSelectUnitIsOpen(true)
+                        }}
+                        sx={{
+                          color: '#dedede',
+                          '&.Mui-checked': {
+                            color: 'primary.main'
+                          }
+                        }}
+                      />
+                    }
+                    label='Export'
+                  />
+                </RadioGroup>
               </FormControl>
-              <Box sx={{ flexGrow: 1 }} />
             </Box>
             {deEx == 'Domestic' || deEx == '' ? (
               ''
@@ -148,9 +220,6 @@ const Scan = ({ }: Props) => {
                         }
                       }, 0);
                       setSelectUnitIsOpen(false)
-                    }}
-                    onBlur={(e) => {
-                      partSeq01Ref.current?.focus()
                     }}
                   >
                     <MenuItem value={'0173'}>Unit 1</MenuItem>
