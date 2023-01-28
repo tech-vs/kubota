@@ -5,7 +5,7 @@ import { alpha, Box, Button, Typography, useMediaQuery } from '@mui/material'
 import { CSSObject, styled, Theme, useTheme } from '@mui/material/styles'
 import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useState, useMemo } from 'react'
 
 type Props = {}
 
@@ -38,7 +38,11 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 const Overall = ({ packingList }: any) => {
   const router = useRouter()
   const theme = useTheme()
-  const isSM = useMediaQuery(theme.breakpoints.down('sm'))
+  const isSM = useMediaQuery(theme.breakpoints.only('sm'))
+  const isMD = useMediaQuery(theme.breakpoints.only('md'))
+  const isXS = useMediaQuery(theme.breakpoints.only('xs'))
+
+  const isMobile = isSM || isMD || isXS
 
   const columns: GridColDef[] = [
     {
@@ -163,11 +167,10 @@ const Overall = ({ packingList }: any) => {
       >
         <Typography variant='h5'>View Packing List</Typography>
       </Box>
-
       <Box
         sx={{
           height: 720,
-          width: isSM ? '100%' : 1270,
+          width: isMobile ? '100%' : 1270,
           '& .cold': {
             color: 'success.main'
           },

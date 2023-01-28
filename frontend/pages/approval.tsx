@@ -38,7 +38,11 @@ const Approval = ({ list }: any) => {
   const router = useRouter()
 
   const theme = useTheme()
-  const isSM = useMediaQuery(theme.breakpoints.down('sm'))
+  const isSM = useMediaQuery(theme.breakpoints.only('sm'))
+  const isMD = useMediaQuery(theme.breakpoints.only('md'))
+  const isXS = useMediaQuery(theme.breakpoints.only('xs'))
+
+  const isMobile = isSM || isMD || isXS
 
   // Call this function whenever you want to
   // refresh props!
@@ -181,7 +185,7 @@ const Approval = ({ list }: any) => {
       <Box
         sx={{
           height: 720,
-          width: isSM ? '100%' : 1225,
+          width: isMobile ? '100%' : 1225,
           '& .cold': {
             color: 'success.main'
           },

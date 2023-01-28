@@ -40,6 +40,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
         main: '#f1416c'
       },
     },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 600,
+        md: 800,
+        lg: 1200,
+        xl: 1536,
+      },
+    },
     typography: {
       fontFamily: 'Ubuntu',
       htmlFontSize: 16,

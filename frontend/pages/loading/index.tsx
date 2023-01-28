@@ -36,7 +36,11 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 const Overall = ({ loadingList }: any) => {
   const router = useRouter()
   const theme = useTheme()
-  const isSM = useMediaQuery(theme.breakpoints.down('sm'))
+  const isSM = useMediaQuery(theme.breakpoints.only('sm'))
+  const isMD = useMediaQuery(theme.breakpoints.only('md'))
+  const isXS = useMediaQuery(theme.breakpoints.only('xs'))
+
+  const isMobile = isSM || isMD || isXS
   const columns: GridColDef[] = [
     {
       field: 'doc_no',
@@ -157,7 +161,7 @@ const Overall = ({ loadingList }: any) => {
       <Box
         sx={{
           height: 720,
-          width: isSM ? '100%' : 1270,
+          width: isMobile ? '100%' : 1270,
           '& .cold': {
             color: 'success.main'
           },
