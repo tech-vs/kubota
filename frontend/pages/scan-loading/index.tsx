@@ -1,5 +1,4 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import { inputLoadingDoc } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
@@ -13,96 +12,20 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  SelectProps,
   Snackbar,
   TextField,
-  TextFieldProps,
   Typography,
   useTheme
 } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState, useRef } from 'react'
 import type { ReactElement } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
 type Props = {}
-// let scanLoadingResponse: any[] = []
-// const columns: GridColDef[] = [
-//   {
-//     field: 'pallet_skewer',
-//     headerName: 'Model Code',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'modelName',
-//     headerName: 'Model Name',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     type: 'string',
-//     cellClassName: 'cellField',
-//     width: 250
-//   },
-//   {
-//     field: 'item_sharp',
-//     headerName: 'ID No.',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'countryCode',
-//     headerName: 'Country Code',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'countryName',
-//     headerName: 'Country Name',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'distributoeCode',
-//     headerName: 'Distributor Code',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'distributoeName',
-//     headerName: 'Distributor Name',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-
-//   {
-//     field: 'blank',
-//     headerName: '',
-//     headerClassName: 'headerField',
-//     flex: 1
-//   }
-// ]
 
 var Amatanakhon =
   '700/867 Moo 3 Amata Nakhon Industrial Estate, Tambon Nong Ka Kha,District, Panthong District, Chon Buri 20160'
@@ -132,17 +55,15 @@ const Scan = ({ genDoc }: any) => {
   })
 
   function resetStateFormData() {
-    setInput(previousInputs => (
-      {
-        ...previousInputs,
-        refNo: '',
-        qty: '',
-        invoiceNo: '',
-        round: '',
-        customerName: '',
-        address: '',
-      }
-    ))
+    setInput(previousInputs => ({
+      ...previousInputs,
+      refNo: '',
+      qty: '',
+      invoiceNo: '',
+      round: '',
+      customerName: '',
+      address: ''
+    }))
   }
 
   const doNoRef = useRef<HTMLInputElement>(null)
@@ -162,8 +83,8 @@ const Scan = ({ genDoc }: any) => {
           input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
             ? Amatanakhon
             : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-              ? Navanakorn
-              : ''
+            ? Navanakorn
+            : ''
       })
     }
     call()
@@ -239,7 +160,7 @@ const Scan = ({ genDoc }: any) => {
               sx={{
                 display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
                 my: 3,
-                position: 'relative',
+                position: 'relative'
               }}
             >
               <FormControl fullWidth required>
@@ -263,9 +184,9 @@ const Scan = ({ genDoc }: any) => {
                   onClose={() => {
                     setTimeout(() => {
                       if (document.activeElement instanceof HTMLElement) {
-                        document.activeElement.blur();
+                        document.activeElement.blur()
                       }
-                    }, 0);
+                    }, 0)
                   }}
                   onBlur={() => {
                     doNoRef.current?.focus()
@@ -331,20 +252,39 @@ const Scan = ({ genDoc }: any) => {
                 position: 'relative'
               }}
             >
-              <TextField
-                size='small'
-                required
-                fullWidth
-                id='filled-basic'
-                label='Invoice No.'
-                variant='outlined'
-                value={input.invoiceNo}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setInput({ ...input, invoiceNo: e.target.value })
-                  setFieldValue('input.invoiceNo', e.target.value)
-                }}
-              />
+              {input.question_type == 'Domestic' ? (
+                <TextField
+                  size='small'
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Invoice No.'
+                  variant='outlined'
+                  value={input.invoiceNo}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    setInput({ ...input, invoiceNo: e.target.value })
+                    setFieldValue('input.invoiceNo', e.target.value)
+                  }}
+                />
+              ) : input.question_type == 'Export' ? (
+                <TextField
+                  size='small'
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Container No. / Seal No.'
+                  variant='outlined'
+                  value={input.invoiceNo}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    setInput({ ...input, invoiceNo: e.target.value })
+                    setFieldValue('input.invoiceNo', e.target.value)
+                  }}
+                />
+              ) : (
+                ''
+              )}
             </Box>
             <Box
               component='main'
@@ -375,7 +315,7 @@ const Scan = ({ genDoc }: any) => {
                 sx={{
                   display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
                   my: 3,
-                  position: 'relative',
+                  position: 'relative'
                 }}
               >
                 <FormControl fullWidth required>
@@ -424,8 +364,8 @@ const Scan = ({ genDoc }: any) => {
                     input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
                       ? Amatanakhon
                       : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-                        ? Navanakorn
-                        : ''
+                      ? Navanakorn
+                      : ''
                   }
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -518,7 +458,7 @@ const Scan = ({ genDoc }: any) => {
                   gap: { xs: '4px' },
                   height: { xs: '60px', md: 'auto' },
                   justifyContent: 'center',
-                  background: { xs: '#fff' },
+                  background: { xs: '#fff' }
                 }}
               >
                 <Button
@@ -526,7 +466,7 @@ const Scan = ({ genDoc }: any) => {
                   color='primary'
                   size='large'
                   type='submit'
-                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
                 >
                   OK
                 </Button>
@@ -539,7 +479,7 @@ const Scan = ({ genDoc }: any) => {
                     resetForm()
                   }}
                   color='secondary'
-                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
                 >
                   Clear
                 </Button>
@@ -613,9 +553,7 @@ export async function getServerSideProps() {
 }
 
 Scan.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export default Scan

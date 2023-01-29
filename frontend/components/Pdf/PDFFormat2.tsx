@@ -51,7 +51,13 @@ const PDFFormat2 = ({ content }: Props) => {
                           <td>{content.total_qty || ''}</td>
                         </tr>
                         <tr>
-                          <td className='text-left'>Invoice No :</td>
+                          {content.question_type.toLowerCase() === 'domestic' ? (
+                            <td className='text-left'>Invoice No :</td>
+                          ) : content.question_type.toLowerCase() === 'export' ? (
+                            <td className='text-left'>Container /Seal No. :</td>
+                          ) : (
+                            <></>
+                          )}
                           <td colSpan={3} className='text-left'>
                             {content.invoice_no || ''}
                           </td>
@@ -124,9 +130,18 @@ const PDFFormat2 = ({ content }: Props) => {
                     return (
                       <tr key={i + indexOfData + '_row_data_body'}>
                         <td className='bold'>{i * 4 + (indexOfData + 1)}</td>
+
                         {indexOfData % 4 === 0 && (
                           <td rowSpan={4} className='fs-9 bold'>
-                            {row.pallet.internal_pallet_no || ''}
+                            {content.question_type.toLowerCase() === 'export' ? (
+                              <>{row.pallet.internal_pallet_no || ''}</>
+                            ) : content.question_type.toLowerCase() === 'domestic' ? (
+                              <>
+                                {row.pallet.pallet || ''}-{row.pallet.skewer || ''}
+                              </>
+                            ) : (
+                              <></>
+                            )}
                           </td>
                         )}
                         <td>{row.part_list[indexOfData].model_name || ''}</td>
@@ -164,111 +179,118 @@ const PDFFormat2 = ({ content }: Props) => {
             <div className='div7'></div>
           </div>
         </div>
-        {
-          content.question_type.toLowerCase() === 'domestic' ?
-            <div className='section' style={{ marginTop: '12pt' }}>
-              <table className='fs-9'>
-                <colgroup>
-                  <col style={{ width: '33%' }} />
-                  <col style={{ width: '33%' }} />
-                  <col style={{ width: '33%' }} />
-                </colgroup>
-                <tbody>
-                  <tr>
-                    <td className='text-left'>
-                      <div>
-                        <div className='flex justify-between'>
-                          <div>Prepare by: </div>
-                          <div className='bold'>{content.prepare_by?.name || ''}</div>
-                        </div>
-                        <div className='flex justify-between'>
-                          <div>Date: </div>
-                          <div>{content.prepare_by?.date || ''}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className='text-left'>
-                      <div>
-                        <div className='flex justify-between'>
-                          <div>Deliverned by: </div>
-                          <div className='bold'>{content.deliverned_by?.name || ''}</div>
-                        </div>
-                        <div className='flex justify-between'>
-                          <div>Date: </div>
-                          <div>{content.deliverned_by?.date || ''}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className='text-left'>
-                      <div>
-                        <div className='flex justify-between'>
-                          <div>Receive by: </div>
-                          <div className='bold'>{content.receive_by?.name || ''}</div>
-                        </div>
-                        <div className='flex justify-between'>
-                          <div>Date: </div>
-                          <div>{content.receive_by?.date || ''}</div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className='text-left'>
+        {content.question_type.toLowerCase() === 'domestic' ? (
+          <div className='section' style={{ marginTop: '12pt' }}>
+            <table className='fs-9'>
+              <colgroup>
+                <col style={{ width: '33%' }} />
+                <col style={{ width: '33%' }} />
+                <col style={{ width: '33%' }} />
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td className='text-left'>
+                    <div>
                       <div className='flex justify-between'>
-                        <div>Start Time: </div>
-                        <div className='bold'>{content.prepare_by?.start_time || ''}</div>
+                        <div>Prepare by: </div>
+                        <div className='bold'>{content.prepare_by?.name || ''}</div>
                       </div>
-                    </td>
-                    <td className='text-left'>
                       <div className='flex justify-between'>
-                        <div>Start Time: </div>
-                        <div className='bold'>{content.deliverned_by?.start_time || ''}</div>
+                        <div>Date: </div>
+                        <div>{content.prepare_by?.date || ''}</div>
                       </div>
-                    </td>
-                    <td className='text-left'>
+                    </div>
+                  </td>
+                  <td className='text-left'>
+                    <div>
                       <div className='flex justify-between'>
-                        <div>Start Time: </div>
-                        <div className='bold'>{content.receive_by?.start_time || ''}</div>
+                        <div>Deliverned by: </div>
+                        <div className='bold'>{content.deliverned_by?.name || ''}</div>
                       </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            : content.question_type.toLowerCase() === 'export' ?
-              <div className='section' style={{ marginTop: '12pt' }}>
-                <table className='fs-9'>
-                  <colgroup>
-                    {
-                      [...Array(8).keys()].map(c => {
-                        return <col style={{ width: '12.5%' }} />
-                      })
-                    }
-                  </colgroup>
-                  <tbody>
-                    <tr>
-                      {
-                        ['Prepare by: Leader / subLeader', '', 'Picking by: Clerk', '', 'Check by: PC-Officer', '', 'Approved by: Manager', ''].map(c => {
-                          return <td className='text-center'>
-                            <div>{c}</div>
-                          </td>
-                        })
-                      }
-                    </tr>
-                    <tr>
-                      {
-                        [...Array(8).keys()].map(c => {
-                          return <td className='text-center'>
-                            <div>{c % 2 === 0 ? 'Date' : ''}</div>
-                          </td>
-                        })
-                      }
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              : <></>
-        }
+                      <div className='flex justify-between'>
+                        <div>Date: </div>
+                        <div>{content.deliverned_by?.date || ''}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className='text-left'>
+                    <div>
+                      <div className='flex justify-between'>
+                        <div>Receive by: </div>
+                        <div className='bold'>{content.receive_by?.name || ''}</div>
+                      </div>
+                      <div className='flex justify-between'>
+                        <div>Date: </div>
+                        <div>{content.receive_by?.date || ''}</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className='text-left'>
+                    <div className='flex justify-between'>
+                      <div>Start Time: </div>
+                      <div className='bold'>{content.prepare_by?.start_time || ''}</div>
+                    </div>
+                  </td>
+                  <td className='text-left'>
+                    <div className='flex justify-between'>
+                      <div>Start Time: </div>
+                      <div className='bold'>{content.deliverned_by?.start_time || ''}</div>
+                    </div>
+                  </td>
+                  <td className='text-left'>
+                    <div className='flex justify-between'>
+                      <div>Start Time: </div>
+                      <div className='bold'>{content.receive_by?.start_time || ''}</div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ) : content.question_type.toLowerCase() === 'export' ? (
+          <div className='section' style={{ marginTop: '12pt' }}>
+            <table className='fs-9'>
+              <colgroup>
+                {[...Array(8).keys()].map(c => {
+                  return <col style={{ width: '12.5%' }} />
+                })}
+              </colgroup>
+              <tbody>
+                <tr>
+                  {[
+                    'Prepare by: Leader / subLeader',
+                    '',
+                    'Picking by: Clerk',
+                    '',
+                    'Check by: PC-Officer',
+                    '',
+                    'Approved by: Manager',
+                    ''
+                  ].map(c => {
+                    return (
+                      <td className='text-center'>
+                        <div>{c}</div>
+                      </td>
+                    )
+                  })}
+                </tr>
+                <tr>
+                  {[...Array(8).keys()].map(c => {
+                    return (
+                      <td className='text-center'>
+                        <div>{c % 2 === 0 ? 'Date' : ''}</div>
+                      </td>
+                    )
+                  })}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   )
