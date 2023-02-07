@@ -19,7 +19,7 @@ const SingleBarcode = forwardRef<HTMLDivElement, Props>(({ content }: Props, ref
         <>
             <div className="barcode-page" data-size="3x1" ref={ref}>
                 <div className='flex items-center justify-center flex-col h-full'
-                    style={{ gap: '0.2cm' }}
+                    style={{ gap: '0.5cm' }}
                 >
                     {
                         content.question_type === 'Export' && <>
