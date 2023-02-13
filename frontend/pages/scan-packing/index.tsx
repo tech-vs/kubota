@@ -1,5 +1,5 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
+import { IContentSingleBarcode } from '@/models/barcode.model'
 import { scanPallet } from '@/services/serverServices'
 import {
   Box,
@@ -19,12 +19,12 @@ import {
   useTheme
 } from '@mui/material'
 import { Form, Formik, FormikProps } from 'formik'
+import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useState, useRef, useEffect } from 'react'
 import type { ReactElement } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-
 type Props = {}
 
 type scanProps = {
@@ -35,7 +35,7 @@ type scanProps = {
   partSeq04: string
 }
 
-const Scan = ({ }: Props) => {
+const Scan = ({}: Props) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const router = useRouter()
@@ -55,6 +55,60 @@ const Scan = ({ }: Props) => {
   const partSeq01Ref = useRef<HTMLInputElement>(null)
   const [selectUnitIsOpen, setSelectUnitIsOpen] = useState(false)
   const [rerenderUnitBlur, setRerenderUnitBlur] = useState(0)
+
+  //test printer
+  const singleBarcodeRef = useRef<HTMLDivElement>(null)
+  const [barcodeContent, setBarcodeContent] = useState<IContentSingleBarcode>({
+    internal_pallet_no: 'test',
+    pallet_string: 'test',
+    question_type: 'Export'
+  })
+  const [selectedDevice, setSelectedDevice] = useState<any>()
+  function printImage() {
+    return new Promise<void>(async (resolve, reject) => {
+      if (selectedDevice && singleBarcodeRef.current) {
+        console.log(barcodeContent)
+        selectedDevice.convertAndSendFile(
+          await toPng(singleBarcodeRef.current),
+          (res: any) => {
+            console.log(res)
+            setTimeout(() => {
+              resolve()
+            }, 2000)
+          },
+          (err: any) => {
+            console.error(err)
+            setTimeout(() => {
+              resolve()
+            }, 2000)
+          },
+          {
+            resize: { width: 600, height: 200 }
+          }
+        )
+      }
+    })
+  }
+
+  function setupPrinter() {
+    //Get the default device from the application as a first step. Discovery takes longer to complete.
+    const BP = window.BrowserPrint
+    BP.getDefaultDevice(
+      'printer',
+      function (device: any) {
+        console.log(device)
+        setSelectedDevice(device)
+      },
+      function (error: any) {
+        console.log(error)
+        MySwal.fire({
+          text: 'Printer is Not Ready',
+          position: 'top',
+          confirmButtonColor: theme.palette.primary.main
+        })
+      }
+    )
+  }
 
   useEffect(() => {
     if (palletNoRef.current && deEx === 'Domestic') {
@@ -125,15 +179,15 @@ const Scan = ({ }: Props) => {
                       '&:has(.Mui-checked)': {
                         boxShadow: 1,
                         color: 'primary.main',
-                        borderColor: 'primary.main',
+                        borderColor: 'primary.main'
                       },
                       minWidth: '110px',
                       height: '1rem'
                     }}
                     control={
                       <Radio
-                        size="small"
-                        onChange={(e) => {
+                        size='small'
+                        onChange={e => {
                           setDeEx(e.target.value)
                           setFieldValue('deEx', e.target.value)
                         }}
@@ -159,15 +213,15 @@ const Scan = ({ }: Props) => {
                       '&:has(.Mui-checked)': {
                         boxShadow: 1,
                         color: 'primary.main',
-                        borderColor: 'primary.main',
+                        borderColor: 'primary.main'
                       },
                       minWidth: '110px',
                       height: '1rem'
                     }}
                     control={
                       <Radio
-                        size="small"
-                        onChange={(e) => {
+                        size='small'
+                        onChange={e => {
                           setDeEx(e.target.value)
                           setFieldValue('deEx', e.target.value)
                           setSelectUnitIsOpen(true)
@@ -216,9 +270,9 @@ const Scan = ({ }: Props) => {
                     onClose={() => {
                       setTimeout(() => {
                         if (document.activeElement instanceof HTMLElement) {
-                          document.activeElement.blur();
+                          document.activeElement.blur()
                         }
-                      }, 0);
+                      }, 0)
                       setSelectUnitIsOpen(false)
                     }}
                   >
@@ -380,26 +434,33 @@ const Scan = ({ }: Props) => {
               }}
             >
               {/* <Box sx={{ flexGrow: 1 }} /> */}
-              <Box sx={{
-                display: { xs: 'flex' },
-                position: { xs: 'fixed', md: 'relative' },
-                bottom: { xs: '0' },
-                left: { xs: '0' },
-                width: { xs: '100%' },
-                zIndex: { xs: '1201' },
-                padding: { xs: '4px' },
-                gap: { xs: '4px' },
-                height: { xs: '60px', md: 'auto' },
-                justifyContent: 'center',
-                background: { xs: '#fff' }
-              }}>
-                <Button variant='contained' size="large" color='primary' type='submit'
-                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}>
+              <Box
+                sx={{
+                  display: { xs: 'flex' },
+                  position: { xs: 'fixed', md: 'relative' },
+                  bottom: { xs: '0' },
+                  left: { xs: '0' },
+                  width: { xs: '100%' },
+                  zIndex: { xs: '1201' },
+                  padding: { xs: '4px' },
+                  gap: { xs: '4px' },
+                  height: { xs: '60px', md: 'auto' },
+                  justifyContent: 'center',
+                  background: { xs: '#fff' }
+                }}
+              >
+                <Button
+                  variant='contained'
+                  size='large'
+                  color='primary'
+                  type='submit'
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
+                >
                   Ok
                 </Button>
                 <Button
                   variant='outlined'
-                  size="large"
+                  size='large'
                   onClick={() => {
                     // window.location.reload()
                     setDeEx('')
@@ -412,25 +473,30 @@ const Scan = ({ }: Props) => {
                     })
                   }}
                   color='secondary'
-                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px', }, height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
                 >
                   Clear
+                </Button>
+                <Button
+                  variant='contained'
+                  size='large'
+                  color='primary'
+                  onClick={async () => {
+                    await printImage()
+                    await MySwal.fire({
+                      text: 'Packing Successfully',
+                      position: 'top',
+                      confirmButtonColor: theme.palette.primary.main
+                    })
+                    setLoading(false)
+                  }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
+                >
+                  Test Printer Packing
                 </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
-            {/* <Box sx={{ width: '100%', my: 5 }}>
-              {loading ? <LinearProgress /> : <></>}
-              {success ? (
-                <Snackbar open={success} autoHideDuration={6000} onClose={() => setSucess(false)}>
-                  <Alert onClose={() => setSucess(false)} severity='success' sx={{ width: '100%' }}>
-                    This is a success message!
-                  </Alert>
-                </Snackbar>
-              ) : (
-                <></>
-              )}
-            </Box> */}
           </CardContent>
         </Card>
       </Form>
@@ -538,9 +604,7 @@ const Scan = ({ }: Props) => {
 }
 
 Scan.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export default Scan
