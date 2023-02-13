@@ -98,6 +98,11 @@ const Scan = ({}: Props) => {
       function (device: any) {
         console.log(device)
         setSelectedDevice(device)
+        MySwal.fire({
+          text: 'Printer is Ready',
+          position: 'top',
+          confirmButtonColor: theme.palette.primary.main
+        })
       },
       function (error: any) {
         console.log(error)
@@ -109,6 +114,18 @@ const Scan = ({}: Props) => {
       }
     )
   }
+  useEffect(() => {
+    try {
+      setupPrinter()
+    } catch (error) {
+      MySwal.fire({
+        text: 'No Printer found. Please recheck Printer',
+        position: 'top',
+        confirmButtonColor: theme.palette.primary.main
+      })
+    }
+  }, [])
+  // test printer
 
   useEffect(() => {
     if (palletNoRef.current && deEx === 'Domestic') {

@@ -1,7 +1,6 @@
 import SingleBarcode from '@/components/Barcode/SingleBarcode'
-import RollingLoading from '@/components/RollingLoading'
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
+import RollingLoading from '@/components/RollingLoading'
 import { IContentSingleBarcode } from '@/models/barcode.model'
 import { checksheetPartList, confirmCheckSheet2 } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
@@ -21,10 +20,10 @@ import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
 import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
+import type { ReactElement } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import type { ReactElement } from 'react'
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -61,13 +60,13 @@ const View = ({ checksheets, id }: any) => {
             console.log(res)
             setTimeout(() => {
               resolve()
-            }, 2000);
+            }, 2000)
           },
           (err: any) => {
             console.error(err)
             setTimeout(() => {
               resolve()
-            }, 2000);
+            }, 2000)
           },
           {
             resize: { width: 600, height: 200 }
@@ -183,7 +182,7 @@ const View = ({ checksheets, id }: any) => {
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
                           boxShadow: 2,
-                          color: 'success.main',
+                          color: 'success.main'
                         },
                         minWidth: '110px',
                         height: '1rem'
@@ -225,7 +224,7 @@ const View = ({ checksheets, id }: any) => {
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
                           boxShadow: 2,
-                          color: 'secondary.main',
+                          color: 'secondary.main'
                         },
                         minWidth: '110px',
                         height: '1rem'
@@ -294,9 +293,9 @@ const View = ({ checksheets, id }: any) => {
                   color='primary'
                   type='submit'
                   disabled={loading}
-                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px', }, height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px' }, height: '100%' }}
                 >
-                  {loading && <RollingLoading />}  Submit Packing
+                  {loading && <RollingLoading />} Submit Packing
                 </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
@@ -345,7 +344,14 @@ const View = ({ checksheets, id }: any) => {
       <div style={{ position: 'relative', marginTop: '1rem' }}>
         <SingleBarcode ref={singleBarcodeRef} content={barcodeContent}></SingleBarcode>
         <Box
-          sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: (theme) => theme.palette.background.default }}
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: theme => theme.palette.background.default
+          }}
         ></Box>
       </div>
     </>
@@ -370,9 +376,7 @@ export async function getServerSideProps(context: any) {
 }
 
 View.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export default View
