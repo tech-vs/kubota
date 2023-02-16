@@ -1,5 +1,4 @@
 import Layout from '@/components/Layouts/Layout'
-import { IContentSingleBarcode } from '@/models/barcode.model'
 import { scanPallet } from '@/services/serverServices'
 import {
   Box,
@@ -19,7 +18,6 @@ import {
   useTheme
 } from '@mui/material'
 import { Form, Formik, FormikProps } from 'formik'
-import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
 import type { ReactElement } from 'react'
 import { ChangeEvent, useEffect, useRef, useState } from 'react'
@@ -55,77 +53,6 @@ const Scan = ({}: Props) => {
   const partSeq01Ref = useRef<HTMLInputElement>(null)
   const [selectUnitIsOpen, setSelectUnitIsOpen] = useState(false)
   const [rerenderUnitBlur, setRerenderUnitBlur] = useState(0)
-
-  //test printer
-  const singleBarcodeRef = useRef<HTMLDivElement>(null)
-  const [barcodeContent, setBarcodeContent] = useState<IContentSingleBarcode>({
-    internal_pallet_no: 'test',
-    pallet_string: 'test',
-    question_type: 'Export'
-  })
-  const [selectedDevice, setSelectedDevice] = useState<any>()
-  function printImage() {
-    return new Promise<void>(async (resolve, reject) => {
-      if (selectedDevice && singleBarcodeRef.current) {
-        console.log(barcodeContent)
-        selectedDevice.convertAndSendFile(
-          await toPng(singleBarcodeRef.current),
-          (res: any) => {
-            console.log(res)
-            setTimeout(() => {
-              resolve()
-            }, 2000)
-          },
-          (err: any) => {
-            console.error(err)
-            setTimeout(() => {
-              resolve()
-            }, 2000)
-          },
-          {
-            resize: { width: 600, height: 200 }
-          }
-        )
-      }
-    })
-  }
-
-  function setupPrinter() {
-    //Get the default device from the application as a first step. Discovery takes longer to complete.
-    const BP = window.BrowserPrint
-    BP.getDefaultDevice(
-      'printer',
-      function (device: any) {
-        console.log(device)
-        setSelectedDevice(device)
-        MySwal.fire({
-          text: 'Printer is Ready',
-          position: 'top',
-          confirmButtonColor: theme.palette.primary.main
-        })
-      },
-      function (error: any) {
-        console.log(error)
-        MySwal.fire({
-          text: 'Printer is Not Ready',
-          position: 'top',
-          confirmButtonColor: theme.palette.primary.main
-        })
-      }
-    )
-  }
-  useEffect(() => {
-    try {
-      setupPrinter()
-    } catch (error) {
-      MySwal.fire({
-        text: 'No Printer found. Please recheck Printer',
-        position: 'top',
-        confirmButtonColor: theme.palette.primary.main
-      })
-    }
-  }, [])
-  // test printer
 
   useEffect(() => {
     if (palletNoRef.current && deEx === 'Domestic') {
@@ -493,23 +420,6 @@ const Scan = ({}: Props) => {
                   sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
                 >
                   Clear
-                </Button>
-                <Button
-                  variant='contained'
-                  size='large'
-                  color='primary'
-                  onClick={async () => {
-                    await printImage()
-                    await MySwal.fire({
-                      text: 'Packing Successfully',
-                      position: 'top',
-                      confirmButtonColor: theme.palette.primary.main
-                    })
-                    setLoading(false)
-                  }}
-                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
-                >
-                  Test Printer Packing
                 </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
