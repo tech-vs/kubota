@@ -1,5 +1,4 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import { inputLoadingDoc } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
@@ -21,85 +20,12 @@ import {
 import LinearProgress from '@mui/material/LinearProgress'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useEffect, useState } from 'react'
+import type { ReactElement } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 
 type Props = {}
-// let scanLoadingResponse: any[] = []
-// const columns: GridColDef[] = [
-//   {
-//     field: 'pallet_skewer',
-//     headerName: 'Model Code',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'modelName',
-//     headerName: 'Model Name',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     type: 'string',
-//     cellClassName: 'cellField',
-//     width: 250
-//   },
-//   {
-//     field: 'item_sharp',
-//     headerName: 'ID No.',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'countryCode',
-//     headerName: 'Country Code',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'countryName',
-//     headerName: 'Country Name',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'distributoeCode',
-//     headerName: 'Distributor Code',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-//   {
-//     field: 'distributoeName',
-//     headerName: 'Distributor Name',
-//     headerAlign: 'center',
-//     headerClassName: 'headerField',
-//     align: 'center',
-//     cellClassName: 'cellField',
-//     width: 150
-//   },
-
-//   {
-//     field: 'blank',
-//     headerName: '',
-//     headerClassName: 'headerField',
-//     flex: 1
-//   }
-// ]
 
 var Amatanakhon =
   '700/867 Moo 3 Amata Nakhon Industrial Estate, Tambon Nong Ka Kha,District, Panthong District, Chon Buri 20160'
@@ -110,21 +36,44 @@ const Scan = ({ genDoc }: any) => {
   // Call this function whenever you want to
   // refresh props!
   const refreshData = () => {
-    router.replace(router.asPath)
+    router.replace(router.asPath, undefined, {
+      scroll: false
+    })
   }
 
   const [deEx, setDeEx] = useState<string>('')
   const [customer, setCustomer] = useState<string>('SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)')
   const [address, setAddress] = useState<string>(Amatanakhon)
   const [input, setInput] = useState({
-    refNo: genDoc.ref_do_no,
-    qty: genDoc.total_qty,
-    invoiceNo: genDoc.invoice_no,
-    round: genDoc.round,
-    customerName: genDoc.customer_name,
-    address: genDoc.address,
+    refNo: genDoc.ref_do_no || '',
+    qty: genDoc.total_qty || '',
+    invoiceNo: genDoc.invoice_no || '',
+    round: genDoc.round || '',
+    customerName: genDoc.customer_name || '',
+    address: genDoc.address || '',
     question_type: genDoc.question_type
   })
+
+  function resetStateFormData() {
+    setInput(previousInputs => ({
+      ...previousInputs,
+      refNo: '',
+      qty: '',
+      invoiceNo: '',
+      round: '',
+      customerName: '',
+      address: ''
+    }))
+  }
+
+  const doNoRef = useRef<HTMLInputElement>(null)
+
+  // useEffect(() => {
+  //   if (doNoRef.current) {
+  //     console.log(doNoRef)
+  //     doNoRef.current.focus()
+  //   }
+  // }, [doNoRef.current])
 
   useEffect(() => {
     async function call() {
@@ -134,8 +83,8 @@ const Scan = ({ genDoc }: any) => {
           input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
             ? Amatanakhon
             : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-              ? Navanakorn
-              : ''
+            ? Navanakorn
+            : ''
       })
     }
     call()
@@ -154,14 +103,14 @@ const Scan = ({ genDoc }: any) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Scan Loading</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
-          <CardContent sx={{ pb: 4, px: 4 }}>
+          <CardContent sx={{ py: 4, px: { xs: 4, md: 8 } }}>
             <Box
               component='main'
               sx={{
@@ -171,18 +120,17 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               <TextField
+                size='small'
                 required
                 fullWidth
                 id='filled-basic'
                 label='Doc No.'
-                variant='filled'
+                variant='outlined'
                 value={genDoc.doc_no}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
                 }}
               />
-
-              <Box sx={{ flexGrow: 1 }} />
             </Box>
             <Box
               component='main'
@@ -193,11 +141,12 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               <TextField
+                size='small'
                 required
                 fullWidth
                 id='filled-basic'
                 label='Del Date'
-                variant='filled'
+                variant='outlined'
                 value={genDoc.delivery_date}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
@@ -210,12 +159,11 @@ const Scan = ({ genDoc }: any) => {
               component='main'
               sx={{
                 display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 5,
-                position: 'relative',
-                height: '55px'
+                my: 3,
+                position: 'relative'
               }}
             >
-              <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
+              <FormControl fullWidth required>
                 <InputLabel id='demo-simple-select-required-label'>Select...</InputLabel>
                 <Select
                   labelId='demo-simple-select-required-label'
@@ -223,18 +171,31 @@ const Scan = ({ genDoc }: any) => {
                   label='deEx *'
                   value={input.question_type}
                   onChange={(e: SelectChangeEvent<string>) => {
-                    e.preventDefault()
-                    setInput({ ...input, question_type: e.target.value })
+                    // e.preventDefault()
+                    // always reset data before setnew data
+                    resetStateFormData()
+                    resetForm()
+
+                    setInput(previousInputs => ({ ...previousInputs, question_type: e.target.value }))
                     setFieldValue('input.question_type', e.target.value)
                     // setDeEx(e.target.value)
                     // setFieldValue('deEx', e.target.value)
+                  }}
+                  onClose={() => {
+                    setTimeout(() => {
+                      if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur()
+                      }
+                    }, 0)
+                  }}
+                  onBlur={() => {
+                    doNoRef.current?.focus()
                   }}
                 >
                   <MenuItem value={'Domestic'}>Domestic</MenuItem>
                   <MenuItem value={'Export'}>Export</MenuItem>
                 </Select>
               </FormControl>
-              <Box sx={{ flexGrow: 1 }} />
             </Box>
             <Box
               component='main'
@@ -245,11 +206,13 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               <TextField
+                inputRef={doNoRef}
+                size='small'
                 required
                 fullWidth
                 id='filled-basic'
                 label='Ref, D/O No.'
-                variant='filled'
+                variant='outlined'
                 value={input.refNo}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
@@ -257,7 +220,6 @@ const Scan = ({ genDoc }: any) => {
                   setFieldValue('input.refNo', e.target.value)
                 }}
               />
-              <Box sx={{ flexGrow: 1 }} />
             </Box>
             <Box
               component='main'
@@ -268,11 +230,12 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               <TextField
+                size='small'
                 required
                 fullWidth
                 id='filled-basic'
                 label='Total Qty'
-                variant='filled'
+                variant='outlined'
                 value={input.qty}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
@@ -280,7 +243,48 @@ const Scan = ({ genDoc }: any) => {
                   setFieldValue('input.qty', e.target.value)
                 }}
               />
-              <Box sx={{ flexGrow: 1 }} />
+            </Box>
+            <Box
+              component='main'
+              sx={{
+                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
+                my: 3,
+                position: 'relative'
+              }}
+            >
+              {input.question_type == 'Domestic' ? (
+                <TextField
+                  size='small'
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Invoice No.'
+                  variant='outlined'
+                  value={input.invoiceNo}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    setInput({ ...input, invoiceNo: e.target.value })
+                    setFieldValue('input.invoiceNo', e.target.value)
+                  }}
+                />
+              ) : input.question_type == 'Export' ? (
+                <TextField
+                  size='small'
+                  required
+                  fullWidth
+                  id='filled-basic'
+                  label='Container No. / Seal No.'
+                  variant='outlined'
+                  value={input.invoiceNo}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    e.preventDefault()
+                    setInput({ ...input, invoiceNo: e.target.value })
+                    setFieldValue('input.invoiceNo', e.target.value)
+                  }}
+                />
+              ) : (
+                ''
+              )}
             </Box>
             <Box
               component='main'
@@ -291,34 +295,12 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               <TextField
-                required
-                fullWidth
-                id='filled-basic'
-                label='Invoice No.'
-                variant='filled'
-                value={input.invoiceNo}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  e.preventDefault()
-                  setInput({ ...input, invoiceNo: e.target.value })
-                  setFieldValue('input.invoiceNo', e.target.value)
-                }}
-              />
-              <Box sx={{ flexGrow: 1 }} />
-            </Box>
-            <Box
-              component='main'
-              sx={{
-                display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 3,
-                position: 'relative'
-              }}
-            >
-              <TextField
+                size='small'
                 required
                 fullWidth
                 id='filled-basic'
                 label='Round'
-                variant='filled'
+                variant='outlined'
                 value={input.round}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   e.preventDefault()
@@ -326,21 +308,20 @@ const Scan = ({ genDoc }: any) => {
                   setFieldValue('input.round', e.target.value)
                 }}
               />
-              <Box sx={{ flexGrow: 1 }} />
             </Box>
             {input.question_type == 'Domestic' ? (
               <Box
                 component='main'
                 sx={{
                   display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                  my: 5,
-                  position: 'relative',
-                  height: '55px'
+                  my: 3,
+                  position: 'relative'
                 }}
               >
-                <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
+                <FormControl fullWidth required>
                   <InputLabel id='demo-simple-select-required-label'>Customer</InputLabel>
                   <Select
+                    fullWidth
                     labelId='demo-simple-select-required-label'
                     id='demo-simple-select-required'
                     label='Customer *'
@@ -359,7 +340,6 @@ const Scan = ({ genDoc }: any) => {
                     </MenuItem>
                   </Select>
                 </FormControl>
-                <Box sx={{ flexGrow: 1 }} />
               </Box>
             ) : (
               ''
@@ -374,17 +354,18 @@ const Scan = ({ genDoc }: any) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Address'
-                  variant='filled'
+                  variant='outlined'
                   value={
                     input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)'
                       ? Amatanakhon
                       : input.customerName == 'SIAM KUBOTA Corporation Co., Ltd (Navanakorn Factory)'
-                        ? Navanakorn
-                        : ''
+                      ? Navanakorn
+                      : ''
                   }
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -415,7 +396,7 @@ const Scan = ({ genDoc }: any) => {
                   fullWidth
                   id='filled-basic'
                   label='Customer'
-                  variant='filled'
+                  variant='outlined'
                   value={input.customerName}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -438,11 +419,12 @@ const Scan = ({ genDoc }: any) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Address'
-                  variant='filled'
+                  variant='outlined'
                   value={input.address}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -464,28 +446,40 @@ const Scan = ({ genDoc }: any) => {
               }}
             >
               {/* <Box sx={{ flexGrow: 1 }} /> */}
-              <Box sx={{
-                display: { xs: 'flex' },
-                position: { xs: 'fixed', md: 'relative' },
-                bottom: { xs: '0' },
-                left: { xs: '0' },
-                width: { xs: '100%' },
-                zIndex: { xs: '1201' },
-                padding: { xs: '4px' },
-                gap: { xs: '4px' },
-                height: { xs: '80px', md: 'auto' }
-              }}>
-                <Button variant='contained' color='primary' size="large" type='submit' sx={{ marginRight: 1, width: '50%', height: '100%' }}>
+              <Box
+                sx={{
+                  display: { xs: 'flex' },
+                  position: { xs: 'fixed', md: 'relative' },
+                  bottom: { xs: '0' },
+                  left: { xs: '0' },
+                  width: { xs: '100%' },
+                  zIndex: { xs: '1201' },
+                  padding: { xs: '4px' },
+                  gap: { xs: '4px' },
+                  height: { xs: '60px', md: 'auto' },
+                  justifyContent: 'center',
+                  background: { xs: '#fff' }
+                }}
+              >
+                <Button
+                  variant='contained'
+                  color='primary'
+                  size='large'
+                  type='submit'
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
+                >
                   OK
                 </Button>
                 <Button
-                  variant='contained'
-                  size="large"
+                  variant='outlined'
+                  size='large'
                   onClick={() => {
-                    router.push('scan-loading/check-pallet')
+                    // router.push('scan-loading/check-pallet')
+                    resetStateFormData()
+                    resetForm()
                   }}
                   color='secondary'
-                  sx={{ marginRight: 1, width: '50%', height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
                 >
                   Clear
                 </Button>
@@ -510,50 +504,37 @@ const Scan = ({ genDoc }: any) => {
     )
   }
   return (
-    <Layout>
-      <Formik
-        initialValues={{ deEx: '', refNo: '', qty: '', invoiceNo: '', round: '', customerName: '', address: '' }}
-        onSubmit={async (values, { setSubmitting, resetForm }) => {
-          try {
-            // console.log({
-            //   ref_do_no: input.refNo,
-            //   question_type: input.question_type,
-            //   status: 'loading',
-            //   total_qty: input.qty,
-            //   invoice_no: input.invoiceNo,
-            //   round: input.round,
-            //   customer_name: input.customerName,
-            //   address: input.address
-            // })
-            await inputLoadingDoc(
-              {
-                ref_do_no: input.refNo,
-                question_type: input.question_type,
-                status: 'loading',
-                total_qty: input.qty,
-                invoice_no: input.invoiceNo,
-                round: input.round,
-                customer_name: input.customerName,
-                address: input.address
-              },
-              genDoc.id
-            )
+    <Formik
+      initialValues={{ deEx: '', refNo: '', qty: '', invoiceNo: '', round: '', customerName: '', address: '' }}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        try {
+          await inputLoadingDoc(
+            {
+              ref_do_no: input.refNo,
+              question_type: input.question_type,
+              status: 'loading',
+              total_qty: input.qty,
+              invoice_no: input.invoiceNo,
+              round: input.round,
+              customer_name: input.customerName,
+              address: input.address
+            },
+            genDoc.id
+          )
 
-            router.push(`/scan-loading/check-pallet`)
-            // router.push(`/scan-loading/checksheet1?id=${genDoc.id}`)
-            setSubmitting(false)
-          } catch (error) {
-            await MySwal.fire({
-              text: JSON.stringify(error),
-              position: 'top',
-              confirmButtonColor: theme.palette.primary.main
-            })
-          }
-        }}
-      >
-        {props => showForm(props)}
-      </Formik>
-    </Layout>
+          router.push(`/scan-loading/check-pallet`)
+          setSubmitting(false)
+        } catch (error) {
+          await MySwal.fire({
+            text: JSON.stringify(error),
+            position: 'top',
+            confirmButtonColor: theme.palette.primary.main
+          })
+        }
+      }}
+    >
+      {props => showForm(props)}
+    </Formik>
   )
 }
 // This gets called on every request
@@ -570,4 +551,9 @@ export async function getServerSideProps() {
     }
   }
 }
-export default withAuth(Scan)
+
+Scan.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
+}
+
+export default Scan

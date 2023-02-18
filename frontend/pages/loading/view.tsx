@@ -2,6 +2,7 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import PageviewIcon from '@mui/icons-material/Pageview'
 import { Box, Button, Typography } from '@mui/material'
+import type { ReactElement } from 'react'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 type Props = {}
 const columns: GridColDef[] = [
@@ -88,77 +89,82 @@ const rows = [
   { id: 8, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
   { id: 9, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' }
 ]
-const Overall = ({}: Props) => {
-  return (
-    <Layout>
-      <Box
-        component='main'
-        sx={{
-          display: { xs: 'none', md: 'flex', flexDirection: 'row' },
-          mb: 3,
-          position: 'relative',
-          height: '30px'
-        }}
-      >
-        <Typography variant='h5'>Delivery Daily Information</Typography>
-      </Box>
+const Overall = ({ }: Props) => {
+  return (<>
+    <Box
+      component='main'
+      sx={{
+        display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+        mb: 3,
+        position: 'relative',
+        height: '30px'
+      }}
+    >
+      <Typography variant='h5'>Delivery Daily Information</Typography>
+    </Box>
 
-      <Box
+    <Box
+      sx={{
+        height: 360,
+        width: '100%',
+        '& .cold': {
+          color: 'success.main'
+        },
+        '& .hot': {
+          color: 'error.main'
+        },
+        '& .headerField': {
+          fontSize: 16,
+          backgroundColor: '#55AAFF'
+        },
+        '& .customerField': {
+          backgroundColor: '#c7ddb5'
+        },
+        '& .cellField': {
+          fontSize: 20,
+          fontWeight: '700'
+        }
+      }}
+    >
+      <DataGrid
         sx={{
-          height: 360,
-          width: '100%',
-          '& .cold': {
-            color: 'success.main'
+          boxShadow: 2,
+          '& .MuiDataGrid-cell:hover': {
+            color: 'primary.main'
           },
-          '& .hot': {
-            color: 'error.main'
-          },
-          '& .headerField': {
-            fontSize: 16,
-            backgroundColor: '#55AAFF'
-          },
-          '& .customerField': {
-            backgroundColor: '#c7ddb5'
-          },
-          '& .cellField': {
-            fontSize: 20,
-            fontWeight: '700'
+          '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
+            outline: 'none'
           }
         }}
-      >
-        <DataGrid
-          sx={{
-            boxShadow: 2,
-            '& .MuiDataGrid-cell:hover': {
-              color: 'primary.main'
-            },
-            '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
-              outline: 'none'
-            }
-          }}
-          rows={rows}
-          columns={columns}
-          getCellClassName={(params: GridCellParams<string>) => {
-            if (params.field === 'customer') {
-              return 'customerField'
-            }
-            if (params.value == 'OK') {
-              return 'cold'
-            }
-            if (params.value == 'Waiting') {
-              return 'hot'
-            }
-            return ''
-          }}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          disableSelectionOnClick
-          disableColumnFilter
-          disableColumnMenu
-        />
-      </Box>
-    </Layout>
+        rows={rows}
+        columns={columns}
+        getCellClassName={(params: GridCellParams<string>) => {
+          if (params.field === 'customer') {
+            return 'customerField'
+          }
+          if (params.value == 'OK') {
+            return 'cold'
+          }
+          if (params.value == 'Waiting') {
+            return 'hot'
+          }
+          return ''
+        }}
+        pageSize={5}
+        rowsPerPageOptions={[5]}
+        disableSelectionOnClick
+        disableColumnFilter
+        disableColumnMenu
+      />
+    </Box>
+  </>
   )
 }
 
-export default withAuth(Overall)
+Overall.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default Overall

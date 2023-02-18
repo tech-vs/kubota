@@ -2,6 +2,7 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { Box, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
+import type { ReactElement } from 'react'
 type Props = {}
 const columns: GridColDef[] = [
   {
@@ -80,9 +81,9 @@ const rows = [
   { id: 8, lastName: 'Frances', firstName: 'Rossini', user: 'test8' },
   { id: 9, lastName: 'Roxie', firstName: 'Harvey', user: 'test9' }
 ]
-const Loading = ({}: any) => {
+const Loading = ({ }: any) => {
   return (
-    <Layout>
+    <>
       <Box
         component='main'
         sx={{
@@ -160,7 +161,7 @@ const Loading = ({}: any) => {
           disableColumnMenu
         />
       </Box>
-    </Layout>
+    </>
   )
 }
 
@@ -179,4 +180,10 @@ const Loading = ({}: any) => {
 //   }
 // }
 
-export default withAuth(Loading)
+Loading.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default Loading

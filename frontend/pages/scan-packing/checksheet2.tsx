@@ -1,6 +1,6 @@
 import SingleBarcode from '@/components/Barcode/SingleBarcode'
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
+import RollingLoading from '@/components/RollingLoading'
 import { IContentSingleBarcode } from '@/models/barcode.model'
 import { checksheetPartList, confirmCheckSheet2 } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
@@ -20,6 +20,7 @@ import { green, pink } from '@mui/material/colors'
 import { Form, Formik, FormikProps } from 'formik'
 import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
+import type { ReactElement } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -57,16 +58,15 @@ const View = ({ checksheets, id }: any) => {
           await toPng(singleBarcodeRef.current),
           (res: any) => {
             console.log(res)
-            resolve()
+            setTimeout(() => {
+              resolve()
+            }, 2000)
           },
           (err: any) => {
             console.error(err)
-            MySwal.fire({
-              text: 'No Printer found. Please recheck Printer',
-              position: 'top',
-              confirmButtonColor: theme.palette.primary.main
-            })
-            resolve()
+            setTimeout(() => {
+              resolve()
+            }, 2000)
           },
           {
             resize: { width: 600, height: 200 }
@@ -105,6 +105,7 @@ const View = ({ checksheets, id }: any) => {
           position: 'top',
           confirmButtonColor: theme.palette.primary.main
         })
+        setLoading(false)
         router.push(`/scan-packing`)
       } catch (error) {
         MySwal.fire({
@@ -112,6 +113,7 @@ const View = ({ checksheets, id }: any) => {
           position: 'top',
           confirmButtonColor: theme.palette.primary.main
         })
+        setLoading(false)
       }
     }
     call()
@@ -138,14 +140,14 @@ const View = ({ checksheets, id }: any) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Packing Check Sheet 2</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
-          <CardContent sx={{ pb: 4, px: { xs: 2, md: 4 } }}>
+          <CardContent sx={{ pb: 4, px: { xs: 4, md: 8 } }}>
             {checksheets.map((checksheet: any) => (
               <Box
                 key={checksheet.id}
@@ -157,7 +159,7 @@ const View = ({ checksheets, id }: any) => {
                   minHeight: '55px'
                 }}
               >
-                <Typography sx={{ mt: 1, mr: 3 }}> {checksheet.text}</Typography>
+                <Typography sx={{ mt: 1, mr: 3, fontSize: '13px' }}> {checksheet.text}</Typography>
                 <FormControl>
                   {/* <FormLabel id='demo-row-radio-buttons-group-label'>Gender</FormLabel> */}
                   <RadioGroup
@@ -166,7 +168,8 @@ const View = ({ checksheets, id }: any) => {
                     name='row-radio-buttons-group'
                     value={checksheet.status}
                     sx={{
-                      gap: '1rem'
+                      gap: '1rem',
+                      justifyContent: 'center'
                     }}
                   >
                     <FormControlLabel
@@ -175,14 +178,18 @@ const View = ({ checksheets, id }: any) => {
                         padding: '1rem',
                         margin: '1rem 0',
                         border: 'solid 1px',
+                        borderColor: 'success.main',
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
-                          background: 'greenyellow'
+                          boxShadow: 2,
+                          color: 'success.main'
                         },
-                        minWidth: '140px'
+                        minWidth: '110px',
+                        height: '1rem'
                       }}
                       control={
                         <Radio
+                          size='small'
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -213,14 +220,18 @@ const View = ({ checksheets, id }: any) => {
                         padding: '1rem',
                         margin: '1rem 0',
                         border: 'solid 1px',
+                        borderColor: 'secondary.main',
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
-                          background: '#ff6e6e'
+                          boxShadow: 2,
+                          color: 'secondary.main'
                         },
-                        minWidth: '140px'
+                        minWidth: '110px',
+                        height: '1rem'
                       }}
                       control={
                         <Radio
+                          size='small'
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -271,7 +282,9 @@ const View = ({ checksheets, id }: any) => {
                   zIndex: { xs: '1201' },
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
-                  height: { xs: '80px', md: 'auto' }
+                  height: { xs: '60px', md: 'auto' },
+                  justifyContent: 'center',
+                  background: { xs: '#fff' }
                 }}
               >
                 <Button
@@ -279,9 +292,10 @@ const View = ({ checksheets, id }: any) => {
                   size='large'
                   color='primary'
                   type='submit'
-                  sx={{ marginRight: 1, width: '100%', height: '100%' }}
+                  disabled={loading}
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px' }, height: '100%' }}
                 >
-                  Submit Packing
+                  {loading && <RollingLoading />} Submit Packing
                 </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
@@ -292,12 +306,13 @@ const View = ({ checksheets, id }: any) => {
     )
   }
   return (
-    <Layout>
+    <>
       <Formik
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           // alert(values.customer)
           try {
+            setLoading(true)
             // submit check sheet 2
             await confirmCheckSheet2(id)
             // get data for render barcode to printer
@@ -320,21 +335,26 @@ const View = ({ checksheets, id }: any) => {
               })
               // alert(JSON.stringify(error.response.data.detail))
             }
+            setLoading(false)
           }
-
-          // resetForm()
-          // window.confirm('test')
         }}
       >
         {props => showForm(props)}
       </Formik>
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', marginTop: '1rem' }}>
         <SingleBarcode ref={singleBarcodeRef} content={barcodeContent}></SingleBarcode>
-        <div
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
-        ></div>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: theme => theme.palette.background.default
+          }}
+        ></Box>
       </div>
-    </Layout>
+    </>
   )
 }
 
@@ -355,4 +375,8 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-export default withAuth(View)
+View.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
+}
+
+export default View

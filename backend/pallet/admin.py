@@ -6,12 +6,14 @@ from pallet.models import (
     RunningNumber,
     Document,
     DocumentPallet,
+    PalletPart,
+    PalletQuestion,
 )
 
 
-# class PartInline(admin.TabularInline):
-#     model = Pallet.part_list.through
-#     extra = 0
+# # class PartInline(admin.TabularInline):
+# #     model = Pallet.part_list.through
+# #     extra = 0
 
 
 # class QuestionInline(admin.TabularInline):
@@ -19,13 +21,28 @@ from pallet.models import (
 #     extra = 0
 
 
+@admin.register(PalletPart)
+class PalletPartAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_display = ('id', 'pallet_id', 'part_id',)
+
+
+# class QuestionInline(admin.TabularInline):
+#     model = Pallet.question_list.through
+#     extra = 0
+@admin.register(PalletQuestion)
+class PalletQuestionAdmin(admin.ModelAdmin):
+    list_per_page = 50
+    list_display = ('id', 'pallet_id', 'question_id', 'text', 'status', 'type', 'section',)
+
+
 @admin.register(Pallet)
 class PalletAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_display = ('id', 'pallet', 'skewer', 'pallet_string', 'internal_pallet_no',
-                    'packing_status', 'packing_datetime', 'created_at', 'updated_at',
+                    'packing_status', 'status', 'packing_datetime', 'created_at', 'updated_at',
                     'packing_by', 'status',)
-    # inlines = [PartInline, QuestionInline,]
+    # # inlines = [PartInline, QuestionInline,]
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('question_list', 'part_list')

@@ -1,18 +1,25 @@
 import { RootState } from '@/store/store'
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
 import PeopleIcon from '@mui/icons-material/People'
 import SummarizeIcon from '@mui/icons-material/Summarize'
-import { Stack, Tooltip } from '@mui/material'
+import { Stack, Tooltip, useMediaQuery } from '@mui/material'
 import Divider from '@mui/material/Divider'
 import MuiDrawer from '@mui/material/Drawer'
-import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
+// set icon
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import LocalShippingRoundedIcon from '@mui/icons-material/LocalShippingRounded';
+import LoopRoundedIcon from '@mui/icons-material/LoopRounded';
+import AssessmentRoundedIcon from '@mui/icons-material/AssessmentRounded';
+import FileDownloadRoundedIcon from '@mui/icons-material/FileDownloadRounded';
+import AssignmentTurnedInRoundedIcon from '@mui/icons-material/AssignmentTurnedInRounded';
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded';
+
+
 import { CSSObject, styled, Theme, useTheme } from '@mui/material/styles'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -72,29 +79,34 @@ type MenuProp = {
   onDrawerClose: () => void
 }
 
+type ColorMui = "inherit" | "disabled" | "error" | "action" | "primary" | "secondary" | "info" | "success" | "warning" | undefined
+
 export default function Menu({ open, onDrawerClose }: MenuProp) {
   const theme = useTheme()
   const router = useRouter()
 
+  const isSM = useMediaQuery(theme.breakpoints.down('sm'))
+
   const role = useSelector((state: RootState) => state.user.role)
   console.log('fewfw', role)
+  const colorPrimary = theme.palette.primary.main
 
   const operatorItems = [
     {
       name: 'Scan (Packing)',
-      icon: <SummarizeIcon />,
+      icon: (color: ColorMui = 'inherit') => <AddCircleRoundedIcon color={color} />,
       pathName: '/scan-packing',
       onClickAction: () => router.push('/scan-packing')
     },
     {
       name: 'Scan (Loading)',
-      icon: <SummarizeIcon />,
+      icon: (color: ColorMui = 'inherit') => <LocalShippingRoundedIcon color={color} />,
       pathName: '/scan-loading',
       onClickAction: () => router.push('/scan-loading')
     },
     {
       name: 'Repack',
-      icon: <SummarizeIcon />,
+      icon: (color: ColorMui = 'inherit') => <LoopRoundedIcon color={color} />,
       pathName: '/repack',
       onClickAction: () => router.push('/repack')
     }
@@ -102,19 +114,19 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
   const items = [
     {
       name: 'Check Sheet Issuing (Packing)',
-      icon: <SummarizeIcon />,
+      icon: (color: ColorMui = 'inherit') => <AssessmentRoundedIcon color={color} />,
       pathName: '/packing',
       onClickAction: () => router.push('/packing')
     },
     {
       name: 'Check Sheet (Loading)',
-      icon: <SummarizeIcon />,
+      icon: (color: ColorMui = 'inherit') => <AssessmentRoundedIcon color={color} />,
       pathName: '/loading',
       onClickAction: () => router.push('/loading')
     },
     {
       name: 'Import Stop Shipment',
-      icon: <FileUploadIcon />,
+      icon: (color: ColorMui = 'inherit') => <FileDownloadRoundedIcon color={color} />,
       pathName: '/import',
       onClickAction: () => router.push('/import')
     }
@@ -126,162 +138,188 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
     // }
   ]
   return (
-    <Drawer variant='permanent' open={!open}>
-      <DrawerHeader>
+    <Drawer variant='permanent' open={open === false}>
+      <DrawerHeader sx={{ display: 'flex', justifyContent: 'center' }}>
         <Stack direction='row'>
           <Image
             src='/img/kubota-icon.jpg'
             layout='fixed'
-            sizes='(max-width: 768px) 100vw,
-              (max-width: 1200px) 50vw,
-              33vw'
+            // sizes='(max-width: 768px) 100vw,
+            //   (max-width: 1200px) 50vw,
+            //   33vw'
             width={160}
-            height={50}
+            height={40}
             objectFit='contain'
             alt='logo'
-            style={{ marginLeft: '20px' }}
+          // style={{ marginLeft: '20px' }}
           />
-          <IconButton onClick={() => onDrawerClose()}>
+          {/* <IconButton onClick={() => onDrawerClose()}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
+          </IconButton> */}
         </Stack>
       </DrawerHeader>
       {role == 'Manager' || role == 'Administrator' ? <Divider /> : ''}
-      <List>
-        {role == 'Manager' || role == 'Administrator'
-          ? items.map((item, index) => (
-              <ListItem
-                key={item.name}
-                disablePadding
-                sx={{ display: 'block' }}
-                onClick={item.onClickAction}
-                style={router.pathname === item.pathName ? { background: '#fcf2dc' } : {}}
-              >
+      {role == 'Manager' || role == 'Administrator' ? (
+        <List>
+          {items.map((item, index) => (
+            <ListItem
+              key={item.name}
+              disablePadding
+              sx={{
+                background: router.pathname === item.pathName ? '#f1faff' : undefined,
+                color: router.pathname === item.pathName ? 'primary.main' : undefined
+              }}
+              onClick={item.onClickAction}
+            // style={router.pathname === item.pathName ? { background: '#fcf2dc' } : {}}
+            >
+              <Tooltip title={item.name} disableHoverListener={open === false} placement='right-start'>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? 'initial' : 'center',
-                    px: 2.5
+                    px: 2.5,
+                    whiteSpace: open ? '' : 'normal'
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center'
+                      mr: 3
                     }}
                   >
                     {/* disable hover when drawer open */}
-                    <Tooltip title={item.name} disableHoverListener={open} placement='right-start'>
-                      {item.icon}
-                    </Tooltip>
+                    {typeof item.icon === 'function' && router.pathname === item.pathName ? item.icon('primary') : item.icon()}
                   </ListItemIcon>
-                  <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary={item.name} />
                 </ListItemButton>
-              </ListItem>
-            ))
-          : ''}
-      </List>
+              </Tooltip>
+            </ListItem>
+          ))}
+        </List>
+      ) : (
+        ''
+      )}
       {role == 'Operator' ? <Divider /> : ''}
-      <List>
-        {role == 'Operator'
-          ? operatorItems.map((item, index) => (
-              <ListItem
-                key={item.name}
-                disablePadding
-                sx={{ display: 'block' }}
-                onClick={item.onClickAction}
-                style={router.pathname === item.pathName ? { background: '#fcf2dc' } : {}}
-              >
+      {role == 'Operator' && (
+        <List>
+          {operatorItems.map((item, index) => (
+            <ListItem
+              key={item.name}
+              disablePadding
+              sx={{
+                display: 'block',
+                background: router.pathname === item.pathName ? '#f1faff' : undefined,
+                color: router.pathname === item.pathName ? 'primary.main' : undefined
+              }}
+              onClick={item.onClickAction}
+            >
+              <Tooltip title={item.name} disableHoverListener={open === false} placement='right'>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? 'initial' : 'center',
-                    px: 2.5
+                    px: 2.5,
+                    whiteSpace: open ? '' : 'normal'
                   }}
                 >
                   <ListItemIcon
                     sx={{
                       minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center'
+                      mr: 3
                     }}
                   >
                     {/* disable hover when drawer open */}
-                    <Tooltip title={item.name} disableHoverListener={open} placement='right-start'>
-                      {item.icon}
-                    </Tooltip>
+                    {typeof item.icon === 'function' && router.pathname === item.pathName ? item.icon('primary') : item.icon()}
                   </ListItemIcon>
-                  <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary={item.name} />
                 </ListItemButton>
-              </ListItem>
-            ))
-          : ''}
-      </List>
+              </Tooltip>
+            </ListItem>
+          ))}
+        </List>
+      )
+      }
       {role == 'Manager' ? <Divider /> : ''}
-      <List>
-        {role == 'Manager'
-          ? ['Management Approve'].map((text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2.5
-                  }}
-                  onClick={() => router.push('/approval')}
-                  style={router.pathname === '/approval' ? { background: '#fcf2dc' } : {}}
-                >
-                  <ListItemIcon
+      {
+        role == 'Manager' && (
+          <List>
+            {['Management Approve'].map((text, index) => (
+              <ListItem
+                key={text}
+                disablePadding
+                sx={{
+                  background: router.pathname === '/approval' ? '#f1faff' : undefined,
+                  color: router.pathname === '/approval' ? 'primary.main' : undefined
+                }}
+              >
+                <Tooltip title={text} disableHoverListener={open === false} placement='right'>
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center'
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                      whiteSpace: open ? '' : 'normal'
                     }}
+                    onClick={() => router.push('/approval')}
                   >
-                    {/* disable hover when drawer open */}
-                    <Tooltip title={text} disableHoverListener={open} placement='right-start'>
-                      <PeopleIcon />
-                    </Tooltip>
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: 3
+                      }}
+                    >
+                      {/* disable hover when drawer open */}
+                      <AssignmentTurnedInRoundedIcon color={router.pathname === '/approval' ? 'primary' : 'inherit'} />
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                </Tooltip>
               </ListItem>
-            ))
-          : ''}
-      </List>
+            ))}
+          </List>
+        )
+      }
       {role == 'Administrator' ? <Divider /> : ''}
-      <List>
-        {role == 'Administrator'
-          ? ['User Management'].map((text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? 'initial' : 'center',
-                    px: 2.5
-                  }}
-                  onClick={() => router.push('/user')}
-                  style={router.pathname === '/user' ? { background: '#fcf2dc' } : {}}
-                >
-                  <ListItemIcon
+      {
+        role == 'Administrator' && (
+          <List>
+            {['User Management'].map((text, index) => (
+              <ListItem
+                key={text}
+                disablePadding
+                sx={{
+                  background: router.pathname === '/user' ? '#f1faff' : undefined,
+                  color: router.pathname === '/user' ? 'primary.main' : undefined
+                }}
+              >
+                <Tooltip title={text} disableHoverListener={open === false} placement='right'>
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : 'auto',
-                      justifyContent: 'center'
+                      minHeight: 48,
+                      justifyContent: open ? 'initial' : 'center',
+                      px: 2.5,
+                      whiteSpace: open ? '' : 'normal'
                     }}
+                    onClick={() => router.push('/user')}
                   >
-                    {/* disable hover when drawer open */}
-                    <Tooltip title={text} disableHoverListener={open} placement='right-start'>
-                      <PeopleIcon />
-                    </Tooltip>
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: 3,
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {/* disable hover when drawer open */}
+                      <ManageAccountsRoundedIcon color={router.pathname === '/user' ? 'primary' : 'inherit'} />
+                    </ListItemIcon>
+                    <ListItemText primary={text} />
+                  </ListItemButton>
+                </Tooltip>
               </ListItem>
-            ))
-          : ''}
-      </List>
-    </Drawer>
+            ))}
+          </List>
+        )
+      }
+    </Drawer >
   )
 }

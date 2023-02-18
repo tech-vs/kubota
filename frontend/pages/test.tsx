@@ -21,7 +21,7 @@ const Test = ({ }: Props) => {
         {
           serial_no: 'test',
           model_code: 'test',
-          model_name: 'test',
+          model_name: 'V2403-M-DI-TE3-TE1T',
           gross_weight: 'test',
           net_weight: 'test',
           country_name: 'test',
@@ -29,7 +29,7 @@ const Test = ({ }: Props) => {
         {
           serial_no: 'test',
           model_code: 'test',
-          model_name: 'test',
+          model_name: 'V2403-M-DI-TE3-TE1T',
           gross_weight: 'test',
           net_weight: 'test',
           country_name: 'test',
@@ -37,7 +37,7 @@ const Test = ({ }: Props) => {
         {
           serial_no: 'test',
           model_code: 'test',
-          model_name: 'test',
+          model_name: 'V2403-M-DI-TE3-TE1T',
           gross_weight: 'test',
           net_weight: 'test',
           country_name: 'test',
@@ -45,7 +45,7 @@ const Test = ({ }: Props) => {
         {
           serial_no: 'test',
           model_code: 'test',
-          model_name: 'test',
+          model_name: 'V2403-M-DI-TE3-TE1T',
           gross_weight: 'test',
           net_weight: 'test',
           country_name: 'test',
@@ -98,7 +98,7 @@ const Test = ({ }: Props) => {
   useEffect(() => {
     const MySwal = withReactContent(Swal)
     MySwal.fire({
-      text: 'Packing Successfully',
+      text: '****Test Swll Successfully****',
       position: 'top',
       confirmButtonColor: theme.palette.primary.main
     })

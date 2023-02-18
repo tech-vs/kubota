@@ -10,6 +10,7 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import Fade from '@mui/material/Fade';
 const drawerWidth = 240
 
 interface AppBarProps extends MuiAppBarProps {
@@ -52,29 +53,29 @@ export default function Header({ open, onDrawerOpen }: HeaderProp) {
     setAnchorEl(null)
   }
   return (
-    <AppBar position='fixed' open={!open}>
-      <Toolbar>
+    <AppBar position='fixed' open={!open} sx={{ background: 'white', boxShadow: '0', borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}>
+      <Toolbar >
         <IconButton
-          color='inherit'
           aria-label='open drawer'
           onClick={onDrawerOpen}
           edge='start'
           sx={{
-            marginRight: 5,
-            ...(open && { display: 'none' })
+            marginRight: 3,
+            color: '#000'
           }}
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant='h6' noWrap component='div'>
+        {/* <Typography variant='h6' noWrap component='div' color='primary'>
           Kubota
-        </Typography>
+        </Typography> */}
+        <Fade in={open}><img src="/img/kubota-icon.jpg" alt="kubota-icon" width="100" /></Fade>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: { xs: 'flex', md: 'flex', flexDirection: 'row-reverse' } }}>
           <IconButton
             size='large'
             aria-label='account of current user'
-            color='inherit'
+            color='primary'
             onClick={handleClick}
             aria-controls={openMenu ? 'account-menu' : undefined}
             aria-haspopup='true'

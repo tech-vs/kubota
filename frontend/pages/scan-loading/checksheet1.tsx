@@ -1,4 +1,5 @@
 import MultipleBarcode, { ILoadingSubmit, IMultipleBarcode } from '@/components/Barcode/MultipleBarcode'
+import RollingLoading from '@/components/RollingLoading'
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { confirmCheckSheet1, submitLoading } from '@/services/serverServices'
@@ -22,6 +23,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
+import type { ReactElement } from 'react'
 type Props = {}
 
 const View = ({ checksheets, id }: any) => {
@@ -38,7 +40,8 @@ const View = ({ checksheets, id }: any) => {
     })
   }
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false)
+  const [loadingApprove, setLoadingApprove] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
 
   const [selectedDevice, setSelectedDevice] = useState<any>()
@@ -91,16 +94,15 @@ const View = ({ checksheets, id }: any) => {
           await toPng(multipleBarcodeRef.current),
           (res: any) => {
             console.log(res)
-            resolve()
+            setTimeout(() => {
+              resolve()
+            }, 2000);
           },
           (err: any) => {
             console.error(err)
-            MySwal.fire({
-              text: 'No Printer found. Please recheck Printer',
-              position: 'top',
-              confirmButtonColor: theme.palette.primary.main
-            })
-            resolve()
+            setTimeout(() => {
+              resolve()
+            }, 2000);
           },
           {
             resize: { width: 900, height: 600 }
@@ -134,6 +136,8 @@ const View = ({ checksheets, id }: any) => {
           position: 'top',
           confirmButtonColor: theme.palette.primary.main
         })
+        setLoadingApprove(false)
+        setLoadingSubmit(false)
         router.push(`/scan-loading/check-pallet`)
       } catch (error) {
         MySwal.fire({
@@ -141,6 +145,8 @@ const View = ({ checksheets, id }: any) => {
           position: 'top',
           confirmButtonColor: theme.palette.primary.main
         })
+        setLoadingApprove(false)
+        setLoadingSubmit(false)
       }
     }
     call()
@@ -167,11 +173,11 @@ const View = ({ checksheets, id }: any) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Loading Check Sheet</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
           <CardContent sx={{ pb: 4, px: { xs: 2, md: 4 } }}>
@@ -195,7 +201,8 @@ const View = ({ checksheets, id }: any) => {
                     name='row-radio-buttons-group'
                     value={checksheet.status}
                     sx={{
-                      gap: '1rem'
+                      gap: '1rem',
+                      justifyContent: 'center'
                     }}
                   >
                     <FormControlLabel
@@ -204,14 +211,19 @@ const View = ({ checksheets, id }: any) => {
                         padding: '1rem',
                         margin: '1rem 0',
                         border: 'solid 1px',
+                        borderColor: 'success.main',
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
-                          background: 'greenyellow'
+                          // background: 'greenyellow'
+                          boxShadow: 2,
+                          color: 'success.main',
                         },
-                        minWidth: '140px'
+                        minWidth: '110px',
+                        height: '1rem'
                       }}
                       control={
                         <Radio
+                          size="small"
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -234,7 +246,7 @@ const View = ({ checksheets, id }: any) => {
                           }}
                         />
                       }
-                      label='Ok'
+                      label='OK'
                     />
                     <FormControlLabel
                       value='false'
@@ -242,14 +254,18 @@ const View = ({ checksheets, id }: any) => {
                         padding: '1rem',
                         margin: '1rem 0',
                         border: 'solid 1px',
+                        borderColor: 'secondary.main',
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
-                          background: '#ff6e6e'
+                          shadow: 2,
+                          color: 'secondary.main',
                         },
-                        minWidth: '140px'
+                        minWidth: '110px',
+                        height: '1rem'
                       }}
                       control={
                         <Radio
+                          size="small"
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -300,84 +316,107 @@ const View = ({ checksheets, id }: any) => {
                   zIndex: { xs: '1201' },
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
-                  height: { xs: '80px', md: 'auto' }
+                  height: { xs: '60px', md: 'auto' },
+                  background: { xs: '#fff' },
                 }}
               >
                 <Button
                   variant='contained'
                   onClick={async () => {
-                    if (typeof internalpalletid === 'string') {
-                      const internalpalletidInt = parseInt(internalpalletid)
-                      const res: ILoadingSubmit[] = await submitLoading({
-                        is_send_approve: false,
-                        pallet_id: internalpalletidInt
-                      })
-                      console.log(res)
-                      let template: IMultipleBarcode = {
-                        barcodes: [],
-                        country_name: '',
-                        net_weight: '',
-                        gross_weight: ''
-                      }
+                    try {
+                      setLoadingSubmit(true)
+                      if (typeof internalpalletid === 'string') {
+                        const internalpalletidInt = parseInt(internalpalletid)
+                        const res = await submitLoading({
+                          is_send_approve: false,
+                          pallet_id: internalpalletidInt
+                        })
+                        console.log(res.status)
+                        if (res.status === 400) {
+                          throw Error(res.data.detail)
+                        }
+                        const data: ILoadingSubmit[] = res.data
+                        let template: IMultipleBarcode = {
+                          barcodes: [],
+                          country_name: '',
+                          net_weight: '',
+                          gross_weight: ''
+                        }
 
-                      template = {
-                        ...template,
-                        barcodes: res,
-                        country_name: res[0]?.country_name,
-                        net_weight: res[0]?.net_weight,
-                        gross_weight: res[0]?.gross_weight
-                      }
+                        template = {
+                          ...template,
+                          barcodes: data,
+                          country_name: data[0]?.country_name,
+                          net_weight: data[0]?.net_weight,
+                          gross_weight: data[0]?.gross_weight
+                        }
 
-                      setBarcodeContent(template)
+                        setBarcodeContent(template)
+                      }
+                    } catch (error) {
+                      console.error(error);
+                      setLoadingSubmit(false)
                     }
                   }}
                   color='primary'
                   size='large'
+                  disabled={loadingSubmit || loadingApprove}
                   sx={{ marginRight: 1, width: '30%', height: '100%' }}
                 >
-                  Submit
+                  {loadingSubmit && <RollingLoading />} Submit
                 </Button>
                 <Button
                   variant='contained'
                   onClick={async () => {
-                    if (typeof internalpalletid === 'string') {
-                      const internalpalletidInt = parseInt(internalpalletid)
-                      const res: ILoadingSubmit[] = await submitLoading({
-                        is_send_approve: true,
-                        pallet_id: internalpalletidInt
-                      })
-                      console.log(res)
-                      let template: IMultipleBarcode = {
-                        barcodes: [],
-                        country_name: '',
-                        net_weight: '',
-                        gross_weight: ''
+                    try {
+                      setLoadingApprove(true)
+                      if (typeof internalpalletid === 'string') {
+                        const internalpalletidInt = parseInt(internalpalletid)
+                        const res = await submitLoading({
+                          is_send_approve: true,
+                          pallet_id: internalpalletidInt
+                        })
+                        console.log(res.status)
+                        if (res.status === 400) {
+                          throw Error(res.data.detail)
+                        }
+                        const data: ILoadingSubmit[] = res.data
+                        let template: IMultipleBarcode = {
+                          barcodes: [],
+                          country_name: '',
+                          net_weight: '',
+                          gross_weight: ''
+                        }
+
+                        template = {
+                          ...template,
+                          barcodes: data,
+                          country_name: data[0]?.country_name,
+                          net_weight: data[0]?.net_weight,
+                          gross_weight: data[0]?.gross_weight
+                        }
+
+                        setBarcodeContent(template)
+
+                        // await MySwal.fire({
+                        //   text: 'Last loading successfully and Request Approval',
+                        //   position: 'top',
+                        //   confirmButtonColor: theme.palette.primary.main
+                        // })
+                        // alert('Last oading successfully and Request Approval')
+                        router.push(`/scan-loading`)
                       }
-
-                      template = {
-                        ...template,
-                        barcodes: res,
-                        country_name: res[0]?.country_name,
-                        net_weight: res[0]?.net_weight,
-                        gross_weight: res[0]?.gross_weight
-                      }
-
-                      setBarcodeContent(template)
-
-                      await MySwal.fire({
-                        text: 'Last loading successfully and Request Approval',
-                        position: 'top',
-                        confirmButtonColor: theme.palette.primary.main
-                      })
-                      // alert('Last oading successfully and Request Approval')
-                      router.push(`/scan-loading`)
+                    } catch (error) {
+                      console.error(error);
+                      setLoadingApprove(false)
                     }
                   }}
-                  color='primary'
+                  color='success'
                   size='large'
+                  disabled={loadingSubmit || loadingApprove}
                   sx={{ marginRight: 1, width: '70%', height: '100%' }}
                 >
-                  Submit & Request Approval
+                  {loadingApprove && <RollingLoading />} Submit & Request Approval
                 </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
@@ -388,7 +427,7 @@ const View = ({ checksheets, id }: any) => {
     )
   }
   return (
-    <Layout>
+    <>
       <Formik
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
@@ -405,18 +444,20 @@ const View = ({ checksheets, id }: any) => {
               })
               // alert(JSON.stringify(error.response.data.detail))
             }
+            setLoadingApprove(false)
+            setLoadingSubmit(false)
           }
         }}
       >
         {props => showForm(props)}
       </Formik>
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', marginTop: '1rem' }}>
         <MultipleBarcode ref={multipleBarcodeRef} content={barcodeContent}></MultipleBarcode>
-        <div
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'white' }}
-        ></div>
+        <Box
+          sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: (theme) => theme.palette.background.default }}
+        ></Box>
       </div>
-    </Layout>
+    </>
   )
 }
 
@@ -437,4 +478,10 @@ export async function getServerSideProps(context: any) {
   }
 }
 
-export default withAuth(View)
+View.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default View

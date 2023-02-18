@@ -1,5 +1,4 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import { scanPallet } from '@/services/serverServices'
 import {
   Box,
@@ -7,8 +6,11 @@ import {
   Card,
   CardContent,
   FormControl,
+  FormControlLabel,
   InputLabel,
   MenuItem,
+  Radio,
+  RadioGroup,
   Select,
   SelectChangeEvent,
   TextField,
@@ -17,10 +19,10 @@ import {
 } from '@mui/material'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
-import { ChangeEvent, useState } from 'react'
+import type { ReactElement } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-
 type Props = {}
 
 type scanProps = {
@@ -31,7 +33,7 @@ type scanProps = {
   partSeq04: string
 }
 
-const Scan = ({ }: Props) => {
+const Scan = ({}: Props) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const router = useRouter()
@@ -46,6 +48,31 @@ const Scan = ({ }: Props) => {
   })
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
+
+  const palletNoRef = useRef<HTMLInputElement>(null)
+  const partSeq01Ref = useRef<HTMLInputElement>(null)
+  const [selectUnitIsOpen, setSelectUnitIsOpen] = useState(false)
+  const [rerenderUnitBlur, setRerenderUnitBlur] = useState(0)
+
+  useEffect(() => {
+    if (palletNoRef.current && deEx === 'Domestic') {
+      console.log(palletNoRef.current)
+      setTimeout(() => {
+        palletNoRef.current?.click()
+        palletNoRef.current?.focus()
+      }, 500)
+    }
+  }, [deEx])
+
+  useEffect(() => {
+    if (selectUnitIsOpen === false) {
+      setTimeout(() => {
+        partSeq01Ref.current?.click()
+        partSeq01Ref.current?.focus()
+      }, 500)
+    }
+  }, [selectUnitIsOpen])
+
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
     return (
       <Form>
@@ -55,11 +82,11 @@ const Scan = ({ }: Props) => {
             display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
             mb: 3,
             position: 'relative',
-            height: '30px'
+            height: '30px',
+            justifyContent: 'center'
           }}
         >
           <Typography variant='h5'>Scan Packing</Typography>
-          <Box sx={{ flexGrow: 1 }} />
         </Box>
         <Card sx={{ mx: { xs: 0, md: 6 } }}>
           <CardContent sx={{ pb: 4, px: 4 }}>
@@ -67,31 +94,94 @@ const Scan = ({ }: Props) => {
               component='main'
               sx={{
                 display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
-                my: 5,
+                my: 2,
                 position: 'relative',
-                height: '55px'
+                height: '55px',
+                justifyContent: 'center'
               }}
             >
-              <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60 }}>
-                <InputLabel id='demo-simple-select-required-label' sx={{ fontSize: 15 }}>
-                  Select...
-                </InputLabel>
-                <Select
-                  labelId='demo-simple-select-required-label'
-                  id='demo-simple-select-required'
-                  label='deEx *'
+              <FormControl>
+                <RadioGroup
+                  row
+                  aria-labelledby='demo-row-radio-buttons-group-label'
+                  name='row-radio-buttons-group'
                   value={deEx}
-                  onChange={(e: SelectChangeEvent<string>) => {
-                    e.preventDefault()
-                    setDeEx(e.target.value)
-                    setFieldValue('deEx', e.target.value)
+                  sx={{
+                    gap: '1rem',
+                    justifyContent: 'center'
                   }}
                 >
-                  <MenuItem value={'Domestic'}>Domestic</MenuItem>
-                  <MenuItem value={'Export'}>Export</MenuItem>
-                </Select>
+                  <FormControlLabel
+                    value='Domestic'
+                    sx={{
+                      padding: '1rem',
+                      margin: '1rem 0',
+                      border: 'solid 1px',
+                      borderColor: '#dedede',
+                      borderRadius: '1rem',
+                      color: '#121212',
+                      '&:has(.Mui-checked)': {
+                        boxShadow: 1,
+                        color: 'primary.main',
+                        borderColor: 'primary.main'
+                      },
+                      minWidth: '110px',
+                      height: '1rem'
+                    }}
+                    control={
+                      <Radio
+                        size='small'
+                        onChange={e => {
+                          setDeEx(e.target.value)
+                          setFieldValue('deEx', e.target.value)
+                        }}
+                        sx={{
+                          color: '#dedede',
+                          '&.Mui-checked': {
+                            color: 'primary.main'
+                          }
+                        }}
+                      />
+                    }
+                    label='Domestic'
+                  />
+                  <FormControlLabel
+                    value='Export'
+                    sx={{
+                      padding: '1rem',
+                      margin: '1rem 0',
+                      border: 'solid 1px',
+                      borderColor: '#dedede',
+                      borderRadius: '1rem',
+                      color: '#121212',
+                      '&:has(.Mui-checked)': {
+                        boxShadow: 1,
+                        color: 'primary.main',
+                        borderColor: 'primary.main'
+                      },
+                      minWidth: '110px',
+                      height: '1rem'
+                    }}
+                    control={
+                      <Radio
+                        size='small'
+                        onChange={e => {
+                          setDeEx(e.target.value)
+                          setFieldValue('deEx', e.target.value)
+                          setSelectUnitIsOpen(true)
+                        }}
+                        sx={{
+                          color: '#dedede',
+                          '&.Mui-checked': {
+                            color: 'primary.main'
+                          }
+                        }}
+                      />
+                    }
+                    label='Export'
+                  />
+                </RadioGroup>
               </FormControl>
-              <Box sx={{ flexGrow: 1 }} />
             </Box>
             {deEx == 'Domestic' || deEx == '' ? (
               ''
@@ -112,10 +202,22 @@ const Scan = ({ }: Props) => {
                     id='demo-simple-select-required'
                     label='Unit *'
                     value={unit}
+                    open={selectUnitIsOpen}
                     onChange={(e: SelectChangeEvent<string>) => {
                       e.preventDefault()
                       setUnit(e.target.value)
                       setFieldValue('unit', e.target.value)
+                    }}
+                    onOpen={() => {
+                      setSelectUnitIsOpen(true)
+                    }}
+                    onClose={() => {
+                      setTimeout(() => {
+                        if (document.activeElement instanceof HTMLElement) {
+                          document.activeElement.blur()
+                        }
+                      }, 0)
+                      setSelectUnitIsOpen(false)
                     }}
                   >
                     <MenuItem value={'0173'}>Unit 1</MenuItem>
@@ -137,11 +239,13 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  inputRef={palletNoRef}
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Pallet No.'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.palletNo}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -164,11 +268,13 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  inputRef={partSeq01Ref}
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Part Seq01'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.partSeq01}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -191,11 +297,12 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Part Seq02'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.partSeq02}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -218,11 +325,12 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Part Seq03'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.partSeq03}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -245,11 +353,12 @@ const Scan = ({ }: Props) => {
                 }}
               >
                 <TextField
+                  size='small'
                   required
                   fullWidth
                   id='filled-basic'
                   label='Part Seq04'
-                  variant='filled'
+                  variant='outlined'
                   value={scan.partSeq04}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     e.preventDefault()
@@ -269,24 +378,33 @@ const Scan = ({ }: Props) => {
               }}
             >
               {/* <Box sx={{ flexGrow: 1 }} /> */}
-              <Box sx={{
-                display: { xs: 'flex' },
-                position: { xs: 'fixed', md: 'relative' },
-                bottom: { xs: '0' },
-                left: { xs: '0' },
-                width: { xs: '100%' },
-                zIndex: { xs: '1201' },
-                padding: { xs: '4px' },
-                gap: { xs: '4px' },
-                height: { xs: '80px', md: 'auto' }
-              }}>
-                <Button variant='contained' size="large" color='primary' type='submit'
-                  sx={{ marginRight: 1, width: '50%', height: '100%' }}>
+              <Box
+                sx={{
+                  display: { xs: 'flex' },
+                  position: { xs: 'fixed', md: 'relative' },
+                  bottom: { xs: '0' },
+                  left: { xs: '0' },
+                  width: { xs: '100%' },
+                  zIndex: { xs: '1201' },
+                  padding: { xs: '4px' },
+                  gap: { xs: '4px' },
+                  height: { xs: '60px', md: 'auto' },
+                  justifyContent: 'center',
+                  background: { xs: '#fff' }
+                }}
+              >
+                <Button
+                  variant='contained'
+                  size='large'
+                  color='primary'
+                  type='submit'
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
+                >
                   Ok
                 </Button>
                 <Button
-                  variant='contained'
-                  size="large"
+                  variant='outlined'
+                  size='large'
                   onClick={() => {
                     // window.location.reload()
                     setDeEx('')
@@ -299,131 +417,121 @@ const Scan = ({ }: Props) => {
                     })
                   }}
                   color='secondary'
-                  sx={{ marginRight: 1, width: '50%', height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '50%', md: '200px' }, height: '100%' }}
                 >
                   Clear
                 </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
-            {/* <Box sx={{ width: '100%', my: 5 }}>
-              {loading ? <LinearProgress /> : <></>}
-              {success ? (
-                <Snackbar open={success} autoHideDuration={6000} onClose={() => setSucess(false)}>
-                  <Alert onClose={() => setSucess(false)} severity='success' sx={{ width: '100%' }}>
-                    This is a success message!
-                  </Alert>
-                </Snackbar>
-              ) : (
-                <></>
-              )}
-            </Box> */}
           </CardContent>
         </Card>
       </Form>
     )
   }
   return (
-    <Layout>
-      <Formik
-        initialValues={{ deEx: '', unit: '', palletNo: '', partSeq01: '', partSeq02: '', partSeq03: '', partSeq04: '' }}
-        onSubmit={async (values, { setSubmitting, resetForm }) => {
-          try {
-            setLoading(true)
-            setTimeout(() => {
-              setSucess(true)
-              setLoading(false)
-            }, 4000)
+    <Formik
+      initialValues={{ deEx: '', unit: '', palletNo: '', partSeq01: '', partSeq02: '', partSeq03: '', partSeq04: '' }}
+      onSubmit={async (values, { setSubmitting, resetForm }) => {
+        try {
+          setLoading(true)
+          setTimeout(() => {
+            setSucess(true)
+            setLoading(false)
+          }, 4000)
 
-            let data_domestic = {
-              pallet_skewer: scan.palletNo,
-              part_list: [
-                {
-                  prod_seq: '1',
-                  id_no: scan.partSeq01
-                },
-                {
-                  prod_seq: '2',
-                  id_no: scan.partSeq02
-                },
-                {
-                  prod_seq: '3',
-                  id_no: scan.partSeq03
-                },
-                {
-                  prod_seq: '4',
-                  id_no: scan.partSeq04
-                }
-              ],
-              question_type: values.deEx
-            }
-            let data_export = {
-              part_list: [
-                {
-                  prod_seq: '1',
-                  id_no: scan.partSeq01
-                },
-                {
-                  prod_seq: '2',
-                  id_no: scan.partSeq02
-                },
-                {
-                  prod_seq: '3',
-                  id_no: scan.partSeq03
-                },
-                {
-                  prod_seq: '4',
-                  id_no: scan.partSeq04
-                }
-              ],
-              question_type: values.deEx,
-              nw_gw: values.unit
-            }
-            setScan({
-              palletNo: '',
-              partSeq01: '',
-              partSeq02: '',
-              partSeq03: '',
-              partSeq04: ''
-            })
-            setDeEx('')
-            setUnit('')
-            if (
-              scan.partSeq01 == scan.partSeq02 ||
-              scan.partSeq01 == scan.partSeq03 ||
-              scan.partSeq01 == scan.partSeq04 ||
-              scan.partSeq02 == scan.partSeq03 ||
-              scan.partSeq02 == scan.partSeq04 ||
-              scan.partSeq03 == scan.partSeq04
-            ) {
-              MySwal.fire({
-                text: 'ID No. ซ้ำกันใน Pallet',
-                position: 'top',
-                confirmButtonColor: theme.palette.primary.main
-              })
-            } else {
-              const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export)
-              router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
-            }
-
-            setSubmitting(false)
-          } catch (error: any) {
-            if (error.response) {
-              MySwal.fire({
-                text: JSON.stringify(error.response.data),
-                position: 'top',
-                confirmButtonColor: theme.palette.primary.main
-              })
-              console.error(error)
-              // alert(JSON.stringify(error.response.data))
-            }
+          let data_domestic = {
+            pallet_skewer: scan.palletNo,
+            part_list: [
+              {
+                prod_seq: '1',
+                id_no: scan.partSeq01
+              },
+              {
+                prod_seq: '2',
+                id_no: scan.partSeq02
+              },
+              {
+                prod_seq: '3',
+                id_no: scan.partSeq03
+              },
+              {
+                prod_seq: '4',
+                id_no: scan.partSeq04
+              }
+            ],
+            question_type: values.deEx
           }
-        }}
-      >
-        {props => showForm(props)}
-      </Formik>
-    </Layout>
+          let data_export = {
+            part_list: [
+              {
+                prod_seq: '1',
+                id_no: scan.partSeq01
+              },
+              {
+                prod_seq: '2',
+                id_no: scan.partSeq02
+              },
+              {
+                prod_seq: '3',
+                id_no: scan.partSeq03
+              },
+              {
+                prod_seq: '4',
+                id_no: scan.partSeq04
+              }
+            ],
+            question_type: values.deEx,
+            nw_gw: values.unit
+          }
+          setScan({
+            palletNo: '',
+            partSeq01: '',
+            partSeq02: '',
+            partSeq03: '',
+            partSeq04: ''
+          })
+          setDeEx('')
+          setUnit('')
+          if (
+            scan.partSeq01 == scan.partSeq02 ||
+            scan.partSeq01 == scan.partSeq03 ||
+            scan.partSeq01 == scan.partSeq04 ||
+            scan.partSeq02 == scan.partSeq03 ||
+            scan.partSeq02 == scan.partSeq04 ||
+            scan.partSeq03 == scan.partSeq04
+          ) {
+            MySwal.fire({
+              text: 'ID No. ซ้ำกันใน Pallet',
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
+          } else {
+            const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export)
+            router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
+          }
+
+          setSubmitting(false)
+        } catch (error: any) {
+          if (error.response) {
+            MySwal.fire({
+              text: JSON.stringify(error.response.data),
+              position: 'top',
+              confirmButtonColor: theme.palette.primary.main
+            })
+            console.error(error)
+            // alert(JSON.stringify(error.response.data))
+          }
+        }
+      }}
+    >
+      {props => showForm(props)}
+    </Formik>
   )
 }
 
-export default withAuth(Scan)
+Scan.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>
+}
+
+export default Scan

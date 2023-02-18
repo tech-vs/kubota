@@ -2,26 +2,48 @@ import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import { approveDocument } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import { Box, Button, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { alpha, Box, Button, styled, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
+import type { ReactElement } from 'react'
 type Props = {}
 
-const VISIBLE_FIELDS = ['modelCode']
+const ODD_OPACITY = 0.2
 
-const rows = [
-  { id: 1, customer: 'Toyota', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 2, customer: 'AAT', shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 3, customer: 'Ford', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 4, customer: 'Isuzu', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 5, customer: 'Honda', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 6, customer: 1, shopping: 'OK', qGate: 'Waiting', loading: 'Waiting' },
-  { id: 7, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 8, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 9, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' }
-]
+const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+  [`& .${gridClasses.row}.even`]: {
+    backgroundColor: theme.palette.grey[200],
+    '&:hover, &.Mui-hovered': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+      '@media (hover: none)': {
+        backgroundColor: 'transparent'
+      }
+    },
+    '&.Mui-selected': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
+      '&:hover, &.Mui-hovered': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
+        ),
+        // Reset on touch devices, it doesn't add specificity
+        '@media (hover: none)': {
+          backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity)
+        }
+      }
+    }
+  }
+}))
 const Approval = ({ list }: any) => {
   const router = useRouter()
+
+  const theme = useTheme()
+  const isSM = useMediaQuery(theme.breakpoints.only('sm'))
+  const isMD = useMediaQuery(theme.breakpoints.only('md'))
+  const isXS = useMediaQuery(theme.breakpoints.only('xs'))
+
+  const isMobile = isSM || isMD || isXS
+
   // Call this function whenever you want to
   // refresh props!
   const refreshData = () => {
@@ -55,7 +77,7 @@ const Approval = ({ list }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'total_qty',
@@ -64,7 +86,7 @@ const Approval = ({ list }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'invoice_no',
@@ -82,7 +104,7 @@ const Approval = ({ list }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'customer_name',
@@ -100,16 +122,27 @@ const Approval = ({ list }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
-
     {
-      field: 'blank',
-      headerName: '',
+      field: 'view',
+      headerName: 'View',
+      headerAlign: 'center',
       headerClassName: 'headerField',
-      flex: 1
+      align: 'center',
+      width: 100,
+      renderCell: ({ row }: GridRenderCellParams<string>) => {
+        return (
+          <Button
+            variant='contained'
+            onClick={() => router.push(`/preview/${row.id}?type=2`)}
+            sx={{ borderRadius: 25 }}
+          >
+            View
+          </Button>
+        )
+      }
     },
-
     {
       field: 'approve',
       headerName: 'Approval',
@@ -126,6 +159,7 @@ const Approval = ({ list }: any) => {
               refreshData()
             }}
             sx={{ borderRadius: 50 }}
+            color='success'
           >
             Approve
           </Button>
@@ -134,14 +168,15 @@ const Approval = ({ list }: any) => {
     }
   ]
   return (
-    <Layout>
+    <>
       <Box
         component='main'
         sx={{
-          display: { xs: 'none', md: 'flex', flexDirection: 'row' },
+          display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
           mb: 3,
           position: 'relative',
-          height: '30px'
+          height: '30px',
+          justifyContent: 'center'
         }}
       >
         <Typography variant='h5'>Management Approval</Typography>
@@ -149,8 +184,8 @@ const Approval = ({ list }: any) => {
 
       <Box
         sx={{
-          height: 360,
-          width: '100%',
+          height: 720,
+          width: isMobile ? '100%' : 1225,
           '& .cold': {
             color: 'success.main'
           },
@@ -158,19 +193,17 @@ const Approval = ({ list }: any) => {
             color: 'error.main'
           },
           '& .headerField': {
-            fontSize: 16,
-            backgroundColor: '#55AAFF'
+            fontSize: 12
           },
           '& .customerField': {
             backgroundColor: '#c7ddb5'
           },
           '& .cellField': {
-            fontSize: 20,
-            fontWeight: '700'
+            fontSize: 12
           }
         }}
       >
-        <DataGrid
+        <StripedDataGrid
           sx={{
             boxShadow: 2,
             '& .MuiDataGrid-cell:hover': {
@@ -180,6 +213,7 @@ const Approval = ({ list }: any) => {
               outline: 'none'
             }
           }}
+          getRowClassName={params => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
           rows={list.results}
           columns={columns}
           getCellClassName={(params: GridCellParams<string>) => {
@@ -194,8 +228,8 @@ const Approval = ({ list }: any) => {
             }
             return ''
           }}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
+          pageSize={12}
+          rowsPerPageOptions={[12]}
           disableSelectionOnClick
           disableVirtualization
           disableExtendRowFullWidth
@@ -203,7 +237,7 @@ const Approval = ({ list }: any) => {
           disableColumnSelector
         />
       </Box>
-    </Layout>
+    </>
   )
 }
 
@@ -222,4 +256,10 @@ export async function getServerSideProps() {
   }
 }
 
-export default withAuth(Approval)
+Approval.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+
+export default Approval

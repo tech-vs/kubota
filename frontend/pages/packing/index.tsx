@@ -1,25 +1,48 @@
 import Layout from '@/components/Layouts/Layout'
 import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
-import { Box, Button, Typography } from '@mui/material'
-import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { alpha, Box, Button, Typography, useMediaQuery } from '@mui/material'
+import { CSSObject, styled, Theme, useTheme } from '@mui/material/styles'
+import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
 import { useRouter } from 'next/router'
+import { ReactElement, useState, useMemo } from 'react'
 
 type Props = {}
 
-const rows = [
-  { id: 1, customer: 'Toyota', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 2, customer: 'AAT', shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 3, customer: 'Ford', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 4, customer: 'Isuzu', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 5, customer: 'Honda', shopping: 'OK', qGate: 'OK', loading: 'Waiting' },
-  { id: 6, customer: 1, shopping: 'OK', qGate: 'Waiting', loading: 'Waiting' },
-  { id: 7, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 8, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' },
-  { id: 9, customer: 1, shopping: 'Waiting', qGate: 'OK', loading: 'Waiting' }
-]
+const ODD_OPACITY = 0.2
+
+const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+  [`& .${gridClasses.row}.even`]: {
+    backgroundColor: theme.palette.grey[200],
+    '&:hover, &.Mui-hovered': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+      '@media (hover: none)': {
+        backgroundColor: 'transparent'
+      }
+    },
+    '&.Mui-selected': {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity),
+      '&:hover, &.Mui-hovered': {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
+        ),
+        // Reset on touch devices, it doesn't add specificity
+        '@media (hover: none)': {
+          backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY + theme.palette.action.selectedOpacity)
+        }
+      }
+    }
+  }
+}))
 const Overall = ({ packingList }: any) => {
   const router = useRouter()
+  const theme = useTheme()
+  const isSM = useMediaQuery(theme.breakpoints.only('sm'))
+  const isMD = useMediaQuery(theme.breakpoints.only('md'))
+  const isXS = useMediaQuery(theme.breakpoints.only('xs'))
+
+  const isMobile = isSM || isMD || isXS
 
   const columns: GridColDef[] = [
     {
@@ -39,7 +62,7 @@ const Overall = ({ packingList }: any) => {
       align: 'center',
       type: 'string',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'model_name',
@@ -48,7 +71,7 @@ const Overall = ({ packingList }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 250
+      width: 150
     },
     {
       field: 'serial_no',
@@ -57,7 +80,7 @@ const Overall = ({ packingList }: any) => {
       headerClassName: 'headerField',
       align: 'center',
       cellClassName: 'cellField',
-      width: 150
+      width: 100
     },
     {
       field: 'country_code',
@@ -96,12 +119,12 @@ const Overall = ({ packingList }: any) => {
       width: 150
     },
 
-    {
-      field: 'blank',
-      headerName: '',
-      headerClassName: 'headerField',
-      flex: 1
-    },
+    // {
+    //   field: 'blank',
+    //   headerName: '',
+    //   headerClassName: 'headerField',
+    //   flex: 1
+    // },
     {
       field: 'view',
       headerName: 'View',
@@ -122,24 +145,32 @@ const Overall = ({ packingList }: any) => {
       }
     }
   ]
+
+  const [sortModel, setSortModel] = useState<GridSortModel>(
+    [{
+      field: 'internal_pallet_no',
+      sort: 'desc',
+    }],
+  );
+
   return (
-    <Layout>
+    <>
       <Box
         component='main'
         sx={{
           display: { xs: 'flex', md: 'flex', flexDirection: 'row' },
           mb: 3,
           position: 'relative',
-          height: '30px'
+          height: '30px',
+          justifyContent: 'center'
         }}
       >
         <Typography variant='h5'>View Packing List</Typography>
       </Box>
-
       <Box
         sx={{
-          height: 800,
-          width: '100%',
+          height: 720,
+          width: isMobile ? '100%' : 1270,
           '& .cold': {
             color: 'success.main'
           },
@@ -147,19 +178,18 @@ const Overall = ({ packingList }: any) => {
             color: 'error.main'
           },
           '& .headerField': {
-            fontSize: 16,
-            backgroundColor: '#55AAFF'
+            fontSize: 12
           },
           '& .customerField': {
             backgroundColor: '#c7ddb5'
           },
           '& .cellField': {
-            fontSize: 20,
-            fontWeight: '700'
+            fontSize: 12
           }
         }}
       >
-        <DataGrid
+        <StripedDataGrid
+          getRowClassName={params => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
           getRowId={packingList => packingList.serial_no}
           sx={{
             boxShadow: 2,
@@ -184,33 +214,35 @@ const Overall = ({ packingList }: any) => {
             }
             return ''
           }}
-          pageSize={15}
-          rowsPerPageOptions={[15]}
+          sortModel={sortModel}
+          onSortModelChange={(model) => setSortModel(model)}
+          pageSize={12}
+          rowsPerPageOptions={[12]}
           disableSelectionOnClick
           disableVirtualization
           disableExtendRowFullWidth
           disableIgnoreModificationsIfProcessingProps
           disableColumnSelector
-          initialState={{
-            pagination: {
-              pageSize: 15
-            }
-          }}
         />
       </Box>
-    </Layout>
+    </>
   )
 }
 
 // This gets called on every request
 export async function getServerSideProps() {
-  const response = await httpClient.get(`/pallet/part-list/?status=finish_pack`)
-  console.log(response)
+  const response = await httpClient.get(`/pallet/part-list/?packing_status=TRUE`)
 
   return {
     props: {
-      packingList: response.data.results
+      packingList: response.data
     }
   }
 }
-export default withAuth(Overall)
+
+Overall.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <Layout>{page}</Layout>
+  )
+}
+export default Overall

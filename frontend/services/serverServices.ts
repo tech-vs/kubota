@@ -83,13 +83,6 @@ export const exportExcel = async (data: exportExcelProps): Promise<void> => {
   return response.data
 }
 
-// export const importExcel = async (data: FormData): Promise<void> => {
-//   const response = await httpClient.post('/import', data, {
-//     baseURL: process.env.NEXT_PUBLIC_BASE_URL_LOCAL_API
-//   })
-//   return response.data
-// }
-
 export const scanPallet = async (data: scanPalletProps): Promise<any> => {
   const response = await httpClient.post('/pallet/', data)
   return response.data
@@ -136,7 +129,7 @@ export const confirmCheckSheet3 = async (palletID: String): Promise<any> => {
 
 export const submitLoading = async (data: submitLoadingProps): Promise<any> => {
   const response = await httpClient.post(`/pallet/loading/submit/`, data)
-  return response.data
+  return response
 }
 
 export const approveDocument = async (id: string): Promise<any> => {
