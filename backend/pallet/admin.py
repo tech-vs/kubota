@@ -5,17 +5,18 @@ from pallet.models import (
     QuestionTemplate,
     RunningNumber,
     Document,
+    DocumentPallet,
 )
 
 
-class PartInline(admin.TabularInline):
-    model = Pallet.part_list.through
-    extra = 0
+# class PartInline(admin.TabularInline):
+#     model = Pallet.part_list.through
+#     extra = 0
 
 
-class QuestionInline(admin.TabularInline):
-    model = Pallet.question_list.through
-    extra = 0
+# class QuestionInline(admin.TabularInline):
+#     model = Pallet.question_list.through
+#     extra = 0
 
 
 @admin.register(Pallet)
@@ -23,8 +24,8 @@ class PalletAdmin(admin.ModelAdmin):
     list_per_page = 50
     list_display = ('id', 'pallet', 'skewer', 'pallet_string', 'internal_pallet_no',
                     'packing_status', 'packing_datetime', 'created_at', 'updated_at',
-                    'packing_by',)
-    inlines = [PartInline, QuestionInline,]
+                    'packing_by', 'status',)
+    # inlines = [PartInline, QuestionInline,]
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('question_list', 'part_list')
@@ -58,3 +59,8 @@ class DocumentInline(admin.TabularInline):
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ('id', 'doc_no', 'delivery_date', 'status', 'loading_by', 'last_approve_by', 'remark_reject',)
     inlines = [DocumentInline]
+
+
+@admin.register(DocumentPallet)
+class DocumentPalletAdmin(admin.ModelAdmin):
+    list_display = ('id', 'document', 'pallet_id',)
