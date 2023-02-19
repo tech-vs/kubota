@@ -391,7 +391,7 @@ const User = ({ user }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps() {
+export async function getServerSideProps(context: any) {
   const response = await httpClient.get('/account/user/', {
     headers: {
       Accept: 'application/json'

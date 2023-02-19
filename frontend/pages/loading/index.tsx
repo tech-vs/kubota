@@ -1,8 +1,15 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
 import { alpha, Box, Button, styled, Typography, useMediaQuery, useTheme } from '@mui/material'
-import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
+import {
+  DataGrid,
+  GridCellParams,
+  gridClasses,
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel
+} from '@mui/x-data-grid'
+import cookie from 'cookie'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
 type Props = {}
@@ -136,12 +143,12 @@ const Overall = ({ loadingList }: any) => {
     }
   ]
 
-  const [sortModel, setSortModel] = useState<GridSortModel>(
-    [{
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    {
       field: 'doc_no',
-      sort: 'desc',
-    }],
-  );
+      sort: 'desc'
+    }
+  ])
 
   return (
     <>
@@ -205,7 +212,7 @@ const Overall = ({ loadingList }: any) => {
             return ''
           }}
           sortModel={sortModel}
-          onSortModelChange={(model) => setSortModel(model)}
+          onSortModelChange={model => setSortModel(model)}
           pageSize={12}
           rowsPerPageOptions={[12]}
           disableSelectionOnClick
@@ -220,10 +227,13 @@ const Overall = ({ loadingList }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps() {
+export async function getServerSideProps(context: any) {
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const accessToken = cookies['access_token']
   const response = await httpClient.get(`/pallet/document/?status=approved`, {
     headers: {
-      Accept: 'application/json'
+      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`
     }
   })
   return {
@@ -234,8 +244,6 @@ export async function getServerSideProps() {
 }
 
 Overall.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 export default Overall

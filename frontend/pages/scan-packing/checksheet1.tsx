@@ -1,5 +1,4 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import { confirmCheckSheet1 } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
@@ -15,6 +14,7 @@ import {
   useTheme
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
+import cookie from 'cookie'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
@@ -22,7 +22,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 type Props = {}
 
-const View = ({ checksheets, id }: any) => {
+const View = ({ checksheets, id, accessToken }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const router = useRouter()
@@ -89,7 +89,7 @@ const View = ({ checksheets, id }: any) => {
                         '&:has(.Mui-checked)': {
                           // background: 'greenyellow',
                           boxShadow: 2,
-                          color: 'success.main',
+                          color: 'success.main'
                         },
                         minWidth: '110px',
                         height: '1rem'
@@ -105,7 +105,8 @@ const View = ({ checksheets, id }: any) => {
                               },
                               {
                                 headers: {
-                                  'Content-Type': 'application/json'
+                                  'Content-Type': 'application/json',
+                                  Authorization: `Bearer ${accessToken}`
                                 }
                               }
                             )
@@ -131,7 +132,7 @@ const View = ({ checksheets, id }: any) => {
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
                           boxShadow: 2,
-                          color: 'secondary.main',
+                          color: 'secondary.main'
                         },
                         minWidth: '110px',
                         height: '1rem'
@@ -147,7 +148,8 @@ const View = ({ checksheets, id }: any) => {
                               },
                               {
                                 headers: {
-                                  'Content-Type': 'application/json'
+                                  'Content-Type': 'application/json',
+                                  Authorization: `Bearer ${accessToken}`
                                 }
                               }
                             )
@@ -179,21 +181,28 @@ const View = ({ checksheets, id }: any) => {
                 height: '55px'
               }}
             >
-              <Box sx={{
-                display: { xs: 'flex' },
-                position: { xs: 'fixed', md: 'relative' },
-                bottom: { xs: '0' },
-                left: { xs: '0' },
-                width: { xs: '100%', md: '100%' },
-                zIndex: { xs: '1201' },
-                padding: { xs: '4px' },
-                gap: { xs: '4px' },
-                height: { xs: '60px', md: 'auto' },
-                justifyContent: 'center',
-                background: { xs: '#fff' }
-              }}>
-                <Button variant='contained' size="large" color='primary' type='submit'
-                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px', }, height: '100%' }}>
+              <Box
+                sx={{
+                  display: { xs: 'flex' },
+                  position: { xs: 'fixed', md: 'relative' },
+                  bottom: { xs: '0' },
+                  left: { xs: '0' },
+                  width: { xs: '100%', md: '100%' },
+                  zIndex: { xs: '1201' },
+                  padding: { xs: '4px' },
+                  gap: { xs: '4px' },
+                  height: { xs: '60px', md: 'auto' },
+                  justifyContent: 'center',
+                  background: { xs: '#fff' }
+                }}
+              >
+                <Button
+                  variant='contained'
+                  size='large'
+                  color='primary'
+                  type='submit'
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px' }, height: '100%' }}
+                >
                   Ok
                 </Button>
               </Box>
@@ -220,7 +229,7 @@ const View = ({ checksheets, id }: any) => {
             //   setLoading(false)
             // }, 4000)
 
-            await confirmCheckSheet1(id)
+            await confirmCheckSheet1(id, accessToken)
             router.push(`/scan-packing/checksheet2?id=${id}`)
             setSubmitting(false)
           } catch (error: any) {
@@ -244,16 +253,20 @@ const View = ({ checksheets, id }: any) => {
 // This gets called on every request
 export async function getServerSideProps(context: any) {
   const id = context.query.id
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const accessToken = cookies['access_token']
   const response = await httpClient.get(`/pallet/${id}/section/1/question/`, {
     headers: {
-      Accept: 'application/json'
+      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`
     }
   })
 
   return {
     props: {
       checksheets: response.data,
-      id
+      id,
+      accessToken
     }
   }
 }

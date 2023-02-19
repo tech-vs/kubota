@@ -1,11 +1,18 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import httpClient from '@/utils/httpClient'
 import { alpha, Box, Button, Typography, useMediaQuery } from '@mui/material'
-import { CSSObject, styled, Theme, useTheme } from '@mui/material/styles'
-import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid'
+import { styled, useTheme } from '@mui/material/styles'
+import {
+  DataGrid,
+  GridCellParams,
+  gridClasses,
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel
+} from '@mui/x-data-grid'
+import cookie from 'cookie'
 import { useRouter } from 'next/router'
-import { ReactElement, useState, useMemo } from 'react'
+import { ReactElement, useState } from 'react'
 
 type Props = {}
 
@@ -146,12 +153,12 @@ const Overall = ({ packingList }: any) => {
     }
   ]
 
-  const [sortModel, setSortModel] = useState<GridSortModel>(
-    [{
+  const [sortModel, setSortModel] = useState<GridSortModel>([
+    {
       field: 'internal_pallet_no',
-      sort: 'desc',
-    }],
-  );
+      sort: 'desc'
+    }
+  ])
 
   return (
     <>
@@ -215,7 +222,7 @@ const Overall = ({ packingList }: any) => {
             return ''
           }}
           sortModel={sortModel}
-          onSortModelChange={(model) => setSortModel(model)}
+          onSortModelChange={model => setSortModel(model)}
           pageSize={12}
           rowsPerPageOptions={[12]}
           disableSelectionOnClick
@@ -230,8 +237,12 @@ const Overall = ({ packingList }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps() {
-  const response = await httpClient.get(`/pallet/part-list/?packing_status=TRUE`)
+export async function getServerSideProps(context: any) {
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const accessToken = cookies['access_token']
+  const response = await httpClient.get(`/pallet/part-list/?packing_status=TRUE`, {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  })
 
   return {
     props: {
@@ -241,8 +252,6 @@ export async function getServerSideProps() {
 }
 
 Overall.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 export default Overall

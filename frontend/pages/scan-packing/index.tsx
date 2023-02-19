@@ -17,6 +17,7 @@ import {
   Typography,
   useTheme
 } from '@mui/material'
+import cookie from 'cookie'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import type { ReactElement } from 'react'
@@ -33,7 +34,7 @@ type scanProps = {
   partSeq04: string
 }
 
-const Scan = ({}: Props) => {
+const Scan = ({ accessToken }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const router = useRouter()
@@ -507,7 +508,7 @@ const Scan = ({}: Props) => {
               confirmButtonColor: theme.palette.primary.main
             })
           } else {
-            const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export)
+            const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export, accessToken)
             router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
           }
 
@@ -532,6 +533,18 @@ const Scan = ({}: Props) => {
 
 Scan.getLayout = function getLayout(page: ReactElement) {
   return <Layout>{page}</Layout>
+}
+
+// This gets called on every request
+export async function getServerSideProps(context: any) {
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const accessToken = cookies['access_token']
+
+  return {
+    props: {
+      accessToken
+    }
+  }
 }
 
 export default Scan

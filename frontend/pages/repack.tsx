@@ -1,18 +1,15 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import { repack, scanLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import {
-  Box, Button, TextField, Typography, useTheme, Card,
-  CardContent, styled, alpha
-} from '@mui/material'
-import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { alpha, Box, Button, Card, CardContent, styled, TextField, Typography, useTheme } from '@mui/material'
+import { DataGrid, GridCellParams, gridClasses, GridColDef } from '@mui/x-data-grid'
+import cookie from 'cookie'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
+import type { ReactElement } from 'react'
 import { ChangeEvent, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import type { ReactElement } from 'react'
 type Props = {}
 const columns: GridColDef[] = [
   {
@@ -115,7 +112,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   }
 }))
 
-const Repack = ({ genDoc }: any) => {
+const Repack = ({ partList, accessToken }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const showForm = ({ values, setFieldValue, resetForm }: FormikProps<any>) => {
@@ -134,14 +131,14 @@ const Repack = ({ genDoc }: any) => {
 
     useEffect(() => {
       async function call() {
-        const res = await scanLoading(scan.internalPalletNo)
+        const res = await scanLoading(scan.internalPalletNo, accessToken)
+        console.log(res)
         setScanLoadingResponse(res)
         setScanLoadingResponseResult(res.item_list)
       }
       call()
     }, [scan])
     return (
-
       <Form>
         <Box
           component='main'
@@ -195,13 +192,13 @@ const Repack = ({ genDoc }: any) => {
                   color: 'error.main'
                 },
                 '& .headerField': {
-                  fontSize: 12,
+                  fontSize: 12
                 },
                 '& .customerField': {
                   backgroundColor: '#c7ddb5'
                 },
                 '& .cellField': {
-                  fontSize: 12,
+                  fontSize: 12
                 }
               }}
             >
@@ -302,7 +299,9 @@ const Repack = ({ genDoc }: any) => {
                   onClick={async () => {
                     try {
                       if (scanLoadingResponse.pallet_id) {
-                        await repack(genDoc.id)
+                        const res = await repack(scanLoadingResponse.pallet_id, accessToken)
+                        console.log(res)
+
                         MySwal.fire({
                           text: 'Repack สำเร็จ',
                           position: 'top',
@@ -326,7 +325,7 @@ const Repack = ({ genDoc }: any) => {
                     }
                   }}
                   color='primary'
-                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px', }, height: '100%' }}
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px' }, height: '100%' }}
                 >
                   OK
                 </Button>
@@ -361,27 +360,25 @@ const Repack = ({ genDoc }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps() {
+export async function getServerSideProps(context: any) {
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const accessToken = cookies['access_token']
   const response = await httpClient.get('/pallet/document/gen-doc/', {
-    headers: {
-      Accept: 'application/json'
-    }
+    headers: { Authorization: `Bearer ${accessToken}` }
   })
 
   return {
     props: {
-      genDoc: response.data
+      partList: response.data,
+      accessToken
     }
   }
 }
-
 
 const warpper: any = withRouter(Repack)
 
 export default warpper
 
 warpper.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }

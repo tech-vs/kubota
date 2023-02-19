@@ -18,6 +18,7 @@ import {
   useTheme
 } from '@mui/material'
 import LinearProgress from '@mui/material/LinearProgress'
+import cookie from 'cookie'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter } from 'next/router'
 import type { ReactElement } from 'react'
@@ -31,7 +32,7 @@ var Amatanakhon =
   '700/867 Moo 3 Amata Nakhon Industrial Estate, Tambon Nong Ka Kha,District, Panthong District, Chon Buri 20160'
 var Navanakorn =
   '101/19-24 Moo 20 Navanakorn Industrial Estate, Tambon Khlongnueng,District Khlongluang, Pathumthani 12120'
-const Scan = ({ genDoc }: any) => {
+const Scan = ({ genDoc, accessToken }: any) => {
   const router = useRouter()
   // Call this function whenever you want to
   // refresh props!
@@ -40,7 +41,6 @@ const Scan = ({ genDoc }: any) => {
       scroll: false
     })
   }
-
   const [deEx, setDeEx] = useState<string>('')
   const [customer, setCustomer] = useState<string>('SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)')
   const [address, setAddress] = useState<string>(Amatanakhon)
@@ -519,7 +519,8 @@ const Scan = ({ genDoc }: any) => {
               customer_name: input.customerName,
               address: input.address
             },
-            genDoc.id
+            genDoc.id,
+            accessToken
           )
 
           router.push(`/scan-loading/check-pallet`)
@@ -538,16 +539,17 @@ const Scan = ({ genDoc }: any) => {
   )
 }
 // This gets called on every request
-export async function getServerSideProps() {
-  const response = await httpClient.get('/pallet/document/gen-doc/', {
-    headers: {
-      Accept: 'application/json'
-    }
+export async function getServerSideProps(context: any) {
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const accessToken = cookies['access_token']
+  const response = await httpClient.get(`/pallet/document/gen-doc/`, {
+    headers: { Authorization: `Bearer ${accessToken}` }
   })
 
   return {
     props: {
-      genDoc: response.data
+      genDoc: response.data,
+      accessToken
     }
   }
 }

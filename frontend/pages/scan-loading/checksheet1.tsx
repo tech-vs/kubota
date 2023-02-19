@@ -1,7 +1,6 @@
 import MultipleBarcode, { ILoadingSubmit, IMultipleBarcode } from '@/components/Barcode/MultipleBarcode'
-import RollingLoading from '@/components/RollingLoading'
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
+import RollingLoading from '@/components/RollingLoading'
 import { confirmCheckSheet1, submitLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
@@ -17,16 +16,17 @@ import {
   useTheme
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
+import cookie from 'cookie'
 import { Form, Formik, FormikProps } from 'formik'
 import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
+import type { ReactElement } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import type { ReactElement } from 'react'
 type Props = {}
 
-const View = ({ checksheets, id }: any) => {
+const View = ({ checksheets, id, accessToken }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const router = useRouter()
@@ -96,13 +96,13 @@ const View = ({ checksheets, id }: any) => {
             console.log(res)
             setTimeout(() => {
               resolve()
-            }, 2000);
+            }, 2000)
           },
           (err: any) => {
             console.error(err)
             setTimeout(() => {
               resolve()
-            }, 2000);
+            }, 2000)
           },
           {
             resize: { width: 900, height: 600 }
@@ -216,14 +216,14 @@ const View = ({ checksheets, id }: any) => {
                         '&:has(.Mui-checked)': {
                           // background: 'greenyellow'
                           boxShadow: 2,
-                          color: 'success.main',
+                          color: 'success.main'
                         },
                         minWidth: '110px',
                         height: '1rem'
                       }}
                       control={
                         <Radio
-                          size="small"
+                          size='small'
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -232,7 +232,8 @@ const View = ({ checksheets, id }: any) => {
                               },
                               {
                                 headers: {
-                                  'Content-Type': 'application/json'
+                                  'Content-Type': 'application/json',
+                                  Authorization: `Bearer ${accessToken}`
                                 }
                               }
                             )
@@ -258,14 +259,14 @@ const View = ({ checksheets, id }: any) => {
                         borderRadius: '1rem',
                         '&:has(.Mui-checked)': {
                           shadow: 2,
-                          color: 'secondary.main',
+                          color: 'secondary.main'
                         },
                         minWidth: '110px',
                         height: '1rem'
                       }}
                       control={
                         <Radio
-                          size="small"
+                          size='small'
                           onChange={async () => {
                             const response = await httpClient.patch(
                               `/pallet/question/${checksheet.id}/status/`,
@@ -274,7 +275,8 @@ const View = ({ checksheets, id }: any) => {
                               },
                               {
                                 headers: {
-                                  'Content-Type': 'application/json'
+                                  'Content-Type': 'application/json',
+                                  Authorization: `Bearer ${accessToken}`
                                 }
                               }
                             )
@@ -317,7 +319,7 @@ const View = ({ checksheets, id }: any) => {
                   padding: { xs: '4px' },
                   gap: { xs: '4px' },
                   height: { xs: '60px', md: 'auto' },
-                  background: { xs: '#fff' },
+                  background: { xs: '#fff' }
                 }}
               >
                 <Button
@@ -327,10 +329,13 @@ const View = ({ checksheets, id }: any) => {
                       setLoadingSubmit(true)
                       if (typeof internalpalletid === 'string') {
                         const internalpalletidInt = parseInt(internalpalletid)
-                        const res = await submitLoading({
-                          is_send_approve: false,
-                          pallet_id: internalpalletidInt
-                        })
+                        const res = await submitLoading(
+                          {
+                            is_send_approve: false,
+                            pallet_id: internalpalletidInt
+                          },
+                          accessToken
+                        )
                         console.log(res.status)
                         if (res.status === 400) {
                           throw Error(res.data.detail)
@@ -354,7 +359,7 @@ const View = ({ checksheets, id }: any) => {
                         setBarcodeContent(template)
                       }
                     } catch (error) {
-                      console.error(error);
+                      console.error(error)
                       setLoadingSubmit(false)
                     }
                   }}
@@ -372,10 +377,13 @@ const View = ({ checksheets, id }: any) => {
                       setLoadingApprove(true)
                       if (typeof internalpalletid === 'string') {
                         const internalpalletidInt = parseInt(internalpalletid)
-                        const res = await submitLoading({
-                          is_send_approve: true,
-                          pallet_id: internalpalletidInt
-                        })
+                        const res = await submitLoading(
+                          {
+                            is_send_approve: true,
+                            pallet_id: internalpalletidInt
+                          },
+                          accessToken
+                        )
                         console.log(res.status)
                         if (res.status === 400) {
                           throw Error(res.data.detail)
@@ -407,7 +415,7 @@ const View = ({ checksheets, id }: any) => {
                         router.push(`/scan-loading`)
                       }
                     } catch (error) {
-                      console.error(error);
+                      console.error(error)
                       setLoadingApprove(false)
                     }
                   }}
@@ -432,7 +440,7 @@ const View = ({ checksheets, id }: any) => {
         initialValues={{ file: null, customer: '' }}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
           try {
-            await confirmCheckSheet1(id)
+            await confirmCheckSheet1(id, accessToken)
             router.push(`scan-loading/check-pallet/`)
             setSubmitting(false)
           } catch (error: any) {
@@ -454,7 +462,14 @@ const View = ({ checksheets, id }: any) => {
       <div style={{ position: 'relative', marginTop: '1rem' }}>
         <MultipleBarcode ref={multipleBarcodeRef} content={barcodeContent}></MultipleBarcode>
         <Box
-          sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: (theme) => theme.palette.background.default }}
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: theme => theme.palette.background.default
+          }}
         ></Box>
       </div>
     </>
@@ -463,25 +478,27 @@ const View = ({ checksheets, id }: any) => {
 
 // This gets called on every request
 export async function getServerSideProps(context: any) {
+  const cookies = cookie.parse(context.req.headers.cookie || '')
   const internalpalletid = context.query.internalpalletid
+  const accessToken = cookies['access_token']
   const response = await httpClient.get(`/pallet/${internalpalletid}/section/3/question/`, {
     headers: {
-      Accept: 'application/json'
+      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`
     }
   })
 
   return {
     props: {
       checksheets: response.data,
-      id: internalpalletid
+      id: internalpalletid,
+      accessToken
     }
   }
 }
 
 View.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export default View

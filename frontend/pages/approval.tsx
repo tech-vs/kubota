@@ -1,9 +1,9 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import { approveDocument } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import { alpha, Box, Button, styled, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import cookie from 'cookie'
 import { useRouter } from 'next/router'
 import type { ReactElement } from 'react'
 type Props = {}
@@ -34,7 +34,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
     }
   }
 }))
-const Approval = ({ list }: any) => {
+const Approval = ({ list, accessToken }: any) => {
   const router = useRouter()
 
   const theme = useTheme()
@@ -155,7 +155,7 @@ const Approval = ({ list }: any) => {
           <Button
             variant='contained'
             onClick={async () => {
-              await approveDocument(row.id)
+              await approveDocument(row.id, accessToken)
               refreshData()
             }}
             sx={{ borderRadius: 50 }}
@@ -242,24 +242,23 @@ const Approval = ({ list }: any) => {
 }
 
 // This gets called on every request
-export async function getServerSideProps() {
+export async function getServerSideProps(context: any) {
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const accessToken = cookies['access_token']
   const response = await httpClient.get(`pallet/document/?status=wait_approve`, {
-    headers: {
-      Accept: 'application/json'
-    }
+    headers: { Authorization: `Bearer ${accessToken}` }
   })
 
   return {
     props: {
-      list: response.data
+      list: response.data,
+      accessToken
     }
   }
 }
 
 Approval.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export default Approval

@@ -17,6 +17,7 @@ import {
   useTheme
 } from '@mui/material'
 import { green, pink } from '@mui/material/colors'
+import cookie from 'cookie'
 import { Form, Formik, FormikProps } from 'formik'
 import { toPng } from 'html-to-image'
 import { useRouter } from 'next/router'
@@ -26,7 +27,7 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 type Props = {}
 
-const View = ({ checksheets, id }: any) => {
+const View = ({ checksheets, id, accessToken }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const router = useRouter()
@@ -198,7 +199,8 @@ const View = ({ checksheets, id }: any) => {
                               },
                               {
                                 headers: {
-                                  'Content-Type': 'application/json'
+                                  'Content-Type': 'application/json',
+                                  Authorization: `Bearer ${accessToken}`
                                 }
                               }
                             )
@@ -240,7 +242,8 @@ const View = ({ checksheets, id }: any) => {
                               },
                               {
                                 headers: {
-                                  'Content-Type': 'application/json'
+                                  'Content-Type': 'application/json',
+                                  Authorization: `Bearer ${accessToken}`
                                 }
                               }
                             )
@@ -297,6 +300,43 @@ const View = ({ checksheets, id }: any) => {
                 >
                   {loading && <RollingLoading />} Submit Packing
                 </Button>
+                <Button
+                  variant='contained'
+                  onClick={async () => {
+                    try {
+                      if (id) {
+                        const res = await repack(id, accessToken)
+                        console.log(res)
+
+                        MySwal.fire({
+                          text: 'Reset สำเร็จ ดำเนินการ Repack ใหม่',
+                          position: 'top',
+                          confirmButtonColor: theme.palette.primary.main
+                        })
+                        router.push(`/scan-packing/`)
+                      } else {
+                        MySwal.fire({
+                          text: 'Reset ไม่สำเร็จ',
+                          position: 'top',
+                          confirmButtonColor: theme.palette.primary.main
+                        })
+                        refreshData()
+                      }
+                      // setScan({ internalPalletNo: '' })
+                      refreshData()
+                    } catch (error) {
+                      MySwal.fire({
+                        text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
+                        position: 'top',
+                        confirmButtonColor: theme.palette.primary.main
+                      })
+                    }
+                  }}
+                  color='error'
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px' }, height: '100%' }}
+                >
+                  Reset
+                </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
@@ -314,9 +354,12 @@ const View = ({ checksheets, id }: any) => {
           try {
             setLoading(true)
             // submit check sheet 2
-            await confirmCheckSheet2(id)
+            await confirmCheckSheet2(id, accessToken)
             // get data for render barcode to printer
-            const { internal_pallet_no, pallet_string, question_type } = await checksheetPartList(id.toString() || '')
+            const { internal_pallet_no, pallet_string, question_type } = await checksheetPartList(
+              id.toString() || '',
+              accessToken
+            )
             console.log(internal_pallet_no)
             setBarcodeContent(barcodeContent => ({
               ...barcodeContent,
@@ -361,16 +404,21 @@ const View = ({ checksheets, id }: any) => {
 // This gets called on every request
 export async function getServerSideProps(context: any) {
   const id = context.query.id
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const internalpalletid = context.query.internalpalletid
+  const accessToken = cookies['access_token']
   const response = await httpClient.get(`/pallet/${id}/section/2/question/`, {
     headers: {
-      Accept: 'application/json'
+      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`
     }
   })
 
   return {
     props: {
       checksheets: response.data,
-      id
+      id,
+      accessToken
     }
   }
 }

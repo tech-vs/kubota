@@ -3,6 +3,7 @@ import PDFFormat2 from '@/components/Pdf/PDFFormat2'
 import { IPreviewDataFormat1, IPreviewDataFormat2, TDataPreview } from '@/models/preview.model'
 import { checksheetPartList, previewDocLoading } from '@/services/serverServices'
 import { Button, useTheme } from '@mui/material'
+import cookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
@@ -12,7 +13,7 @@ type Props = {}
 
 export type TFormId = number | string | string[]
 
-const PreviewDocumentWithId = ({}: Props) => {
+const PreviewDocumentWithId = ({ accessToken }: any) => {
   const MySwal = withReactContent(Swal)
   const theme = useTheme()
   const [formShow, setFormShow] = useState<TFormId>(1)
@@ -40,10 +41,10 @@ const PreviewDocumentWithId = ({}: Props) => {
       }
       let res
       if (type === '1') {
-        res = await checksheetPartList(id.toString() || '')
+        res = await checksheetPartList(id.toString() || '', accessToken)
         setData(res)
       } else if (type === '2') {
-        res = await previewDocLoading(id.toString() || '')
+        res = await previewDocLoading(id.toString() || '', accessToken)
         setData(res)
       }
       setFormShow(type || '1')
@@ -95,6 +96,17 @@ const PreviewDocumentWithId = ({}: Props) => {
       <>{renderContent(data)}</>
     </>
   )
+}
+
+export async function getServerSideProps(context: any) {
+  const cookies = cookie.parse(context.req.headers.cookie || '')
+  const accessToken = cookies['access_token']
+
+  return {
+    props: {
+      accessToken
+    }
+  }
 }
 
 export default PreviewDocumentWithId
