@@ -72,7 +72,7 @@ export const addUser = async (data: addUserProps): Promise<void> => {
 }
 
 export const deleteUser = async (data: String): Promise<void> => {
-  const response = await httpClient.delete(`/account/delete/${data}`)
+  const response = await httpClient.delete(`/account/delete/${data}/`)
   return response.data
 }
 

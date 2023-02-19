@@ -307,12 +307,14 @@ const Repack = ({ partList, accessToken }: any) => {
                           position: 'top',
                           confirmButtonColor: theme.palette.primary.main
                         })
+                        refreshData()
                       } else {
                         MySwal.fire({
                           text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
                           position: 'top',
                           confirmButtonColor: theme.palette.primary.main
                         })
+                        refreshData()
                       }
                       setScan({ internalPalletNo: '' })
                       refreshData()

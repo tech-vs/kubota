@@ -1,5 +1,4 @@
 import Layout from '@/components/Layouts/Layout'
-import withAuth from '@/components/withAuth'
 import { addUser, deleteUser } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
@@ -26,11 +25,11 @@ import {
 import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { Formik } from 'formik'
 import { useRouter } from 'next/router'
+import type { ReactElement } from 'react'
 import { ChangeEvent, Fragment, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import * as Yup from 'yup'
-import type { ReactElement } from 'react'
 {
   /* <Avatar sx={{ mr: 2 }}>test</Avatar> */
 }
@@ -66,7 +65,8 @@ const User = ({ user }: any) => {
   const [addUserForm, setAddUserForm] = useState({
     username: '',
     password: '',
-    role: 'ADMIN'
+    role: 'ADMIN',
+    email: ''
   })
   const [deleteUsername, setDeleteUsername] = useState({
     username: '',
@@ -120,8 +120,8 @@ const User = ({ user }: any) => {
       cellClassName: 'cellField'
     },
     {
-      field: 'createdAt',
-      headerName: 'Created At',
+      field: 'email',
+      headerName: 'Email',
       width: 150,
       headerAlign: 'center',
       headerClassName: 'headerField',
@@ -192,7 +192,7 @@ const User = ({ user }: any) => {
           height: 600,
           width: '100%',
           '& .headerField': {
-            fontSize: 12,
+            fontSize: 12
           },
           '& .customerField': {
             backgroundColor: '#c7ddb5'
@@ -252,14 +252,15 @@ const User = ({ user }: any) => {
         />
       </Box>
       <Formik
-        initialValues={{ username: '', password: '', role: '' }}
+        initialValues={{ username: '', password: '', role: '', email: '' }}
         validationSchema={SignupSchema}
         onSubmit={async (values, { setSubmitting }) => {
           try {
             let data = {
               username: values.username,
               password: values.password,
-              role: values.role
+              role: values.role,
+              email: values.email
             }
             await addUser(data)
             refreshData()
@@ -313,6 +314,21 @@ const User = ({ user }: any) => {
                     setFieldValue('password', e.target.value)
                   }}
                 />
+                <TextField
+                  required
+                  autoFocus
+                  margin='dense'
+                  id='name'
+                  label='Email'
+                  type='text'
+                  fullWidth
+                  variant='standard'
+                  value={addUserForm.email}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    setAddUserForm({ ...addUserForm, email: e.target.value })
+                    setFieldValue('email', e.target.value)
+                  }}
+                />
                 <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60, mt: 4 }}>
                   <InputLabel required id='demo-simple-select-required-label'>
                     Role
@@ -331,7 +347,9 @@ const User = ({ user }: any) => {
                     <MenuItem value={'Administrator'}>Administrator</MenuItem>
                     <MenuItem value={'Operator'}>Operator</MenuItem>
                     <MenuItem value={'Manager'}>Manager</MenuItem>
-                    <MenuItem value={'SAP_Operator'}>SAP_Operator</MenuItem>
+                    <MenuItem value={'Clerk'}>Clerk</MenuItem>
+                    <MenuItem value={'Leader'}>Leader</MenuItem>
+                    <MenuItem value={'Engineer'}>Engineer</MenuItem>
                   </Select>
                 </FormControl>
               </DialogContent>
@@ -397,7 +415,6 @@ export async function getServerSideProps(context: any) {
       Accept: 'application/json'
     }
   })
-
   return {
     props: {
       user: response.data.results
@@ -406,9 +423,7 @@ export async function getServerSideProps(context: any) {
 }
 
 User.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <Layout>{page}</Layout>
-  )
+  return <Layout>{page}</Layout>
 }
 
 export default User
