@@ -2,7 +2,7 @@ import SingleBarcode from '@/components/Barcode/SingleBarcode'
 import Layout from '@/components/Layouts/Layout'
 import RollingLoading from '@/components/RollingLoading'
 import { IContentSingleBarcode } from '@/models/barcode.model'
-import { checksheetPartList, confirmCheckSheet2 } from '@/services/serverServices'
+import { checksheetPartList, confirmCheckSheet2, repack } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
   Box,
@@ -37,6 +37,22 @@ const View = ({ checksheets, id }: any) => {
       scroll: false
     })
   }
+  // const [scan, setScan] = useState({
+  //   internalPalletNo: ''
+  // })
+
+  // const [scanLoadingResponse, setScanLoadingResponse] = useState<any>({})
+  // const [scanLoadingResponseResult, setScanLoadingResponseResult] = useState<any>([])
+
+  // useEffect(() => {
+  //   async function call() {
+  //     const res = await scanLoading(scan.internalPalletNo)
+  //     console.log(res)
+  //     setScanLoadingResponse(res)
+  //     setScanLoadingResponseResult(res.item_list)
+  //   }
+  //   call()
+  // }, [scan])
 
   const [loading, setLoading] = useState<boolean>(false)
   const [success, setSucess] = useState<boolean>(false)
@@ -296,6 +312,43 @@ const View = ({ checksheets, id }: any) => {
                   sx={{ marginRight: 1, width: { xs: '100%', md: '200px' }, height: '100%' }}
                 >
                   {loading && <RollingLoading />} Submit Packing
+                </Button>
+                <Button
+                  variant='contained'
+                  onClick={async () => {
+                    try {
+                      if (id) {
+                        const res = await repack(id)
+                        console.log(res)
+
+                        MySwal.fire({
+                          text: 'Reset สำเร็จ ดำเนินการ Repack ใหม่',
+                          position: 'top',
+                          confirmButtonColor: theme.palette.primary.main
+                        })
+                        router.push(`/scan-packing/`)
+                      } else {
+                        MySwal.fire({
+                          text: 'Reset ไม่สำเร็จ',
+                          position: 'top',
+                          confirmButtonColor: theme.palette.primary.main
+                        })
+                        refreshData()
+                      }
+                      // setScan({ internalPalletNo: '' })
+                      refreshData()
+                    } catch (error) {
+                      MySwal.fire({
+                        text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
+                        position: 'top',
+                        confirmButtonColor: theme.palette.primary.main
+                      })
+                    }
+                  }}
+                  color='error'
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px' }, height: '100%' }}
+                >
+                  Reset
                 </Button>
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
