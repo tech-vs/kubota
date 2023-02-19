@@ -1,9 +1,9 @@
 import Header from '@/components/Layouts/Header'
 import Menu from '@/components/Layouts/Menu'
 import Box from '@mui/material/Box'
+import Container from '@mui/material/Container'
 import CssBaseline from '@mui/material/CssBaseline'
 import { CSSObject, styled, Theme } from '@mui/material/styles'
-import Container from '@mui/material/Container';
 import * as React from 'react'
 import withAuth from '../withAuth'
 
@@ -48,13 +48,11 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <Header open={open} onDrawerOpen={() => setOpen((op => !op))} />
+      <Header open={open} onDrawerOpen={() => setOpen(op => !op)} />
       <Menu open={open} onDrawerClose={() => setOpen(false)} />
       <Box component='main' sx={{ flexGrow: 1, flexShrink: 1, flexBasis: 0, minWidth: 0, p: { xs: 1, md: 3 } }}>
         <DrawerHeader />
-        <Container sx={{ px: { xs: 0 } }}>
-          {children}
-        </Container>
+        <Container sx={{ px: { xs: 0 } }}>{children}</Container>
       </Box>
     </Box>
   )

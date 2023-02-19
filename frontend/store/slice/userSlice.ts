@@ -91,7 +91,7 @@ const userSlice = createSlice({
   },
   extraReducers: builder => {
     // fullfiled, pending, rejected
-    console.log('extrareducer')
+    // console.log('extrareducer')
     builder.addCase(signIn.fulfilled, (state, action: PayloadAction<any>) => {
       state.accessToken = action.payload.token
       state.username = action.payload.username

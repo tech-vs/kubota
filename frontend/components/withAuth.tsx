@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router'
-import { FC } from 'react'
 import { useSelector } from 'react-redux'
 
 // import { isAuthenticatedSelector } from '@/store/slice/userSlice'
@@ -16,7 +15,7 @@ const withAuth = (WrappedComponent: any) => (props: any) => {
     const isAuthenticated = useSelector(isAuthenticatedSelector)
     const isAuthenticating = useSelector((state: RootState) => state.user.isAuthenticating)
     const role = useSelector((state: RootState) => state.user.role)
-    console.log(isAuthenticated)
+    console.log(role)
 
     // is fetching session (eg. show spinner)
     if (isAuthenticating) {
@@ -30,7 +29,7 @@ const withAuth = (WrappedComponent: any) => (props: any) => {
       } else if (route == '/') {
         if (role == 'Operator') {
           router.push('/scan-packing')
-        } else if (role == 'Manager') {
+        } else if (role == 'Manager' || role == 'Engineer' || role == 'Clerk' || role == 'Leader') {
           router.push('/approval')
         } else if (role == 'Administrator') {
           router.push('/user')
@@ -41,7 +40,7 @@ const withAuth = (WrappedComponent: any) => (props: any) => {
       if (isAuthenticated) {
         if (role == 'Operator') {
           router.push('/scan-packing')
-        } else if (role == 'Manager') {
+        } else if (role == 'Manager' || role == 'Engineer' || role == 'Clerk' || role == 'Leader') {
           router.push('/approval')
         } else if (role == 'Administrator') {
           router.push('/user')

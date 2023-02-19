@@ -1,14 +1,30 @@
 import Layout from '@/components/Layouts/Layout'
-import { approveDocument } from '@/services/serverServices'
+import { approveDocument, rejectDocument } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import { alpha, Box, Button, styled, Typography, useMediaQuery, useTheme } from '@mui/material'
+import {
+  alpha,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  styled,
+  TextField,
+  Typography,
+  useMediaQuery,
+  useTheme
+} from '@mui/material'
 import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import cookie from 'cookie'
 import { useRouter } from 'next/router'
-import type { ReactElement } from 'react'
+import { ChangeEvent, ReactElement, useState } from 'react'
+import * as Yup from 'yup'
 type Props = {}
 
 const ODD_OPACITY = 0.2
+const RejectSchema = Yup.object().shape({
+  remark_reject: Yup.string().required('Required')
+})
 
 const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   [`& .${gridClasses.row}.even`]: {
@@ -34,7 +50,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
     }
   }
 }))
-const Approval = ({ list, accessToken }: any) => {
+const Approval = ({ list, accessToken, role }: any) => {
   const router = useRouter()
 
   const theme = useTheme()
@@ -48,6 +64,21 @@ const Approval = ({ list, accessToken }: any) => {
   // refresh props!
   const refreshData = () => {
     router.replace(router.asPath)
+  }
+
+  //reject Document
+  const [reject, setReject] = useState({
+    id: '',
+    remark_reject: ''
+  })
+  const [rejectPopUpOpen, setRejectPopUpOpen] = useState(false)
+
+  const handleRejectPopUpOpen = () => {
+    setRejectPopUpOpen(true)
+  }
+
+  const handleRejectPopUpClose = () => {
+    setRejectPopUpOpen(false)
   }
 
   const columns: GridColDef[] = [
@@ -155,13 +186,36 @@ const Approval = ({ list, accessToken }: any) => {
           <Button
             variant='contained'
             onClick={async () => {
-              await approveDocument(row.id, accessToken)
+              await approveDocument(row.id, role, accessToken)
               refreshData()
             }}
             sx={{ borderRadius: 50 }}
             color='success'
           >
             Approve
+          </Button>
+        )
+      }
+    },
+    {
+      field: 'reject',
+      headerName: 'Reject',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      width: 125,
+      renderCell: ({ row }: GridRenderCellParams<string>) => {
+        return (
+          <Button
+            variant='contained'
+            onClick={async () => {
+              setReject({ ...reject, id: row.id })
+              setRejectPopUpOpen(true)
+            }}
+            sx={{ borderRadius: 50 }}
+            color='error'
+          >
+            Reject
           </Button>
         )
       }
@@ -237,22 +291,104 @@ const Approval = ({ list, accessToken }: any) => {
           disableColumnSelector
         />
       </Box>
+      <Dialog open={rejectPopUpOpen} onClose={handleRejectPopUpClose} fullWidth>
+        <Box position='absolute' top={0} right={0}></Box>
+        <DialogContent>
+          <Typography>{`Are you sure to reject this document`}</Typography>
+        </DialogContent>
+        <TextField
+          required
+          autoFocus
+          margin='dense'
+          id='name'
+          label='Remark'
+          type='text'
+          fullWidth
+          variant='standard'
+          value={reject.remark_reject}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setReject({ ...reject, remark_reject: e.target.value })
+          }}
+        />
+        <DialogActions>
+          <Button color='primary' variant='contained' onClick={handleRejectPopUpClose}>
+            Cancel
+          </Button>
+          <Button
+            color='secondary'
+            variant='contained'
+            onClick={async () => {
+              await rejectDocument(reject.id, reject.remark_reject, accessToken)
+              setRejectPopUpOpen(false)
+              refreshData()
+            }}
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }
 
 // This gets called on every request
 export async function getServerSideProps(context: any) {
+  // const session = await getSession()
+  // console.log(session)
   const cookies = cookie.parse(context.req.headers.cookie || '')
   const accessToken = cookies['access_token']
-  const response = await httpClient.get(`pallet/document/?status=wait_approve`, {
+  const profile = await httpClient.get(`/account/profile/`, {
     headers: { Authorization: `Bearer ${accessToken}` }
   })
+  const role = profile.data.role
 
-  return {
-    props: {
-      list: response.data,
-      accessToken
+  if (role == 'Leader') {
+    const response = await httpClient.get(`pallet/document/?status=wait_approve`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    return {
+      props: {
+        list: response.data,
+        accessToken,
+        role
+      }
+    }
+  }
+
+  if (role == 'Clerk') {
+    const response = await httpClient.get(`pallet/document/?status=leader_approved`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    return {
+      props: {
+        list: response.data,
+        accessToken,
+        role
+      }
+    }
+  }
+
+  if (role == 'Engineer') {
+    const response = await httpClient.get(`pallet/document/?status=clerk_approved`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    return {
+      props: {
+        list: response.data,
+        accessToken
+      }
+    }
+  }
+  if (role == 'Manager') {
+    const response = await httpClient.get(`pallet/document/?status=engineer_approved`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    return {
+      props: {
+        list: response.data,
+        accessToken,
+        role
+      }
     }
   }
 }

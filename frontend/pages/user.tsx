@@ -122,7 +122,7 @@ const User = ({ user }: any) => {
     {
       field: 'email',
       headerName: 'Email',
-      width: 150,
+      width: 200,
       headerAlign: 'center',
       headerClassName: 'headerField',
       align: 'center',

@@ -152,11 +152,74 @@ export const submitLoading = async (data: submitLoadingProps, accessToken: strin
   return response
 }
 
-export const approveDocument = async (id: string, accessToken: string): Promise<any> => {
+export const approveDocument = async (id: string, role: string, accessToken: string): Promise<any> => {
+  if (role == 'Leader') {
+    const response = await httpClient.patch(
+      `/pallet/document/${id}/`,
+      {
+        status: 'leader_approved'
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+    return response.data
+  }
+  if (role == 'Leader') {
+    const response = await httpClient.patch(
+      `/pallet/document/${id}/`,
+      {
+        status: 'leader_approved'
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+    return response.data
+  }
+  if (role == 'Clerk') {
+    const response = await httpClient.patch(
+      `/pallet/document/${id}/`,
+      {
+        status: 'clerk_approved'
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+    return response.data
+  }
+  if (role == 'Engineer') {
+    const response = await httpClient.patch(
+      `/pallet/document/${id}/`,
+      {
+        status: 'engineer_approved'
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+    return response.data
+  }
+  if (role == 'Manager') {
+    const response = await httpClient.patch(
+      `/pallet/document/${id}/`,
+      {
+        status: 'manager_approved'
+      },
+      {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      }
+    )
+    return response.data
+  }
+}
+
+export const rejectDocument = async (id: string, remark_reject: string, accessToken: string): Promise<any> => {
   const response = await httpClient.patch(
-    `/pallet/document/${id}/`,
+    `/pallet/document/${id}/reject/`,
     {
-      status: 'approved'
+      remark_reject
     },
     {
       headers: { Authorization: `Bearer ${accessToken}` }
@@ -164,7 +227,6 @@ export const approveDocument = async (id: string, accessToken: string): Promise<
   )
   return response.data
 }
-
 export const importExcel = async (data: FormData): Promise<any> => {
   try {
     const response = await httpClient.post('/syncdata/master-loading/upload/', data, {

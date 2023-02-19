@@ -47,7 +47,6 @@ const signin = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
-  console.log('getSession')
   try {
     const cookies = cookie.parse(req.headers.cookie || '')
     const accessToken = cookies['access_token']
@@ -58,10 +57,10 @@ const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
       console.log(response.data)
       res.json(response.data)
     } else {
-      res.json({ result: 'nok' })
+      res.json({ result: 'no accessToken found' })
     }
   } catch (error: any) {
-    res.json({ result: 'nok' })
+    res.json(error)
   }
 }
 const signout = async (req: NextApiRequest, res: NextApiResponse) => {
