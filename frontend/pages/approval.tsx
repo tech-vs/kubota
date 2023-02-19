@@ -69,7 +69,7 @@ const Approval = ({ list, accessToken, role }: any) => {
   //reject Document
   const [reject, setReject] = useState({
     id: '',
-    remark_reject: 'reject'
+    remark_reject: ''
   })
   const [rejectPopUpOpen, setRejectPopUpOpen] = useState(false)
 
