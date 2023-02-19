@@ -358,7 +358,7 @@ const View = ({ checksheets, id, accessToken }: any) => {
                   onClick={async () => {
                     try {
                       if (id) {
-                        const res = await repack(id)
+                        const res = await repack(id, accessToken)
                         console.log(res)
 
                         MySwal.fire({
