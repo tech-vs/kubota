@@ -2,7 +2,7 @@ import SingleBarcode from '@/components/Barcode/SingleBarcode'
 import Layout from '@/components/Layouts/Layout'
 import RollingLoading from '@/components/RollingLoading'
 import { IContentSingleBarcode } from '@/models/barcode.model'
-import { checksheetPartList, confirmCheckSheet2 } from '@/services/serverServices'
+import { checksheetPartList, confirmCheckSheet2, repack } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
   Box,
