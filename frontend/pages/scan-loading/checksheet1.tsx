@@ -426,6 +426,43 @@ const View = ({ checksheets, id, accessToken }: any) => {
                 >
                   {loadingApprove && <RollingLoading />} Submit & Request Approval
                 </Button>
+                {/* <Button
+                  variant='contained'
+                  onClick={async () => {
+                    try {
+                      if (id) {
+                        const res = await repack(id, accessToken)
+                        console.log(res)
+
+                        MySwal.fire({
+                          text: 'Reset สำเร็จ ดำเนินการ Loading ใหม่',
+                          position: 'top',
+                          confirmButtonColor: theme.palette.primary.main
+                        })
+                        router.push(`/scan-loading/`)
+                      } else {
+                        MySwal.fire({
+                          text: 'Reset ไม่สำเร็จ',
+                          position: 'top',
+                          confirmButtonColor: theme.palette.primary.main
+                        })
+                        refreshData()
+                      }
+                      // setScan({ internalPalletNo: '' })
+                      refreshData()
+                    } catch (error) {
+                      MySwal.fire({
+                        text: 'ไม่สำเร็จ กรุณาทำการ Repack ใหม่',
+                        position: 'top',
+                        confirmButtonColor: theme.palette.primary.main
+                      })
+                    }
+                  }}
+                  color='error'
+                  sx={{ marginRight: 1, width: { xs: '100%', md: '200px' }, height: '100%' }}
+                >
+                  Reset
+                </Button> */}
               </Box>
               {/* <Box sx={{ flexGrow: 1 }} /> */}
             </Box>
