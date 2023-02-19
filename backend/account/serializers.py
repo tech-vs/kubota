@@ -43,3 +43,4 @@ class UserSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     username = serializers.CharField()   
     role = serializers.ChoiceField(choices=Role.choices)
+    email = serializers.EmailField()
