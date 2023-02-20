@@ -75,6 +75,7 @@ class LoadingViewSet(viewsets.GenericViewSet):
         pallet.save()
 
         if is_send_approve and doc:
+            doc.operator_approve_name = request.user.get_full_name()
             doc.last_approve_by = request.user
             doc.status = DocStatus.WAIT_APRROVE
             send_email(list(User.objects.filter(role=Role.LEADER).exclude(email__exact='').values_list('email', flat=True)), 'Approve from Operator', f'doc no: {doc.doc_no}')
@@ -183,15 +184,19 @@ class DocumentViewSet(viewsets.GenericViewSet):
         doc = self.get_object()
         if doc:
             if request.user.role == Role.LEADER and doc.status == DocStatus.WAIT_APRROVE:
+                doc.leader_approve_name = request.user.get_full_name()
                 doc.status = DocStatus.LEADER_APPROVED
                 send_email(list(User.objects.filter(role=Role.CLERK).exclude(email__exact='').values_list('email', flat=True)), 'Approve from Leader', f'doc no: {doc.doc_no}')
             elif request.user.role == Role.CLERK and doc.status == DocStatus.LEADER_APPROVED:
+                doc.clerk_approve_name = request.user.get_full_name()
                 doc.status = DocStatus.CLERK_APPROVED
                 send_email(list(User.objects.filter(role=Role.ENGINEER).exclude(email__exact='').values_list('email', flat=True)), 'Approve from Clerk', f'doc no: {doc.doc_no}')
             elif request.user.role == Role.ENGINEER and doc.status == DocStatus.CLERK_APPROVED:
+                doc.engineer_approve_name = request.user.get_full_name()
                 doc.status = DocStatus.ENGINEER_APPROVED
                 send_email(list(User.objects.filter(role=Role.MANAGER).exclude(email__exact='').values_list('email', flat=True)), 'Approve from Engineer', f'doc no: {doc.doc_no}')
             elif request.user.role == Role.MANAGER and doc.status == DocStatus.ENGINEER_APPROVED:
+                doc.manager_approve_name = request.user.get_full_name()
                 doc.status = DocStatus.MANAGER_APPROVED
             doc.last_approve_by = request.user
             doc.save()
@@ -209,6 +214,8 @@ class DocumentViewSet(viewsets.GenericViewSet):
         if doc:
             for pallet_id in doc.documentpallet_set.all().values_list('pallet_id', flat=True):
                 Pallet.objects.filter(id=pallet_id).update(status=PalletStatus.FINISH_PACK)
+            doc.reject_name = request.user.get_full_name()
+            doc.reject_role = request.user.role
             doc.status = DocStatus.REJECT
             doc.last_approve_by = request.user
             doc.remark_reject = remark

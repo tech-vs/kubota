@@ -85,6 +85,13 @@ class DocDetailSerializer(serializers.Serializer):
     question_list = serializers.SerializerMethodField()
     question_type = serializers.ChoiceField(choices=QuestionType.choices, allow_null=True)
     pallet_list = serializers.SerializerMethodField()
+    operator_approve_name = serializers.CharField()
+    leader_approve_name = serializers.CharField()
+    clerk_approve_name = serializers.CharField()
+    engineer_approve_name = serializers.CharField()
+    manager_approve_name = serializers.CharField()
+    reject_name = serializers.CharField()
+    reject_role = serializers.CharField()
 
     def get_question_list(self, obj):
         pallet = obj.pallet_list.prefetch_related('palletquestion_set').first()

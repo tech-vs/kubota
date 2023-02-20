@@ -27,6 +27,8 @@ class UserCreateSerializer(serializers.Serializer):
     # last_name = serializers.CharField(max_length=150, allow_blank=True, required=False)
     email = serializers.EmailField(max_length=120, required=False)
     role = serializers.ChoiceField(choices=Role.choices, required=False)
+    first_name = serializers.CharField(max_length=150, allow_blank=True)
+    last_name = serializers.CharField(max_length=150, allow_blank=True)
 
     def validate_username(self, username):
         if User.objects.filter(username=username).exists():
@@ -44,3 +46,5 @@ class UserSerializer(serializers.Serializer):
     username = serializers.CharField()   
     role = serializers.ChoiceField(choices=Role.choices)
     email = serializers.EmailField()
+    first_name = serializers.CharField(max_length=150, allow_blank=True)
+    last_name = serializers.CharField(max_length=150, allow_blank=True)
