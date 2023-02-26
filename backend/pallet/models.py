@@ -203,6 +203,14 @@ class Document(CommonInfoModel):
         related_name='approve_doc',
         null=True,
     )
+    operator_approve_name = models.CharField(max_length=350, default='')
+    leader_approve_name = models.CharField(max_length=350, default='')
+    clerk_approve_name = models.CharField(max_length=350, default='')
+    engineer_approve_name = models.CharField(max_length=350, default='')
+    manager_approve_name = models.CharField(max_length=350, default='')
+    reject_name = models.CharField(max_length=350, default='')
+    reject_role = models.CharField(max_length=350, default='')
+    
 
     class Meta:
         ordering = ['created_at']
