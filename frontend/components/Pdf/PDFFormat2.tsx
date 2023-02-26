@@ -261,13 +261,13 @@ const PDFFormat2 = ({ content }: Props) => {
                 <tr>
                   {[
                     'Prepare by: Leader / subLeader',
-                    '',
+                    `${content.leader_approve_name}`,
                     'Picking by: Clerk',
-                    '',
+                    `${content.clerk_approve_name}`,
                     'Check by: PC-Officer',
-                    '',
+                    `${content.engineer_approve_name}`,
                     'Approved by: Manager',
-                    ''
+                    `${content.manager_approve_name}`
                   ].map(c => {
                     return (
                       <td className='text-center'>

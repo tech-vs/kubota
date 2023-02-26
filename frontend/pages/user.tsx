@@ -66,7 +66,9 @@ const User = ({ user }: any) => {
     username: '',
     password: '',
     role: 'ADMIN',
-    email: ''
+    email: '',
+    first_name: '',
+    last_name: ''
   })
   const [deleteUsername, setDeleteUsername] = useState({
     username: '',
@@ -122,6 +124,24 @@ const User = ({ user }: any) => {
     {
       field: 'email',
       headerName: 'Email',
+      width: 200,
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField'
+    },
+    {
+      field: 'first_name',
+      headerName: 'First Name',
+      width: 200,
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField'
+    },
+    {
+      field: 'last_name',
+      headerName: 'Last Name',
       width: 200,
       headerAlign: 'center',
       headerClassName: 'headerField',
@@ -252,7 +272,7 @@ const User = ({ user }: any) => {
         />
       </Box>
       <Formik
-        initialValues={{ username: '', password: '', role: '', email: '' }}
+        initialValues={{ username: '', password: '', role: '', email: '', first_name: '', last_name: '' }}
         validationSchema={SignupSchema}
         onSubmit={async (values, { setSubmitting }) => {
           try {
@@ -260,7 +280,9 @@ const User = ({ user }: any) => {
               username: values.username,
               password: values.password,
               role: values.role,
-              email: values.email
+              email: values.email,
+              first_name: values.first_name,
+              last_name: values.last_name
             }
             await addUser(data)
             refreshData()
@@ -327,6 +349,36 @@ const User = ({ user }: any) => {
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     setAddUserForm({ ...addUserForm, email: e.target.value })
                     setFieldValue('email', e.target.value)
+                  }}
+                />
+                <TextField
+                  required
+                  autoFocus
+                  margin='dense'
+                  id='name'
+                  label='First Name'
+                  type='text'
+                  fullWidth
+                  variant='standard'
+                  value={addUserForm.first_name}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    setAddUserForm({ ...addUserForm, first_name: e.target.value })
+                    setFieldValue('first_name', e.target.value)
+                  }}
+                />
+                <TextField
+                  required
+                  autoFocus
+                  margin='dense'
+                  id='name'
+                  label='Last Name'
+                  type='text'
+                  fullWidth
+                  variant='standard'
+                  value={addUserForm.last_name}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    setAddUserForm({ ...addUserForm, last_name: e.target.value })
+                    setFieldValue('last_name', e.target.value)
                   }}
                 />
                 <FormControl fullWidth required sx={{ minWidth: 120, minHeight: 60, mt: 4 }}>

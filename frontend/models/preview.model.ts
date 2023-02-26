@@ -122,6 +122,13 @@ export interface IPreviewDataFormat2 {
     date: string
     start_time: string
   }
+  operator_approve_name: string
+  leader_approve_name: string
+  clerk_approve_name: string
+  engineer_approve_name: string
+  manager_approve_name: string
+  reject_name: string
+  reject_role: string
 }
 
 export const mockupData1: any = {
@@ -325,7 +332,8 @@ export const mockupData2: IPreviewDataFormat2 = {
   total_qty: '64',
   invoice_no: 'test_invoice',
   customer_name: 'SIAM KUBOTA Corporation Co., Ltd (Amata Nakhon Factory)',
-  address: '700/867 Moo 3 Amata Nakhon Industrial Estate,Tambon Nong Ka Kha, District, Panthong District,Chon Buri 20160',
+  address:
+    '700/867 Moo 3 Amata Nakhon Industrial Estate,Tambon Nong Ka Kha, District, Panthong District,Chon Buri 20160',
   prepare_by: {
     name: 'KET',
     date: '2022-11-05T09:35:25+00:00',
@@ -342,12 +350,19 @@ export const mockupData2: IPreviewDataFormat2 = {
     start_time: '2022-11-05T09:35:25+00:00'
   },
   id: 0,
-  delivery_date: "",
-  status: "",
-  round: "",
-  question_type: "",
+  delivery_date: '',
+  status: '',
+  round: '',
+  question_type: '',
   question_list: [],
-  pallet_list: []
+  pallet_list: [],
+  operator_approve_name: '',
+  leader_approve_name: '',
+  clerk_approve_name: '',
+  engineer_approve_name: '',
+  manager_approve_name: '',
+  reject_name: '',
+  reject_role: ''
 }
 
 export type TDataPreview = IPreviewDataFormat1 | IPreviewDataFormat2
