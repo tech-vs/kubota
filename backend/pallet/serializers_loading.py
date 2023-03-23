@@ -102,7 +102,7 @@ class DocDetailSerializer(serializers.Serializer):
 
 
     def get_pallet_list(self, obj):
-        pallet_list = obj.pallet_list.all().prefetch_related('part_list', 'palletquestion_set')
+        pallet_list = obj.pallet_list.all().prefetch_related('part_list', 'palletquestion_set').order_by('updated_at')
         data = []
         if pallet_list:
             for pallet in pallet_list:

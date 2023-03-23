@@ -43,6 +43,11 @@ class PalletPackingDoneSerializer(serializers.Serializer):
     packing_datetime = serializers.DateTimeField()
 
 
+class UserSerializer(serializers.Serializer):
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+
+
 class PalletListSerializer(serializers.Serializer):
     pallet_id = serializers.IntegerField(source='id')
     pallet = serializers.CharField()
@@ -52,6 +57,13 @@ class PalletListSerializer(serializers.Serializer):
     question_type = serializers.ChoiceField(choices=QuestionType.choices)
     status = serializers.ChoiceField(choices=PalletStatus.choices)
     created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
+    packing_by = serializers.SerializerMethodField()
+
+    def get_packing_by(self, obj):
+        if obj.packing_by:
+            return UserSerializer(obj.packing_by).data
+        return {'first_name': '', 'last_name': ''}
 
 
 class QuestionListSerializer(serializers.Serializer):

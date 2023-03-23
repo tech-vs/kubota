@@ -72,7 +72,7 @@ class LoadingViewSet(viewsets.GenericViewSet):
             return Response({'detail': 'pallet-skewer นี้มีการเรียกโหลดไปแล้ว'}, status=status.HTTP_400_BAD_REQUEST)
         
         pallet.status = PalletStatus.SHIPPED
-        pallet.save()
+        pallet.save(update_fields=['status', 'updated_at'])
 
         if is_send_approve and doc:
             doc.operator_approve_name = request.user.get_full_name()

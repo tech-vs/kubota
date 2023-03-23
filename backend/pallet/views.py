@@ -17,7 +17,8 @@ from pallet.models import (
     PalletStatus,
     PalletQuestion,
     PalletPart,
-    PalletStatus
+    PalletStatus,
+    NWGW
 )
 from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           PalletListSerializer, QuestionCheckSerializer,
@@ -102,7 +103,7 @@ class PalletViewSet(viewsets.GenericViewSet):
             if part_item:
                 part_to_set_list.append((prod_seq, part_item))
                 check_duplicate_id_no.append(part_item.id_no)
-        if len(part_to_set_list) != 4:
+        if len(part_to_set_list) != 4 and nw_gw != NWGW.UNIT1:
             return Response("Part มีไม่ครบ 4", status=status.HTTP_400_BAD_REQUEST)
         if PalletPart.objects.filter(part__id_no__in=check_duplicate_id_no).exclude(pallet__status=PalletStatus.REPACK).exists():
             return Response("ID No ที่ใส่มามีการนำใส่ pallet ไปแล้ว", status=status.HTTP_400_BAD_REQUEST)
