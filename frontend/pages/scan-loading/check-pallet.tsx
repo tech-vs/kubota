@@ -6,8 +6,7 @@ import { DataGrid, GridCellParams, gridClasses, GridColDef } from '@mui/x-data-g
 import cookie from 'cookie'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
-import type { ReactElement } from 'react'
-import { ChangeEvent, useEffect, useState } from 'react'
+import { ChangeEvent, ReactElement, useEffect, useRef, useState } from 'react'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 type Props = {}
@@ -120,6 +119,16 @@ const View = ({ genDoc, accessToken }: any) => {
     const [scanLoadingResponse, setScanLoadingResponse] = useState<any>({})
     const [scanLoadingResponseResult, setScanLoadingResponseResult] = useState<any>({})
 
+    const palletNoRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+      console.log(palletNoRef.current)
+      setTimeout(() => {
+        palletNoRef.current?.click()
+        palletNoRef.current?.focus()
+      }, 500)
+    }, [])
+
     useEffect(() => {
       async function call() {
         const res = await scanLoading(scan.internalPalletNo, accessToken)
@@ -153,6 +162,7 @@ const View = ({ genDoc, accessToken }: any) => {
               }}
             >
               <TextField
+                inputRef={palletNoRef}
                 required
                 fullWidth
                 size='small'

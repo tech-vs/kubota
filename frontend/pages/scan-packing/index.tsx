@@ -286,7 +286,7 @@ const Scan = ({ accessToken }: any) => {
                 <Box sx={{ flexGrow: 1 }} />
               </Box>
             )}
-            {deEx == '' ? (
+            {deEx == '' || unit == '0173' ? (
               ''
             ) : (
               <Box
@@ -314,7 +314,7 @@ const Scan = ({ accessToken }: any) => {
                 <Box sx={{ flexGrow: 1 }} />
               </Box>
             )}
-            {deEx == '' ? (
+            {deEx == '' || unit == '0173' ? (
               ''
             ) : (
               <Box
@@ -342,7 +342,7 @@ const Scan = ({ accessToken }: any) => {
                 <Box sx={{ flexGrow: 1 }} />
               </Box>
             )}
-            {deEx == '' ? (
+            {deEx == '' || unit == '0173' ? (
               ''
             ) : (
               <Box
@@ -462,6 +462,21 @@ const Scan = ({ accessToken }: any) => {
               }
             ],
             question_type: values.deEx
+          }
+
+          if (unit == '0173') {
+            let data_export = {
+              part_list: [
+                {
+                  prod_seq: '1',
+                  id_no: scan.partSeq01
+                }
+              ],
+              question_type: values.deEx,
+              nw_gw: values.unit
+            }
+            const response = await scanPallet(data_export, accessToken)
+            router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
           }
           let data_export = {
             part_list: [

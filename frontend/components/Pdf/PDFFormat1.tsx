@@ -122,7 +122,9 @@ const PDFFormat1 = ({ content }: Props) => {
             <div>Reject</div>
           </div>
           <div>
-            <div className='flex items-center' style={{ gap: '3pt' }}>ผ่าน: <img src="/img/ocross.svg" alt="ocross" /></div>
+            <div className='flex items-center' style={{ gap: '3pt' }}>
+              ผ่าน: <img src='/img/ocross.svg' alt='ocross' />
+            </div>
             <div>Repaired</div>
           </div>
         </div>
@@ -162,8 +164,9 @@ const PDFFormat1 = ({ content }: Props) => {
           </div>
           {question2.map((table, itable) => (
             <div
-              className={`inline-flex ${content.question_list.filter(f => f.section === 2).length <= 5 ? 'w-full' : 'w-50'
-                }`}
+              className={`inline-flex ${
+                content.question_list.filter(f => f.section === 2).length <= 5 ? 'w-full' : 'w-50'
+              }`}
               key={itable}
             >
               <table>
@@ -207,7 +210,10 @@ const PDFFormat1 = ({ content }: Props) => {
                       <br />
                       Sign
                     </td>
-                    <td style={{ width: '60%' }}></td>
+
+                    <td
+                      style={{ width: '60%' }}
+                    >{`${content.packing_by.first_name} ${content.packing_by.last_name}`}</td>
                   </tr>
                 </tbody>
               </table>
