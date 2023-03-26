@@ -209,7 +209,7 @@ const User = ({ user }: any) => {
 
       <Box
         sx={{
-          height: 600,
+          height: 800,
           width: '100%',
           '& .headerField': {
             fontSize: 12
@@ -259,14 +259,14 @@ const User = ({ user }: any) => {
             }
             return ''
           }}
-          pageSize={15}
-          rowsPerPageOptions={[15]}
+          pageSize={12}
+          rowsPerPageOptions={[12]}
           disableSelectionOnClick
           disableColumnFilter
           disableColumnMenu
           initialState={{
             pagination: {
-              pageSize: 15
+              pageSize: 12
             }
           }}
         />
