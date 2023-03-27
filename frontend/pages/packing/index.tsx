@@ -125,6 +125,15 @@ const Overall = ({ packingList }: any) => {
       cellClassName: 'cellField',
       width: 150
     },
+    {
+      field: 'fullname',
+      headerName: 'Operator',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
 
     // {
     //   field: 'blank',
@@ -243,10 +252,27 @@ export async function getServerSideProps(context: any) {
   const response = await httpClient.get(`/pallet/part-list/?packing_status=TRUE`, {
     headers: { Authorization: `Bearer ${accessToken}` }
   })
-
-  return {
-    props: {
-      packingList: response.data
+  let result
+  if (response.data) {
+    result = response.data.map((element: any) => {
+      const fullname = `${element.packing_by.first_name} ${element.packing_by.last_name}`
+      return {
+        pallet_id: element.pallet_id,
+        internal_pallet_no: element.internal_pallet_no,
+        model_code: element.model_code,
+        model_name: element.model_name,
+        serial_no: element.serial_no,
+        country_code: element.country_code,
+        country_name: element.country_name,
+        distributor_code: element.distributor_code,
+        distributor_name: element.distributor_name,
+        fullname
+      }
+    })
+    return {
+      props: {
+        packingList: result
+      }
     }
   }
 }
