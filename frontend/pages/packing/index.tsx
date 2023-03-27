@@ -62,6 +62,15 @@ const Overall = ({ packingList }: any) => {
       width: 150
     },
     {
+      field: 'pallet_string',
+      headerName: 'Pallet No',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 150
+    },
+    {
       field: 'model_code',
       headerName: 'Model Code',
       headerAlign: 'center',
@@ -256,6 +265,7 @@ export async function getServerSideProps(context: any) {
   if (response.data) {
     result = response.data.map((element: any) => {
       const fullname = `${element.packing_by.first_name} ${element.packing_by.last_name}`
+
       return {
         pallet_id: element.pallet_id,
         internal_pallet_no: element.internal_pallet_no,
@@ -266,6 +276,7 @@ export async function getServerSideProps(context: any) {
         country_name: element.country_name,
         distributor_code: element.distributor_code,
         distributor_name: element.distributor_name,
+        pallet_string: element.pallet_string,
         fullname
       }
     })
