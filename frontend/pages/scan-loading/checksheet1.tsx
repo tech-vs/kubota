@@ -412,7 +412,7 @@ const View = ({ checksheets, id, accessToken }: any) => {
                         //   confirmButtonColor: theme.palette.primary.main
                         // })
                         // alert('Last oading successfully and Request Approval')
-                        router.push(`/scan-loading`)
+                        router.push(`/scan-packing`)
                       }
                     } catch (error) {
                       console.error(error)
