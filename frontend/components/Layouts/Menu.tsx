@@ -347,9 +347,6 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
         )}
       </Drawer>
       <div>
-        <Button variant='outlined' onClick={handleClickOpen}>
-          Open alert dialog
-        </Button>
         <Dialog
           open={openPopup}
           onClose={handleClose}
