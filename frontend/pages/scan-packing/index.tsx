@@ -470,6 +470,18 @@ const Scan = ({ accessToken }: any) => {
                 {
                   prod_seq: '1',
                   id_no: scan.partSeq01
+                },
+                {
+                  prod_seq: '2',
+                  id_no: scan.partSeq01
+                },
+                {
+                  prod_seq: '3',
+                  id_no: scan.partSeq01
+                },
+                {
+                  prod_seq: '4',
+                  id_no: scan.partSeq01
                 }
               ],
               question_type: values.deEx,
@@ -509,24 +521,25 @@ const Scan = ({ accessToken }: any) => {
           })
           setDeEx('')
           setUnit('')
-          if (
-            scan.partSeq01 == scan.partSeq02 ||
-            scan.partSeq01 == scan.partSeq03 ||
-            scan.partSeq01 == scan.partSeq04 ||
-            scan.partSeq02 == scan.partSeq03 ||
-            scan.partSeq02 == scan.partSeq04 ||
-            scan.partSeq03 == scan.partSeq04
-          ) {
-            MySwal.fire({
-              text: 'ID No. ซ้ำกันใน Pallet',
-              position: 'top',
-              confirmButtonColor: theme.palette.primary.main
-            })
-          } else {
-            const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export, accessToken)
-            router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
+          if (unit != '0173') {
+            if (
+              scan.partSeq01 == scan.partSeq02 ||
+              scan.partSeq01 == scan.partSeq03 ||
+              scan.partSeq01 == scan.partSeq04 ||
+              scan.partSeq02 == scan.partSeq03 ||
+              scan.partSeq02 == scan.partSeq04 ||
+              scan.partSeq03 == scan.partSeq04
+            ) {
+              MySwal.fire({
+                text: 'ID No. ซ้ำกันใน Pallet',
+                position: 'top',
+                confirmButtonColor: theme.palette.primary.main
+              })
+            } else {
+              const response = await scanPallet(values.deEx === 'Domestic' ? data_domestic : data_export, accessToken)
+              router.push(`/scan-packing/checksheet1?id=${response.pallet_id}`)
+            }
           }
-
           setSubmitting(false)
         } catch (error: any) {
           if (error.response) {
