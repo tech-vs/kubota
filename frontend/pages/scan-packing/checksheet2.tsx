@@ -38,28 +38,10 @@ const View = ({ checksheets, id, accessToken }: any) => {
       scroll: false
     })
   }
-  // const [scan, setScan] = useState({
-  //   internalPalletNo: ''
-  // })
-
-  // const [scanLoadingResponse, setScanLoadingResponse] = useState<any>({})
-  // const [scanLoadingResponseResult, setScanLoadingResponseResult] = useState<any>([])
-
-  // useEffect(() => {
-  //   async function call() {
-  //     const res = await scanLoading(scan.internalPalletNo)
-  //     console.log(res)
-  //     setScanLoadingResponse(res)
-  //     setScanLoadingResponseResult(res.item_list)
-  //   }
-  //   call()
-  // }, [scan])
 
   const [loading, setLoading] = useState<boolean>(false)
-  const [success, setSucess] = useState<boolean>(false)
 
   const [selectedDevice, setSelectedDevice] = useState<any>()
-  // const [imagePrint, setImagePrint] = useState<string>('')
   const [barcodeContent, setBarcodeContent] = useState<IContentSingleBarcode>({
     internal_pallet_no: 'test',
     pallet_string: 'test',
@@ -338,7 +320,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
                         })
                         refreshData()
                       }
-                      // setScan({ internalPalletNo: '' })
                       refreshData()
                     } catch (error) {
                       MySwal.fire({
@@ -375,7 +356,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
                         })
                         refreshData()
                       }
-                      // setScan({ internalPalletNo: '' })
                       refreshData()
                     } catch (error) {
                       MySwal.fire({
@@ -429,7 +409,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
                 position: 'top',
                 confirmButtonColor: theme.palette.primary.main
               })
-              // alert(JSON.stringify(error.response.data.detail))
             }
             setLoading(false)
           }

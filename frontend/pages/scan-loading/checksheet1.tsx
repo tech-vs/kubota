@@ -123,6 +123,11 @@ const View = ({ checksheets, id, accessToken }: any) => {
       },
       function (error: any) {
         console.log(error)
+        MySwal.fire({
+          text: 'Printer is Not Ready',
+          position: 'top',
+          confirmButtonColor: theme.palette.primary.main
+        })
       }
     )
   }
@@ -131,7 +136,7 @@ const View = ({ checksheets, id, accessToken }: any) => {
     async function call() {
       try {
         await printImage()
-        MySwal.fire({
+        await MySwal.fire({
           text: 'Loading successfully',
           position: 'top',
           confirmButtonColor: theme.palette.primary.main
@@ -384,7 +389,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
                           },
                           accessToken
                         )
-                        console.log(res.status)
                         if (res.status === 400) {
                           throw Error(res.data.detail)
                         }
@@ -405,13 +409,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
                         }
 
                         setBarcodeContent(template)
-
-                        // await MySwal.fire({
-                        //   text: 'Last loading successfully and Request Approval',
-                        //   position: 'top',
-                        //   confirmButtonColor: theme.palette.primary.main
-                        // })
-                        // alert('Last oading successfully and Request Approval')
                         router.push(`/scan-packing`)
                       }
                     } catch (error) {
@@ -487,7 +484,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
                 position: 'top',
                 confirmButtonColor: theme.palette.primary.main
               })
-              // alert(JSON.stringify(error.response.data.detail))
             }
             setLoadingApprove(false)
             setLoadingSubmit(false)
