@@ -227,8 +227,8 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
         ) : (
           ''
         )}
-        {role == 'Operator' || role == 'Administrator' ? <Divider /> : ''}
-        {(role == 'Operator' || role == 'Administrator') && (
+        {role == 'Operator' ? <Divider /> : ''}
+        {role == 'Operator' && (
           <List>
             {operatorItems.map((item, index) => (
               <ListItem
@@ -268,8 +268,16 @@ export default function Menu({ open, onDrawerClose }: MenuProp) {
             ))}
           </List>
         )}
-        {role == 'Manager' || role == 'Engineer' || role == 'Clerk' || role == 'Leader' ? <Divider /> : ''}
-        {(role == 'Manager' || role == 'Engineer' || role == 'Clerk' || role == 'Leader') && (
+        {role == 'Manager' || role == 'Engineer' || role == 'Clerk' || role == 'Leader' || role == 'Administrator' ? (
+          <Divider />
+        ) : (
+          ''
+        )}
+        {(role == 'Manager' ||
+          role == 'Engineer' ||
+          role == 'Clerk' ||
+          role == 'Leader' ||
+          role == 'Administrator') && (
           <List>
             {['Management Approve'].map((text, index) => (
               <ListItem

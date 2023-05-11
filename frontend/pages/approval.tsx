@@ -2,19 +2,19 @@ import Layout from '@/components/Layouts/Layout'
 import { approveDocument, rejectDocument } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
 import {
-  alpha,
   Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
-  styled,
   TextField,
   Typography,
+  alpha,
+  styled,
   useMediaQuery,
   useTheme
 } from '@mui/material'
-import { DataGrid, GridCellParams, gridClasses, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { DataGrid, GridCellParams, GridColDef, GridRenderCellParams, gridClasses } from '@mui/x-data-grid'
 import cookie from 'cookie'
 import { useRouter } from 'next/router'
 import { ChangeEvent, ReactElement, useState } from 'react'
@@ -156,6 +156,15 @@ const Approval = ({ list, accessToken, role }: any) => {
       width: 100
     },
     {
+      field: 'role',
+      headerName: 'Role',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      width: 100
+    },
+    {
       field: 'view',
       headerName: 'View',
       headerAlign: 'center',
@@ -182,6 +191,9 @@ const Approval = ({ list, accessToken, role }: any) => {
       align: 'center',
       width: 125,
       renderCell: ({ row }: GridRenderCellParams<string>) => {
+        if (role == 'Administrator') {
+          return <></>
+        }
         return (
           <Button
             variant='contained'
@@ -205,6 +217,9 @@ const Approval = ({ list, accessToken, role }: any) => {
       align: 'center',
       width: 125,
       renderCell: ({ row }: GridRenderCellParams<string>) => {
+        if (role == 'Administrator') {
+          return <></>
+        }
         return (
           <Button
             variant='contained'
@@ -268,7 +283,7 @@ const Approval = ({ list, accessToken, role }: any) => {
             }
           }}
           getRowClassName={params => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
-          rows={list.results}
+          rows={list}
           columns={columns}
           getCellClassName={(params: GridCellParams<string>) => {
             if (params.field === 'customer') {
@@ -346,9 +361,10 @@ export async function getServerSideProps(context: any) {
     const response = await httpClient.get(`pallet/document/?status=wait_approve`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     })
+    console.log(response.data)
     return {
       props: {
-        list: response.data,
+        list: response.data.results,
         accessToken,
         role
       }
@@ -361,7 +377,7 @@ export async function getServerSideProps(context: any) {
     })
     return {
       props: {
-        list: response.data,
+        list: response.data.results,
         accessToken,
         role
       }
@@ -374,7 +390,7 @@ export async function getServerSideProps(context: any) {
     })
     return {
       props: {
-        list: response.data,
+        list: response.data.results,
         accessToken
       }
     }
@@ -385,7 +401,46 @@ export async function getServerSideProps(context: any) {
     })
     return {
       props: {
-        list: response.data,
+        list: response.data.results,
+        accessToken,
+        role
+      }
+    }
+  }
+  if (role == 'Administrator') {
+    const response_leader = await httpClient.get(`pallet/document/?status=wait_approve`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    const response_leader_withRole = response_leader.data.results.map((response: any) => {
+      return { ...response, role: 'Leader' }
+    })
+    const response_clerk = await httpClient.get(`pallet/document/?status=leader_approved`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    const response_clerk_withRole = response_clerk.data.results.map((response: any) => {
+      return { ...response, role: 'Clerk' }
+    })
+    const response_engineer = await httpClient.get(`pallet/document/?status=clerk_approved`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    const response_engineer_withRole = response_engineer.data.results.map((response: any) => {
+      return { ...response, role: 'Clerk' }
+    })
+    const response_manager = await httpClient.get(`pallet/document/?status=engineer_approved`, {
+      headers: { Authorization: `Bearer ${accessToken}` }
+    })
+    const response_manager_withRole = response_manager.data.results.map((response: any) => {
+      return { ...response, role: 'Clerk' }
+    })
+    const response_all = [
+      ...response_leader_withRole,
+      ...response_clerk_withRole,
+      ...response_engineer_withRole,
+      ...response_manager_withRole
+    ]
+    return {
+      props: {
+        list: response_all,
         accessToken,
         role
       }

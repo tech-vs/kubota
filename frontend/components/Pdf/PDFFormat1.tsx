@@ -91,10 +91,9 @@ const PDFFormat1 = ({ content }: Props) => {
                 <tr key={m.id_no + i}>
                   <td>{m.model_code || ''}</td>
                   <td>
-                    {' '}
                     <div className='flex justify-center items-center '>
                       <Barcode value={m.model_code || ''} {...barcodeOption} />
-                    </div>{' '}
+                    </div>
                   </td>
                   <td>{m.model_name || ''}</td>
                   <td>{m.id_no || ''}</td>

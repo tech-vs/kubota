@@ -12,6 +12,7 @@ import {
 import cookie from 'cookie'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
+import CsvDownloadButton from 'react-json-to-csv'
 type Props = {}
 
 const ODD_OPACITY = 0.2
@@ -163,6 +164,14 @@ const Overall = ({ loadingList }: any) => {
         }}
       >
         <Typography variant='h5'>View Loading List</Typography>
+        <Box sx={{ flexGrow: 1 }} />
+        {loadingList ? (
+          <CsvDownloadButton data={loadingList.results} delimiter=','>
+            Export Log
+          </CsvDownloadButton>
+        ) : (
+          <></>
+        )}
       </Box>
 
       <Box
@@ -236,6 +245,7 @@ export async function getServerSideProps(context: any) {
       Authorization: `Bearer ${accessToken}`
     }
   })
+  console.log(response.data)
   return {
     props: {
       loadingList: response.data
