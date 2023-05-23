@@ -165,18 +165,6 @@ export const approveDocument = async (id: string, role: string, accessToken: str
     )
     return response.data
   }
-  if (role == 'Leader') {
-    const response = await httpClient.patch(
-      `/pallet/document/${id}/`,
-      {
-        status: 'leader_approved'
-      },
-      {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      }
-    )
-    return response.data
-  }
   if (role == 'Clerk') {
     const response = await httpClient.patch(
       `/pallet/document/${id}/`,

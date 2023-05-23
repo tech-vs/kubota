@@ -391,7 +391,8 @@ export async function getServerSideProps(context: any) {
     return {
       props: {
         list: response.data.results,
-        accessToken
+        accessToken,
+        role
       }
     }
   }
@@ -424,13 +425,13 @@ export async function getServerSideProps(context: any) {
       headers: { Authorization: `Bearer ${accessToken}` }
     })
     const response_engineer_withRole = response_engineer.data.results.map((response: any) => {
-      return { ...response, role: 'Clerk' }
+      return { ...response, role: 'Engineer' }
     })
     const response_manager = await httpClient.get(`pallet/document/?status=engineer_approved`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     })
     const response_manager_withRole = response_manager.data.results.map((response: any) => {
-      return { ...response, role: 'Clerk' }
+      return { ...response, role: 'Manager' }
     })
     const response_all = [
       ...response_leader_withRole,
