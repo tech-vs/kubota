@@ -87,25 +87,45 @@ const PDFFormat1 = ({ content }: Props) => {
               </tr>
             </thead>
             <tbody>
-              {content.part_list.map((m, i) => (
-                <tr key={m.id_no + i}>
-                  <td>{m.model_code || ''}</td>
+              {content.nw_gw == '0173' ? (
+                <tr key={content.part_list[0].id_no + 1}>
+                  <td>{content.part_list[0].model_code || ''}</td>
                   <td>
                     <div className='flex justify-center items-center '>
-                      <Barcode value={m.model_code || ''} {...barcodeOption} />
+                      <Barcode value={content.part_list[0].model_code || ''} {...barcodeOption} />
                     </div>
                   </td>
-                  <td>{m.model_name || ''}</td>
-                  <td>{m.id_no || ''}</td>
-                  <td>{m.serial_no || ''}</td>
+                  <td>{content.part_list[0].model_name || ''}</td>
+                  <td>{content.part_list[0].id_no || ''}</td>
+                  <td>{content.part_list[0].serial_no || ''}</td>
                   <td>
                     <div className='flex justify-center items-center '>
-                      <Barcode value={m.serial_no || ''} {...barcodeOption} />
+                      <Barcode value={content.part_list[0].serial_no || ''} {...barcodeOption} />
                     </div>
                   </td>
                   <td></td>
                 </tr>
-              ))}
+              ) : (
+                content.part_list.map((m, i) => (
+                  <tr key={m.id_no + i}>
+                    <td>{m.model_code || ''}</td>
+                    <td>
+                      <div className='flex justify-center items-center '>
+                        <Barcode value={m.model_code || ''} {...barcodeOption} />
+                      </div>
+                    </td>
+                    <td>{m.model_name || ''}</td>
+                    <td>{m.id_no || ''}</td>
+                    <td>{m.serial_no || ''}</td>
+                    <td>
+                      <div className='flex justify-center items-center '>
+                        <Barcode value={m.serial_no || ''} {...barcodeOption} />
+                      </div>
+                    </td>
+                    <td></td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -2,6 +2,7 @@ export interface IPreviewDataFormat1 {
   pallet_id: number
   pallet: string
   skewer: string
+  nw_gw: string
   internal_pallet_no: string
   packing_by: {
     first_name: string
