@@ -52,6 +52,7 @@ class PalletListSerializer(serializers.Serializer):
     pallet_id = serializers.IntegerField(source='id')
     pallet = serializers.CharField()
     skewer = serializers.CharField()
+    nw_gw = serializers.ChoiceField(choices=NWGW.choices)
     internal_pallet_no = serializers.CharField()
     pallet_string = serializers.CharField()
     question_type = serializers.ChoiceField(choices=QuestionType.choices)
@@ -59,6 +60,7 @@ class PalletListSerializer(serializers.Serializer):
     created_at = serializers.DateTimeField()
     updated_at = serializers.DateTimeField()
     packing_by = serializers.SerializerMethodField()
+
 
     def get_packing_by(self, obj):
         if obj.packing_by:
