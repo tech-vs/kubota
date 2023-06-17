@@ -82,6 +82,16 @@ def sync_data_oracle() -> str:
     # ProdInfoHistory.objects.bulk_create(prodinfohistory_list)
     return 'Done'
 
+'''
+update prod_result set prod_status = '2' where station_no = '700602' and id_no= 'XXXXXXXXXX' and actual_date = SYSDATE
+'''
+def update_data_oracle(id_no='') -> str:
+    with cx_Oracle.connect(user="STDADMIN", password="STDADMIN", dsn="172.20.176.72/PRDACT") as db:
+        cursor = db.cursor()
+        cursor.execute('update prod_result set prod_status = :1 where station_no = :2 and id_no = :3', ["2", "700602", id_no])
+        db.commit()
+    return 'Done'
+
 
 # select *from MS_PACKING_STYLE where MODEL_CODE = '1J49500000' and PACKING_STYLE_CODE = '0173'
 # select *from MS_PACKING_STYLE where MODEL_CODE = '1J49500000' and PACKING_STYLE_CODE = '0473'

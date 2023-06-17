@@ -25,6 +25,7 @@ from pallet.serializers import (NoneSerializer, PalletCreateSerializer,
                           QuestionListSerializer, PalletPackingDoneSerializer,
                           PalletPartListSerializer, PalletRepackSerializer)
 from pallet.filters import PalletPartListFilter
+from syncdata.syncdata import update_data_oracle
 '''
 test rebase ei
 '''
@@ -138,6 +139,9 @@ class PalletViewSet(viewsets.GenericViewSet):
             PalletPart.objects.bulk_create([PalletPart(pallet=pallet, part=part_item[1]) for part_item in part_to_set_list])
             pallet.generate_question(question_type)
         response = PalletListSerializer(pallet).data
+
+        for part in part_list:
+            update_data_oracle(part.get('id_no', ''))
         return Response(response, status=status.HTTP_201_CREATED)
 
 
