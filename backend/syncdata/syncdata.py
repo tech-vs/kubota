@@ -1,7 +1,10 @@
 import pyodbc
+import pytz
 from typing import List
 import cx_Oracle
 from syncdata.models import PSETSDataUpload, ProdInfoHistory
+from django.utils import timezone
+
 
 
 # results = []
@@ -86,9 +89,11 @@ def sync_data_oracle() -> str:
 update prod_result set prod_status = '2' where station_no = '700602' and id_no= 'XXXXXXXXXX' and actual_date = SYSDATE
 '''
 def update_data_oracle(id_no='') -> str:
+    tz = pytz.timezone('Asia/Bangkok')
+    now = timezone.localtime(timezone=tz)
     with cx_Oracle.connect(user="STDADMIN", password="STDADMIN", dsn="172.20.176.72/PRDACT") as db:
         cursor = db.cursor()
-        cursor.execute('update prod_result set prod_status = :1 where station_no = :2 and id_no = :3', ["2", "700602", id_no])
+        cursor.execute('update prod_result set prod_status = :1, actual_date = :2 where station_no = :3 and id_no = :4', ["2", now, "700602", id_no])
         db.commit()
     return 'Done'
 
