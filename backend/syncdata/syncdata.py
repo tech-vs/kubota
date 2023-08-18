@@ -93,7 +93,7 @@ def update_data_oracle(id_no='') -> str:
     now = timezone.localtime(timezone=tz)
     with cx_Oracle.connect(user="STDADMIN", password="STDADMIN", dsn="172.20.176.72/PRDACT") as db:
         cursor = db.cursor()
-        cursor.execute('update prod_result set prod_status = :1, actual_date = :2 where station_no = :3 and id_no = :4', ["2", now, "700602", id_no])
+        cursor.execute('update prod_result set prod_status = :1, actual_date = :2 where station_no = :3 and id_no = :4 and actual_monthly_sub_seq = :5 and actual_monthly_seq = :6', ["2", now, "700602", id_no, "0", "20230700001"])
         db.commit()
     return 'Done'
 
