@@ -95,7 +95,7 @@ def update_data_oracle(id_no='') -> str:
         cursor = db.cursor()
         cursor.execute('select ACTUAL_RUNNING_SEQ from MS_ACTUAL_MONTHLY_SEQ where  STATION_NO = "700602" and TO_CHAR(actual_work_MONTH, "mm/YY") = TO_CHAR(SYSDATE, "mm/YY")')
         (actual_monthly_seq,)=cursor.fetchone()
-        cursor.execute('update prod_result set prod_status = :1, actual_date = :2 where station_no = :3 and id_no = :4 and actual_monthly_sub_seq = :5 and actual_monthly_seq = :6', ["2", now, "700602", id_no, "0", actual_monthly_seq])
+        cursor.execute('update prod_result set prod_status = :1, actual_date = :2 where station_no = :3 and id_no = :4 and actual_monthly_sub_seq = :5 and actual_monthly_seq = :6', ["2", now, "700602", id_no, "0", str(actual_monthly_seq)])
         db.commit()
     return 'Done'
 
