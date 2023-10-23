@@ -96,9 +96,9 @@ def update_data_oracle(increase: int = 1) -> str:
         row = cursor.fetchone()
         if row:
             actual_monthly_seq += row[0]
-            cursor.execute("update MS_ACTUAL_MONTHLY_SEQ set ACTUAL_RUNNING_SEQ = :1, UPDATE_DATE = :2 where STATION_NO = :3 and TO_CHAR(actual_work_MONTH,'mm/YY') = TO_CHAR(SYSDATE,'mm/YY')", [actual_monthly_seq, "SYSDATE", "700602"])
+            cursor.execute("update MS_ACTUAL_MONTHLY_SEQ set ACTUAL_RUNNING_SEQ = :1, UPDATE_DATE = SYSDATE where STATION_NO = :2 and TO_CHAR(actual_work_MONTH,'mm/YY') = TO_CHAR(SYSDATE,'mm/YY')", [actual_monthly_seq, "700602"])
         else:
-            cursor.execute("insert into MS_ACTUAL_MONTHLY_SEQ(STATION_NO, ACTUAL_WORK_MONTH, ACTUAL_RUNNING_SEQ, CREATE_DATE, CREATE_BY, UPDATE_DATE, UPDATE_BY) values (:1, :2, :3, :4, :5, :6, :7)", ["700602", "SYSDATE", actual_monthly_seq, "SYSDATE", "380", "SYSDATE", "380"])
+            cursor.execute("insert into MS_ACTUAL_MONTHLY_SEQ(STATION_NO, ACTUAL_WORK_MONTH, ACTUAL_RUNNING_SEQ, CREATE_DATE, CREATE_BY, UPDATE_DATE, UPDATE_BY) values (:1, SYSDATE, :2, SYSDATE, :3, SYSDATE, :4)", ["700602", actual_monthly_seq, "380", "380"])
         db.commit()
     return 'Done'
 
