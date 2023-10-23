@@ -139,9 +139,6 @@ class PalletViewSet(viewsets.GenericViewSet):
             PalletPart.objects.bulk_create([PalletPart(pallet=pallet, part=part_item[1]) for part_item in part_to_set_list])
             pallet.generate_question(question_type)
         response = PalletListSerializer(pallet).data
-
-        for part in part_list:
-            update_data_oracle(part.get('id_no', ''))
         return Response(response, status=status.HTTP_201_CREATED)
 
 
@@ -194,6 +191,10 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
         if not self.pallet.palletquestion_set.filter(Q(section=1) | Q(section=2), Q(status=False)).exists():
             self.pallet.packing_status = True
             self.pallet.status = PalletStatus.FINISH_PACK
+            if self.pallet.nw_gw == NWGW.UNIT1:
+                update_data_oracle(1)
+            elif self.pallet.nw_gw == NWGW.UNIT4:
+                update_data_oracle(4)
             self.pallet.packing_datetime = timezone.now()
             self.pallet.save()
         response = PalletPackingDoneSerializer(self.pallet).data

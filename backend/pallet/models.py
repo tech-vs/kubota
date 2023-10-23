@@ -12,8 +12,8 @@ class QuestionType(models.TextChoices):
 
 
 class NWGW(models.TextChoices):
-    UNIT1 = '0173'
-    UNIT4 = '0473'
+    UNIT1 = '0173' # + 1
+    UNIT4 = '0473' # + 4
 
 
 class PalletStatus(models.TextChoices):

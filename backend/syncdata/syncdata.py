@@ -73,6 +73,7 @@ def sync_data_oracle() -> str:
     # prodinfohistory_list = []
     for result in results:
         id_no = result.pop('id_no', None)
+        print(id_no)
         plan_prod_finish_ym = result.pop('plan_prod_finish_ym', None)
         ProdInfoHistory.objects.update_or_create(
             id_no=id_no,
@@ -85,17 +86,19 @@ def sync_data_oracle() -> str:
     # ProdInfoHistory.objects.bulk_create(prodinfohistory_list)
     return 'Done'
 
-'''
-update prod_result set prod_status = '2' where station_no = '700602' and id_no= 'XXXXXXXXXX' and actual_date = SYSDATE
-'''
-def update_data_oracle(id_no='') -> str:
+def update_data_oracle(increase: int = 1) -> str:
     tz = pytz.timezone('Asia/Bangkok')
     now = timezone.localtime(timezone=tz)
+    actual_monthly_seq = increase
     with cx_Oracle.connect(user="STDADMIN", password="STDADMIN", dsn="172.20.176.72/PRDACT") as db:
         cursor = db.cursor()
-        cursor.execute('select ACTUAL_RUNNING_SEQ from MS_ACTUAL_MONTHLY_SEQ where  STATION_NO = "700602" and TO_CHAR(actual_work_MONTH, "mm/YY") = TO_CHAR(SYSDATE, "mm/YY")')
-        (actual_monthly_seq,)=cursor.fetchone()
-        cursor.execute('update prod_result set prod_status = :1, actual_date = :2 where station_no = :3 and id_no = :4 and actual_monthly_sub_seq = :5 and actual_monthly_seq = :6', ["2", now, "700602", id_no, "0", str(actual_monthly_seq)])
+        cursor.execute("select ACTUAL_RUNNING_SEQ from MS_ACTUAL_MONTHLY_SEQ where STATION_NO = '700602' and TO_CHAR(actual_work_MONTH,'mm/YY') = TO_CHAR(SYSDATE,'mm/YY')")
+        row = cursor.fetchone()
+        if row:
+            actual_monthly_seq += row[0]
+            cursor.execute("update MS_ACTUAL_MONTHLY_SEQ set ACTUAL_RUNNING_SEQ = :1, UPDATE_DATE = :2 where STATION_NO = :3 and TO_CHAR(actual_work_MONTH,'mm/YY') = TO_CHAR(SYSDATE,'mm/YY')", [actual_monthly_seq, "SYSDATE", "700602"])
+        else:
+            cursor.execute("insert into MS_ACTUAL_MONTHLY_SEQ(STATION_NO, ACTUAL_WORK_MOTH, ACTUAL_RUNNING_SEQ, CREATE_DATE, CREATE_BY, UPDATE_DATE, UPDATE_BY) values (:1, :2, :3, :4, :5, :6, :7)", ["700602", "SYSDATE", actual_monthly_seq, "SYSDATE", "380", "SYSDATE", "380"])
         db.commit()
     return 'Done'
 
