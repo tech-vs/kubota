@@ -143,7 +143,7 @@ class PalletViewSet(viewsets.GenericViewSet):
 
 
 class PalletListQuestionViewSet(viewsets.GenericViewSet):
-    queryset = Pallet.objects.all().prefetch_related('palletquestion_set')
+    queryset = Pallet.objects.all().prefetch_related('palletquestion_set', 'part_list')
     lookup_field = None
     # permission_classes = (AllowAny,)
     action_serializers = {
@@ -191,10 +191,12 @@ class PalletListQuestionViewSet(viewsets.GenericViewSet):
         if not self.pallet.palletquestion_set.filter(Q(section=1) | Q(section=2), Q(status=False)).exists():
             self.pallet.packing_status = True
             self.pallet.status = PalletStatus.FINISH_PACK
+            # add more
+            id_no_list = [part.id_no for part in self.pallet.part_list.all()]
             if self.pallet.nw_gw == NWGW.UNIT1:
-                update_data_oracle(1)
+                update_data_oracle(1, id_no_list)
             elif self.pallet.nw_gw == NWGW.UNIT4:
-                update_data_oracle(4)
+                update_data_oracle(4, id_no_list)
             self.pallet.packing_datetime = timezone.now()
             self.pallet.save()
         response = PalletPackingDoneSerializer(self.pallet).data
