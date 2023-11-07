@@ -107,11 +107,12 @@ def update_data_oracle(increase: int = 1, id_no_list: List = []) -> str:
             previos_actual_monthly_seq += 1
             ac_update = f"{now.strftime('%Y%m')}{str(previos_actual_monthly_seq).zfill(5)}"
             try:
-                cursor.execute("update prod_result set prod_status = :1 where station_no = :2 and id_no = :3 and TO_CHAR(actual_date, 'YY/mm/dd') = TO_CHAR(SYSDATE, 'YY/mm/dd') and actual_monthly_sub_seq = :4 and actual_monthly_seq = :5", ["2", "700602", id_no, "0", str(ac_update)])
+                cursor.execute("update prod_result set prod_status = :1, actual_monthly_seq = :2, actual_date = SYSDATE where station_no = :3 and id_no = :4", ["2", str(ac_update), "700602", id_no])
+                print(f'success id_no: {id_no}, actual_monthly_seq: {ac_update}')
                 db.commit()
                 # cursor.execute("insert into prod_result(STATION_NO, PLAN_MONTHLY_SEQ, PLAN_MONTHLY_SUB_SEQ)")
             except:
-                print(f'id_no: {id_no}, actual_monthly_seq: {ac_update}')
+                print(f'fail id_no: {id_no}, actual_monthly_seq: {ac_update}')
                 LogSyncData.objects.create(table='PROD_RESULT', detail={'id_no': id_no, 'actual_monthly_seq': ac_update})
     return 'Done'
 
