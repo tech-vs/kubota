@@ -91,29 +91,36 @@ def update_data_oracle(increase: int = 1, id_no_list: List = []) -> str:
     now = timezone.localtime(timezone=tz)
     actual_monthly_seq = increase
     previos_actual_monthly_seq = 0
+    count_update = 0
     with cx_Oracle.connect(user="STDADMIN", password="STDADMIN", dsn="172.20.176.72/PRDACT") as db:
         cursor = db.cursor()
         cursor.execute("select ACTUAL_RUNNING_SEQ from MS_ACTUAL_MONTHLY_SEQ where STATION_NO = '700602' and TO_CHAR(actual_work_MONTH,'mm/YY') = TO_CHAR(SYSDATE,'mm/YY')")
-        row = cursor.fetchone()
-        if row:
-            previos_actual_monthly_seq = row[0]
-            actual_monthly_seq += row[0]
+        row_actual_running_seq = cursor.fetchone()
+        if row_actual_running_seq:
+            previos_actual_monthly_seq = row_actual_running_seq[0]
+        for id_no in id_no_list:
+            previos_actual_monthly_seq += 1
+            ac_update = f"{now.strftime('%Y%m')}{str(previos_actual_monthly_seq).zfill(5)}"
+            
+            cursor.execute("select prod_result from prod_result where station_no = :3 and id_no = :4", ["700602", id_no])
+            row = cursor.fetchone()
+            if row:
+                cursor.execute("update prod_result set prod_status = :1, actual_monthly_seq = :2, actual_date = SYSDATE where station_no = :3 and id_no = :4", ["2", str(ac_update), "700602", id_no])
+                print(f'success id_no: {id_no}, actual_monthly_seq: {ac_update}')
+                count_update += 1
+                db.commit()
+                # cursor.execute("insert into prod_result(STATION_NO, PLAN_MONTHLY_SEQ, PLAN_MONTHLY_SUB_SEQ)")
+            else:
+                print(f'fail id_no: {id_no}, actual_monthly_seq: {ac_update}')
+                LogSyncData.objects.create(table='PROD_RESULT', detail={'id_no': id_no, 'actual_monthly_seq': ac_update})
+        
+        if count_update != 0 and row_actual_running_seq:
+            actual_monthly_seq += row_actual_running_seq[0]
             cursor.execute("update MS_ACTUAL_MONTHLY_SEQ set ACTUAL_RUNNING_SEQ = :1, UPDATE_DATE = SYSDATE where STATION_NO = :2 and TO_CHAR(actual_work_MONTH,'mm/YY') = TO_CHAR(SYSDATE,'mm/YY')", [actual_monthly_seq, "700602"])
             db.commit()
         else:
             cursor.execute("insert into MS_ACTUAL_MONTHLY_SEQ(STATION_NO, ACTUAL_WORK_MONTH, ACTUAL_RUNNING_SEQ, CREATE_DATE, CREATE_BY, UPDATE_DATE, UPDATE_BY) values (:1, SYSDATE, :2, SYSDATE, :3, SYSDATE, :4)", ["700602", actual_monthly_seq, "380", "380"])
             db.commit()
-        for id_no in id_no_list:
-            previos_actual_monthly_seq += 1
-            ac_update = f"{now.strftime('%Y%m')}{str(previos_actual_monthly_seq).zfill(5)}"
-            try:
-                cursor.execute("update prod_result set prod_status = :1, actual_monthly_seq = :2, actual_date = SYSDATE where station_no = :3 and id_no = :4", ["2", str(ac_update), "700602", id_no])
-                print(f'success id_no: {id_no}, actual_monthly_seq: {ac_update}')
-                db.commit()
-                # cursor.execute("insert into prod_result(STATION_NO, PLAN_MONTHLY_SEQ, PLAN_MONTHLY_SUB_SEQ)")
-            except:
-                print(f'fail id_no: {id_no}, actual_monthly_seq: {ac_update}')
-                LogSyncData.objects.create(table='PROD_RESULT', detail={'id_no': id_no, 'actual_monthly_seq': ac_update})
     return 'Done'
 
 
