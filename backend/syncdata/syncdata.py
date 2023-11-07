@@ -114,10 +114,13 @@ def update_data_oracle(increase: int = 1, id_no_list: List = []) -> str:
                 print(f'fail id_no: {id_no}, actual_monthly_seq: {ac_update}')
                 LogSyncData.objects.create(table='PROD_RESULT', detail={'id_no': id_no, 'actual_monthly_seq': ac_update})
         
-        if count_update != 0 and row_actual_running_seq:
-            actual_monthly_seq += row_actual_running_seq[0]
-            cursor.execute("update MS_ACTUAL_MONTHLY_SEQ set ACTUAL_RUNNING_SEQ = :1, UPDATE_DATE = SYSDATE where STATION_NO = :2 and TO_CHAR(actual_work_MONTH,'mm/YY') = TO_CHAR(SYSDATE,'mm/YY')", [actual_monthly_seq, "700602"])
-            db.commit()
+        if row_actual_running_seq:
+            if count_update != 0:
+                actual_monthly_seq += row_actual_running_seq[0]
+                cursor.execute("update MS_ACTUAL_MONTHLY_SEQ set ACTUAL_RUNNING_SEQ = :1, UPDATE_DATE = SYSDATE where STATION_NO = :2 and TO_CHAR(actual_work_MONTH,'mm/YY') = TO_CHAR(SYSDATE,'mm/YY')", [actual_monthly_seq, "700602"])
+                db.commit()
+            else:
+                print("not update ACTUAL_RUNNING_SEQ cause no id_no update")
         else:
             cursor.execute("insert into MS_ACTUAL_MONTHLY_SEQ(STATION_NO, ACTUAL_WORK_MONTH, ACTUAL_RUNNING_SEQ, CREATE_DATE, CREATE_BY, UPDATE_DATE, UPDATE_BY) values (:1, SYSDATE, :2, SYSDATE, :3, SYSDATE, :4)", ["700602", actual_monthly_seq, "380", "380"])
             db.commit()
