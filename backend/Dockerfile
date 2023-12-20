@@ -26,6 +26,7 @@ ENV ORACLE_SID asdb
 # RUN export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 RUN pip install --upgrade pip
+RUN pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org pip setuptools
 
 # RUN pip install poetry
 # RUN poetry config virtualenvs.create false
