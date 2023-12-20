@@ -105,7 +105,7 @@ def update_data_oracle(increase: int = 1, id_no_list: List = []) -> str:
             cursor.execute("select prod_status from prod_result where station_no = :3 and id_no = :4", ["700602", id_no])
             row = cursor.fetchone()
             if row:
-                cursor.execute("update prod_result set prod_status = :1, actual_monthly_seq = :2, actual_date = SYSDATE where station_no = :3 and id_no = :4", ["2", str(ac_update), "700602", id_no])
+                cursor.execute("update prod_result set prod_status = :1, actual_monthly_seq = :2, actual_date = SYSDATE, update_date = SYSDATE, actual_monthly_sub_seq = '0', update_by = '700602' where station_no = :3 and id_no = :4", ["2", str(ac_update), "700602", id_no])
                 print(f'success id_no: {id_no}, actual_monthly_seq: {ac_update}')
                 count_update += 1
                 db.commit()
