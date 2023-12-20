@@ -239,7 +239,7 @@ const Overall = ({ loadingList }: any) => {
 export async function getServerSideProps(context: any) {
   const cookies = cookie.parse(context.req.headers.cookie || '')
   const accessToken = cookies['access_token']
-  const response = await httpClient.get(`/pallet/document/?status=approved`, {
+  const response = await httpClient.get(`/pallet/document/?status=manager_approved`, {
     headers: {
       Accept: 'application/json',
       Authorization: `Bearer ${accessToken}`
