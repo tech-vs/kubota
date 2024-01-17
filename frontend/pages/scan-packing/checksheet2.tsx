@@ -52,7 +52,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
   function printImage() {
     return new Promise<void>(async (resolve, reject) => {
       if (selectedDevice && singleBarcodeRef.current) {
-        console.log(barcodeContent)
         selectedDevice.convertAndSendFile(
           await toPng(singleBarcodeRef.current),
           (res: any) => {
@@ -81,7 +80,7 @@ const View = ({ checksheets, id, accessToken }: any) => {
     BP.getDefaultDevice(
       'printer',
       function (device: any) {
-        console.log(device)
+        // console.log(device)
         setSelectedDevice(device)
       },
       function (error: any) {
@@ -304,7 +303,7 @@ const View = ({ checksheets, id, accessToken }: any) => {
                     try {
                       if (id) {
                         const res = await repack(id, accessToken)
-                        console.log(res)
+    
 
                         MySwal.fire({
                           text: 'Reset สำเร็จ ดำเนินการ Repack ใหม่',
@@ -393,7 +392,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
               id.toString() || '',
               accessToken
             )
-            console.log(internal_pallet_no)
             setBarcodeContent(barcodeContent => ({
               ...barcodeContent,
               internal_pallet_no,

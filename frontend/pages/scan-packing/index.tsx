@@ -57,7 +57,6 @@ const Scan = ({ accessToken }: any) => {
 
   useEffect(() => {
     if (palletNoRef.current && deEx === 'Domestic') {
-      console.log(palletNoRef.current)
       setTimeout(() => {
         palletNoRef.current?.click()
         palletNoRef.current?.focus()

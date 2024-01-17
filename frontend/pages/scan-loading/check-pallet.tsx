@@ -122,7 +122,6 @@ const View = ({ genDoc, accessToken }: any) => {
     const palletNoRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
-      console.log(palletNoRef.current)
       setTimeout(() => {
         palletNoRef.current?.click()
         palletNoRef.current?.focus()

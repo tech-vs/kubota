@@ -1,8 +1,8 @@
 import Layout from '@/components/Layouts/Layout'
 import { repack, scanLoading } from '@/services/serverServices'
 import httpClient from '@/utils/httpClient'
-import { alpha, Box, Button, Card, CardContent, styled, TextField, Typography, useTheme } from '@mui/material'
-import { DataGrid, GridCellParams, gridClasses, GridColDef } from '@mui/x-data-grid'
+import { Box, Button, Card, CardContent, TextField, Typography, alpha, styled, useTheme } from '@mui/material'
+import { DataGrid, GridCellParams, GridColDef, gridClasses } from '@mui/x-data-grid'
 import cookie from 'cookie'
 import { Form, Formik, FormikProps } from 'formik'
 import { useRouter, withRouter } from 'next/router'
@@ -132,7 +132,6 @@ const Repack = ({ partList, accessToken }: any) => {
     useEffect(() => {
       async function call() {
         const res = await scanLoading(scan.internalPalletNo, accessToken)
-        console.log(res)
         setScanLoadingResponse(res)
         setScanLoadingResponseResult(res.item_list)
       }
@@ -300,7 +299,7 @@ const Repack = ({ partList, accessToken }: any) => {
                     try {
                       if (scanLoadingResponse.pallet_id) {
                         const res = await repack(scanLoadingResponse.pallet_id, accessToken)
-                        console.log(res)
+  
 
                         MySwal.fire({
                           text: 'Repack สำเร็จ',

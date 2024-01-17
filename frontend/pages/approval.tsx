@@ -361,7 +361,6 @@ export async function getServerSideProps(context: any) {
     const response = await httpClient.get(`pallet/document/?status=wait_approve`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     })
-    console.log(response.data)
     return {
       props: {
         list: response.data.results,

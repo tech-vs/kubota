@@ -1,17 +1,35 @@
-import { IPreviewDataFormat2 } from '@/models/preview.model'
-import { useMemo } from 'react'
+import { IPreviewDataFormat2 } from '@/models/preview.model';
+import { useEffect, useMemo, useState } from 'react';
 
 interface Props {
   content: IPreviewDataFormat2
 }
+function splitList(inputList: any[]) {
+  const outputList = [];
+  
+  while (inputList.length > 0) {
+    outputList.push(inputList.splice(0, 20));
+  }
+
+  return outputList;
+}
 
 const PDFFormat2 = ({ content }: Props) => {
   // filter section === 3 only
+  // console.log(content.pallet_list.length)
+  const [contentPerPage,setContentPerPage] = useState<any[][]>([])
+  useEffect(() => {
+    const splitResult = splitList(content.pallet_list)
+    setContentPerPage(splitResult)
+  }, [content])
+  console.log(contentPerPage);
+  
   const headerQuestion = useMemo(() => content.question_list.filter(f => f.section === 3), [content.question_list])
 
   return (
     <>
-      <div className='page' data-size='A4'>
+    {contentPerPage.map((item,index) => (     
+        <div key={index} className='page' data-size='A4'>
         <div className='text-center fs-17 bold'>Kubota Engine (Thailand) Co., Ltd.</div>
         <div className='fs-12'>Address : 360 Moo3, Phanom Sarakarm, Chachoengsao 24120 Thailand</div>
         <div className='fs-12'>Tel: 038-855136-40 ,Fax : 038-855145</div>
@@ -124,13 +142,13 @@ const PDFFormat2 = ({ content }: Props) => {
               </tr>
               {
                 // render group 4
-                content.pallet_list.map((row, i) =>
+                item.map((row, i) =>
                   // render row
                   [...Array(4).keys()].map(indexOfData => {
                     return (
                       <tr key={i + indexOfData + '_row_data_body'}>
                         <td className='bold'>{i * 4 + (indexOfData + 1)}</td>
-
+  
                         {indexOfData % 4 === 0 && (
                           <td rowSpan={4} className='fs-9 bold'>
                             {content.question_type.toLowerCase() === 'export' ? (
@@ -253,8 +271,8 @@ const PDFFormat2 = ({ content }: Props) => {
           <div className='section' style={{ marginTop: '12pt' }}>
             <table className='fs-9'>
               <colgroup>
-                {[...Array(8).keys()].map(c => {
-                  return <col style={{ width: '12.5%' }} />
+                {[...Array(8).keys()].map((c,index) => {
+                  return <col key={index} style={{ width: '12.5%' }} />
                 })}
               </colgroup>
               <tbody>
@@ -268,18 +286,18 @@ const PDFFormat2 = ({ content }: Props) => {
                     `${content.engineer_approve_name}`,
                     'Approved by: Manager',
                     `${content.manager_approve_name}`
-                  ].map(c => {
+                  ].map((c,index) => {
                     return (
-                      <td className='text-center'>
+                      <td key={index} className='text-center'>
                         <div>{c}</div>
                       </td>
                     )
                   })}
                 </tr>
                 <tr>
-                  {[...Array(8).keys()].map(c => {
+                  {[...Array(8).keys()].map((c,index) => {
                     return (
-                      <td className='text-center'>
+                      <td  key={index} className='text-center'>
                         <div>{c % 2 === 0 ? 'Date' : ''}</div>
                       </td>
                     )
@@ -292,6 +310,12 @@ const PDFFormat2 = ({ content }: Props) => {
           <></>
         )}
       </div>
+
+
+    ))}
+    
+
+      
     </>
   )
 }

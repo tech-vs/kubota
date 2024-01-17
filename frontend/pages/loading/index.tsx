@@ -245,7 +245,6 @@ export async function getServerSideProps(context: any) {
       Authorization: `Bearer ${accessToken}`
     }
   })
-  console.log(response.data)
   return {
     props: {
       loadingList: response.data

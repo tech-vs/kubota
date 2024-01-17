@@ -30,7 +30,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const signin = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    console.log(req.body)
     const response = await httpClient.post('/account/login/', req.body)
     const { token } = response.data
     setCookie(res, 'access_token', token, {
@@ -54,7 +53,6 @@ const getSession = async (req: NextApiRequest, res: NextApiResponse) => {
       const response = await httpClient.get(`/account/profile/`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
-      console.log(response.data)
       res.json(response.data)
     } else {
       res.json({ result: 'no accessToken found' })

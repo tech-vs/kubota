@@ -93,7 +93,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
         selectedDevice.convertAndSendFile(
           await toPng(multipleBarcodeRef.current),
           (res: any) => {
-            console.log(res)
             setTimeout(() => {
               resolve()
             }, 2000)
@@ -118,7 +117,6 @@ const View = ({ checksheets, id, accessToken }: any) => {
     BP.getDefaultDevice(
       'printer',
       function (device: any) {
-        console.log(device)
         setSelectedDevice(device)
       },
       function (error: any) {
@@ -341,7 +339,7 @@ const View = ({ checksheets, id, accessToken }: any) => {
                           },
                           accessToken
                         )
-                        console.log(res.status)
+  
                         if (res.status === 400) {
                           throw Error(res.data.detail)
                         }

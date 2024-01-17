@@ -26,7 +26,7 @@ const PreviewDocumentWithId = ({ accessToken }: any) => {
     if (!router.isReady) return
     const { id, type } = router.query
     // codes using router.query
-    console.log('id : ', router.query)
+    // console.log('id : ', router.query)
 
     const fetchData = async () => {
       setLoading(true)

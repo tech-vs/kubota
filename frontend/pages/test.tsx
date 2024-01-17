@@ -1,11 +1,10 @@
 import MultipleBarcode from "@/components/Barcode/MultipleBarcode"
 import SingleBarcode from "@/components/Barcode/SingleBarcode"
 import { IContentSingleBarcode } from "@/models/barcode.model"
-import { toPng } from "html-to-image"
+import { useTheme } from "@mui/material"
 import { useCallback, useEffect, useRef, useState } from "react"
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-import { useTheme } from "@mui/material";
 
 type Props = {}
 
@@ -64,7 +63,7 @@ const Test = ({ }: Props) => {
     const BP = window.BrowserPrint
     //Get the default device from the application as a first step. Discovery takes longer to complete.
     BP.getDefaultDevice("printer", function (device: any) {
-      console.log(device);
+      // console.log(device);
     }, function (error: any) {
       console.log(error);
     })
@@ -75,7 +74,7 @@ const Test = ({ }: Props) => {
       console.dir(siggleBarcodeRef.current);
 
       // callbackDataUrl(await toPng(ref.current))
-      console.log(await toPng(siggleBarcodeRef.current))
+      // console.log(await toPng(siggleBarcodeRef.current))
     }
   }, [siggleBarcodeRef?.current])
 
@@ -84,7 +83,7 @@ const Test = ({ }: Props) => {
       console.dir(multipleBarcodeRef.current);
 
       // callbackDataUrl(await toPng(ref.current))
-      console.log(await toPng(multipleBarcodeRef.current))
+      // console.log(await toPng(multipleBarcodeRef.current))
     }
   }, [multipleBarcodeRef?.current])
 
