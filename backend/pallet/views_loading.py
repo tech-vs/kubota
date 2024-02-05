@@ -179,7 +179,7 @@ class DocumentViewSet(viewsets.GenericViewSet):
         response = self.get_serializer(doc).data
         return Response(response, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['GET'], url_path='approve')
+    @action(detail=True, methods=['PATCH'], url_path='approve')
     def approve(self, request, *args, **kwargs):
         doc = self.get_object()
         if doc:
