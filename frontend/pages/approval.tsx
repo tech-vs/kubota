@@ -83,6 +83,16 @@ const Approval = ({ list, accessToken, role }: any) => {
 
   const columns: GridColDef[] = [
     {
+      field: 'id',
+      headerName: '',
+      headerAlign: 'center',
+      headerClassName: 'headerField',
+      align: 'center',
+      cellClassName: 'cellField',
+      hide: true,
+      width: 0
+    },
+    {
       field: 'doc_no',
       headerName: 'Document No.',
       headerAlign: 'center',
@@ -281,6 +291,11 @@ const Approval = ({ list, accessToken, role }: any) => {
             '&.MuiDataGrid-root .MuiDataGrid-cell:focus': {
               outline: 'none'
             }
+          }}
+          initialState={{
+            sorting: {
+              sortModel: [{ field: 'id', sort: 'asc' }],
+            },
           }}
           getRowClassName={params => (params.indexRelativeToCurrentPage % 2 === 0 ? 'even' : 'odd')}
           rows={list}
