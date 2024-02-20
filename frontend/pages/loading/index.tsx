@@ -12,7 +12,6 @@ import {
 import cookie from 'cookie'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
-import CsvDownloadButton from 'react-json-to-csv'
 type Props = {}
 
 const ODD_OPACITY = 0.2
@@ -42,6 +41,8 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   }
 }))
 const Overall = ({ loadingList }: any) => {
+  console.log(loadingList.results);
+  
   const router = useRouter()
   const theme = useTheme()
   const isSM = useMediaQuery(theme.breakpoints.only('sm'))
@@ -165,13 +166,7 @@ const Overall = ({ loadingList }: any) => {
       >
         <Typography variant='h5'>View Loading List</Typography>
         <Box sx={{ flexGrow: 1 }} />
-        {loadingList ? (
-          <CsvDownloadButton data={loadingList.results} delimiter=','>
-            Export Log
-          </CsvDownloadButton>
-        ) : (
-          <></>
-        )}
+
       </Box>
 
       <Box

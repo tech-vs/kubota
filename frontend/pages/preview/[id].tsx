@@ -6,12 +6,13 @@ import { Button, useTheme } from '@mui/material'
 import cookie from 'cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import CsvDownloadButton from 'react-json-to-csv'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
-
 type Props = {}
 
 export type TFormId = number | string | string[]
+
 
 const PreviewDocumentWithId = ({ accessToken }: any) => {
   const MySwal = withReactContent(Swal)
@@ -20,8 +21,12 @@ const PreviewDocumentWithId = ({ accessToken }: any) => {
   const [loading, setLoading] = useState<boolean>(false)
   const [render, setRender] = useState<boolean>(false)
   const [data, setData] = useState<TDataPreview | undefined>()
+  const [csv, setCSV] = useState<any>()
   const router = useRouter()
 
+    console.log(csv)
+
+  
   useEffect(() => {
     if (!router.isReady) return
     const { id, type } = router.query
@@ -42,10 +47,34 @@ const PreviewDocumentWithId = ({ accessToken }: any) => {
       let res
       if (type === '1') {
         res = await checksheetPartList(id.toString() || '', accessToken)
+        const {
+          pallet_list, 
+          question_list, 
+          clerk_approve_name, 
+          engineer_approve_name, 
+          leader_approve_name, 
+          manager_approve_name,
+          reject_name,
+          reject_role,
+          ...obj
+        } = res
         setData(res)
+        setCSV(obj)
       } else if (type === '2') {
         res = await previewDocLoading(id.toString() || '', accessToken)
+        const {
+          pallet_list, 
+          question_list, 
+          clerk_approve_name, 
+          engineer_approve_name, 
+          leader_approve_name, 
+          manager_approve_name,
+          reject_name,
+          reject_role,
+          ...obj
+        } = res
         setData(res)
+        setCSV(obj)
       }
       setFormShow(type || '1')
       setLoading(false)
@@ -93,6 +122,17 @@ const PreviewDocumentWithId = ({ accessToken }: any) => {
       >
         Done
       </Button>
+      {csv && (<CsvDownloadButton data={[csv]} delimiter=',' >
+      <Button
+        variant='contained'
+        color='primary'
+        className='no-print'
+        sx={{ position: 'fixed', left: '1rem', top: '4rem' }}
+      >
+        Export Log
+        </Button>
+      </CsvDownloadButton>
+        ) }
       <>{renderContent(data)}</>
     </>
   )

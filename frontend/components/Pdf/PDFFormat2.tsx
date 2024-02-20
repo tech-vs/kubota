@@ -22,7 +22,7 @@ const PDFFormat2 = ({ content }: Props) => {
     const splitResult = splitList(content.pallet_list)
     setContentPerPage(splitResult)
   }, [content])
-  console.log(contentPerPage);
+  // console.log(contentPerPage);
   
   const headerQuestion = useMemo(() => content.question_list.filter(f => f.section === 3), [content.question_list])
 
